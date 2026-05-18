@@ -1,0 +1,21 @@
+Tanggal,No. Reff,Keterangan,Kode Akun,Debit,Kredit
+2024-12-01,REF-24-12-001,Setoran Modal Awal Pemilik,11111,50000000,0
+2024-12-01,REF-24-12-001,Setoran Modal Awal Pemilik,31000,0,50000000
+2024-12-02,REF-24-12-002,Bayar Sewa Tempat Desember,52400,2500000,0
+2024-12-02,REF-24-12-002,Bayar Sewa Tempat Desember,11111,0,2500000
+2024-12-05,REF-24-12-003,Penjualan Produk Tunai,11101,1500000,0
+2024-12-05,REF-24-12-003,Penjualan Produk Tunai,41000,0,1500000
+2024-12-08,REF-24-12-004,Biaya Operasional Harian,52200,450000,0
+2024-12-08,REF-24-12-004,Biaya Operasional Harian,11101,0,450000
+2024-12-12,REF-24-12-005,Penjualan Produk Kredit (Catering),11200,3500000,0
+2024-12-12,REF-24-12-005,Penjualan Produk Kredit (Catering),41000,0,3500000
+2024-12-15,REF-24-12-006,Bayar Tagihan Listrik & Air,52300,850000,0
+2024-12-15,REF-24-12-006,Bayar Tagihan Listrik & Air,11101,0,850000
+2024-12-20,REF-24-12-007,Penjualan Event Akhir Tahun,11111,8000000,0
+2024-12-20,REF-24-12-007,Penjualan Event Akhir Tahun,41000,0,8000000
+2024-12-25,REF-24-12-008,Pembayaran Gaji Karyawan Desember,52100,4000000,0
+2024-12-25,REF-24-12-008,Pembayaran Gaji Karyawan Desember,11111,0,4000000
+2024-12-28,REF-24-12-009,Potongan Admin Bank Bulanan,53000,25000,0
+2024-12-28,REF-24-12-009,Potongan Admin Bank Bulanan,11111,0,25000
+2024-12-30,REF-24-12-010,Pembelian Perlengkapan Kebersihan,11500,300000,0
+2024-12-30,REF-24-12-010,Pembelian Perlengkapan Kebersihan,11101,0,300000

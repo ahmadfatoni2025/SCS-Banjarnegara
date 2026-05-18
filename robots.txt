@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+Sitemap: https://scsbanjamegara.com/sitemap.xml
+
+# Google Image Bot
+User-agent: Googlebot-Image
+Allow: /
+Disallow: /private/
+
+# Bing Bot
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 2

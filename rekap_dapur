@@ -1,0 +1,911 @@
+<?php
+
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+// Selalu mulai session DI PALING ATAS
+session_start();
+
+// Sertakan koneksi database
+include 'koneksi.php'; // Pastikan nama file ini benar
+
+// Variabel untuk pesan feedback
+$feedback_message = '';
+$feedback_type = ''; // 'success' atau 'error' atau 'info'
+
+// =========================================================================
+// === BLOK PENYIMPANAN PESANAN (TIDAK BERUBAH) ===
+// =========================================================================
+if (isset($_GET['action']) && $_GET['action'] === 'simpan') {
+    
+    header('Content-Type: application/json'); 
+    $response = ['success' => false, 'message' => 'Terjadi kesalahan tidak diketahui.']; 
+
+    if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'dapur' || !isset($_SESSION['user']['id'])) { 
+        $response['message'] = 'Akses ditolak (simpan). Hanya Dapur.'; http_response_code(403); echo json_encode($response); exit;
+    }
+    $id_dapur = (int)$_SESSION['user']['id']; 
+
+    $input = file_get_contents('php://input');
+    $data = json_decode($input, true);
+
+    if ($data === null || !isset($data['cart']) || !isset($data['customerData']) || empty($data['cart'])) {
+         $response['message'] = 'Data pesanan tidak valid/kosong.'; http_response_code(400); echo json_encode($response); exit;
+    }
+    $cart = $data['cart'];
+    $customerData = $data['customerData'];
+    $nama_pemesan = trim($customerData['nama'] ?? '');
+    $email_pemesan = trim($customerData['email'] ?? ''); 
+    $wa_pemesan = trim($customerData['wa'] ?? '');
+    if (empty($nama_pemesan) || empty($wa_pemesan)) { http_response_code(400); $response['message'] = 'Nama & WA wajib.'; echo json_encode($response); exit; }
+    if (!preg_match('/^\d{6,}$/', $wa_pemesan)) { http_response_code(400); $response['message'] = 'No WA invalid.'; echo json_encode($response); exit; }
+    if (!empty($email_pemesan) && !filter_var($email_pemesan, FILTER_VALIDATE_EMAIL)) { http_response_code(400); $response['message'] = 'Email invalid.'; echo json_encode($response); exit; }
+
+    $total_harga_server = 0;
+    $item_ids = array_map('intval', array_keys($cart)); 
+    if (empty($item_ids)) { http_response_code(400); $response['message'] = 'Keranjang kosong.'; echo json_encode($response); exit; }
+    
+    $placeholders = implode(',', array_fill(0, count($item_ids), '?')); 
+    $types = str_repeat('i', count($item_ids)); 
+    $sql_harga = "SELECT id_barang, nama, harga, stok FROM gudang WHERE id_barang IN ($placeholders)";
+    $stmt_harga = $koneksi->prepare($sql_harga);
+    if ($stmt_harga === false) { http_response_code(500); $response['message'] = "DB Error (prepare harga)"; error_log("Gagal prepare harga: " . $koneksi->error); echo json_encode($response); exit; }
+    if (!empty($item_ids)) $stmt_harga->bind_param($types, ...$item_ids);
+    if (!$stmt_harga->execute()){ http_response_code(500); $response['message'] = "DB Error (exec harga)"; error_log("Gagal exec harga: " . $stmt_harga->error); echo json_encode($response); exit; }
+    
+    $stmt_harga->store_result();
+    $stmt_harga->bind_result($id_barang_db, $nama_db, $harga_db, $stok_db);
+    
+    $db_items = [];
+    while ($stmt_harga->fetch()) {
+        $db_items[$id_barang_db] = ['nama' => $nama_db, 'harga' => (float)$harga_db, 'stok' => (int)$stok_db];
+    }
+    $stmt_harga->free_result();
+    $stmt_harga->close();
+
+    $valid_cart_items = []; 
+    foreach ($cart as $id_str => $item_cart) {
+        $id_barang = (int)$id_str; $jumlah_pesan = filter_var($item_cart['jumlah'] ?? 0, FILTER_VALIDATE_INT); $harga_cart = filter_var($item_cart['harga'] ?? -1, FILTER_VALIDATE_FLOAT); $nama_cart = $item_cart['nama'] ?? '???';
+        if ($jumlah_pesan === false || $harga_cart === false) { http_response_code(400); $response['message']="Data jumlah/harga invalid u/ '{$nama_cart}'"; echo json_encode($response); exit;}
+        if (!isset($db_items[$id_barang])) { http_response_code(400); $response['message']="Barang '{$nama_cart}' tdk ditemukan"; echo json_encode($response); exit;}
+        $item_db = $db_items[$id_barang]; if ($jumlah_pesan <= 0) continue; 
+        if (abs($item_db['harga'] - $harga_cart) > 0.01) { http_response_code(400); $response['message']="Harga '{$item_db['nama']}' berubah. Harga skrg: Rp ".number_format($item_db['harga'],0,',','.'); echo json_encode($response); exit;}
+        if ($jumlah_pesan > $item_db['stok']) { http_response_code(400); $response['message']="Stok '{$item_db['nama']}' tdk cukup (sisa {$item_db['stok']})"; echo json_encode($response); exit;}
+        $total_harga_server += $item_db['harga'] * $jumlah_pesan; $valid_cart_items[$id_barang] = $jumlah_pesan; 
+    }
+    if (empty($valid_cart_items)) { http_response_code(400); $response['message']='Tdk ada item valid di keranjang'; echo json_encode($response); exit; }
+
+    $koneksi->begin_transaction();
+    try {
+        $sql_insert_pesanan = "INSERT INTO pesanan (id_dapur, nama_pemesan, email_pemesan, wa_pemesan, total_harga, status_pembayaran, status_pengiriman, tgl_pesan) VALUES (?, ?, ?, ?, ?, 'Belum Bayar', 'Pending', NOW())";
+        $stmt_pesanan = $koneksi->prepare($sql_insert_pesanan);
+        if ($stmt_pesanan === false) throw new Exception("Gagal prepare insert pesanan: " . $koneksi->error);
+        $email_to_insert = !empty($email_pemesan) ? $email_pemesan : null; 
+        $stmt_pesanan->bind_param("isssd", $id_dapur, $nama_pemesan, $email_to_insert, $wa_pemesan, $total_harga_server);
+        if (!$stmt_pesanan->execute()) throw new Exception("Gagal execute insert pesanan: " . $stmt_pesanan->error . " | Data: ID Dapur={$id_dapur}, Nama={$nama_pemesan}, Email={$email_to_insert}, WA={$wa_pemesan}, Total={$total_harga_server}");
+        $id_pesanan_baru = $koneksi->insert_id;
+        if ($id_pesanan_baru == 0) throw new Exception("Gagal mendapatkan ID pesanan baru setelah insert.");
+        $stmt_pesanan->close();
+
+        $sql_insert_detail = "INSERT INTO detail_pesanan (id_pesanan, id_barang, jumlah, harga_satuan) VALUES (?, ?, ?, ?)";
+        $stmt_detail = $koneksi->prepare($sql_insert_detail); if ($stmt_detail === false) throw new Exception("Gagal prepare insert detail: " . $koneksi->error);
+        $sql_update_stok = "UPDATE gudang SET stok = GREATEST(0, stok - ?) WHERE id_barang = ? AND stok >= ?";
+        $stmt_stok = $koneksi->prepare($sql_update_stok); if ($stmt_stok === false) throw new Exception("Gagal prepare update stok: " . $koneksi->error);
+        foreach ($valid_cart_items as $id_barang => $jumlah_pesan) {
+            $harga_satuan = $db_items[$id_barang]['harga']; $stmt_detail->bind_param("iiid", $id_pesanan_baru, $id_barang, $jumlah_pesan, $harga_satuan);
+            if (!$stmt_detail->execute()) throw new Exception("Gagal execute insert detail u/ ID $id_barang: " . $stmt_detail->error);
+            $stmt_stok->bind_param("iii", $jumlah_pesan, $id_barang, $jumlah_pesan); 
+            if (!$stmt_stok->execute()) throw new Exception("Gagal execute update stok u/ ID $id_barang: " . $stmt_stok->error);
+            if ($stmt_stok->affected_rows === 0) { $nama_brg = $db_items[$id_barang]['nama'] ?? "ID $id_barang"; throw new Exception("Update stok gagal u/ '{$nama_brg}'. Stok mungkin habis.");}
+        }
+        $stmt_detail->close(); $stmt_stok->close();
+
+        if (!$koneksi->commit()) throw new Exception("Gagal commit transaksi: " . $koneksi->error);
+        $response['success'] = true; $response['message'] = "Pesanan berhasil disimpan (ID: $id_pesanan_baru)"; $response['order_id'] = $id_pesanan_baru; 
+    } catch (Exception $e) {
+        $koneksi->rollback(); $response['message'] = $e->getMessage(); http_response_code(500); error_log("Rollback Triggered (Simpan Pesanan): " . $e->getMessage()); 
+    }
+    echo json_encode($response); exit;
+} 
+// =========================================================================
+// === BLOK UPDATE STATUS PENGIRIMAN (TIDAK BERUBAH) ===
+// =========================================================================
+else if (isset($_GET['action']) && $_GET['action'] === 'update_status' && isset($_GET['id']) && isset($_GET['status'])) {
+    
+    if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+        header('Location: login.php?error=unauthorized'); exit;
+    }
+    $id_pesanan_to_update = filter_var($_GET['id'], FILTER_VALIDATE_INT);
+    $new_status = $_GET['status']; 
+    $allowed_statuses = ['Pending', 'Ongoing', 'Done']; 
+
+    if ($id_pesanan_to_update && in_array($new_status, $allowed_statuses)) {
+        $sql_update = "UPDATE pesanan SET status_pengiriman = ? WHERE id_pesanan = ?";
+        $stmt_update = $koneksi->prepare($sql_update);
+        if ($stmt_update) {
+            $stmt_update->bind_param("si", $new_status, $id_pesanan_to_update);
+            if ($stmt_update->execute()) {
+                if ($stmt_update->affected_rows > 0) {
+                    $feedback_message = "Status pengiriman pesanan #{$id_pesanan_to_update} diubah menjadi '{$new_status}'."; $feedback_type = 'success';
+                } else {
+                     $feedback_message = "Status pengiriman pesanan #{$id_pesanan_to_update} sudah '{$new_status}' atau ID tidak ditemukan."; $feedback_type = 'info'; 
+                }
+            } else {
+                $feedback_message = "Gagal mengubah status pengiriman: " . $stmt_update->error; $feedback_type = 'error'; error_log($feedback_message);
+            }
+            $stmt_update->close();
+        } else {
+             $feedback_message = "Gagal prepare query update pengiriman: " . $koneksi->error; $feedback_type = 'error'; error_log($feedback_message);
+        }
+    } else {
+        $feedback_message = "Permintaan update status pengiriman tidak valid."; $feedback_type = 'error';
+    }
+    
+    $filter_params = http_build_query([
+        'search' => $_GET['search'] ?? '',
+        'tanggal' => $_GET['tanggal'] ?? '', 
+        'bayar' => $_GET['bayar'] ?? 'Semua',
+        'kirim' => $_GET['kirim'] ?? 'Semua'
+    ]);
+    header("Location: laporanPenjualan.php?feedback=" . urlencode($feedback_message) . "&type=" . $feedback_type . "&" . $filter_params); exit;
+}
+// =========================================================================
+// === BLOK UPDATE STATUS PEMBAYARAN (TIDAK BERUBAH) ===
+// =========================================================================
+else if (isset($_GET['action']) && $_GET['action'] === 'update_bayar' && isset($_GET['id']) && isset($_GET['status'])) {
+    
+    if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+        header('Location: login.php?error=unauthorized'); exit;
+    }
+    $id_pesanan_to_update = filter_var($_GET['id'], FILTER_VALIDATE_INT);
+    $new_status_bayar = $_GET['status']; 
+    $allowed_bayar_statuses = ['Belum Bayar', 'Lunas', 'Batal']; 
+
+    if ($id_pesanan_to_update && in_array($new_status_bayar, $allowed_bayar_statuses)) {
+        
+        $do_rollback = false;
+        if ($new_status_bayar === 'Batal') {
+            $stmt_check_batal = $koneksi->prepare("SELECT status_pembayaran FROM pesanan WHERE id_pesanan = ?");
+            if($stmt_check_batal){
+                $stmt_check_batal->bind_param("i", $id_pesanan_to_update);
+                $stmt_check_batal->execute();
+                $stmt_check_batal->store_result();
+                $stmt_check_batal->bind_result($status_sebelumnya);
+                if($stmt_check_batal->fetch()){
+                    if($status_sebelumnya !== 'Batal'){
+                        $do_rollback = true;
+                    }
+                }
+                $stmt_check_batal->free_result();
+                $stmt_check_batal->close();
+            }
+        }
+
+        $koneksi->begin_transaction();
+        try {
+            $sql_update_bayar = "UPDATE pesanan SET status_pembayaran = ? WHERE id_pesanan = ?";
+            $stmt_update_bayar = $koneksi->prepare($sql_update_bayar);
+            if (!$stmt_update_bayar) throw new Exception("Gagal prepare update bayar: " . $koneksi->error);
+            $stmt_update_bayar->bind_param("si", $new_status_bayar, $id_pesanan_to_update);
+            if (!$stmt_update_bayar->execute()) throw new Exception("Gagal execute update bayar: " . $stmt_update_bayar->error);
+            $affected_rows_bayar = $stmt_update_bayar->affected_rows;
+            $stmt_update_bayar->close();
+
+            if ($do_rollback) {
+                $stmt_get_details = $koneksi->prepare("SELECT id_barang, jumlah FROM detail_pesanan WHERE id_pesanan = ?");
+                 if (!$stmt_get_details) throw new Exception("Gagal prepare get details for rollback: " . $koneksi->error);
+                $stmt_get_details->bind_param("i", $id_pesanan_to_update);
+                if (!$stmt_get_details->execute()) throw new Exception("Gagal execute get details for rollback: " . $stmt_get_details->error);
+                $items_to_rollback = [];
+                $stmt_get_details->store_result();
+                $stmt_get_details->bind_result($id_brg_db, $jumlah_db);
+                while($stmt_get_details->fetch()){
+                    $items_to_rollback[$id_brg_db] = $jumlah_db;
+                }
+                $stmt_get_details->free_result();
+                $stmt_get_details->close();
+
+                if (!empty($items_to_rollback)) {
+                    $sql_rollback_stok = "UPDATE gudang SET stok = stok + ? WHERE id_barang = ?";
+                    $stmt_rollback = $koneksi->prepare($sql_rollback_stok);
+                     if (!$stmt_rollback) throw new Exception("Gagal prepare rollback stok: " . $koneksi->error);
+                    foreach ($items_to_rollback as $id_brg => $jml) {
+                        $stmt_rollback->bind_param("ii", $jml, $id_brg);
+                        if (!$stmt_rollback->execute()) {
+                            error_log("Gagal rollback stok untuk barang ID {$id_brg}: " . $stmt_rollback->error);
+                        }
+                    }
+                    $stmt_rollback->close();
+                }
+            }
+
+            if (!$koneksi->commit()) throw new Exception("Gagal commit transaksi update bayar: " . $koneksi->error);
+
+            if ($affected_rows_bayar > 0) {
+                $feedback_message = "Status pembayaran pesanan #{$id_pesanan_to_update} berhasil diubah menjadi '{$new_status_bayar}'.";
+                if ($do_rollback) $feedback_message .= " Stok barang telah dikembalikan.";
+                $feedback_type = 'success';
+            } else {
+                 $feedback_message = "Status pembayaran pesanan #{$id_pesanan_to_update} sudah '{$new_status_bayar}' atau ID tidak ditemukan.";
+                 $feedback_type = 'info'; 
+            }
+        } catch (Exception $e) {
+            $koneksi->rollback();
+            $feedback_message = "Gagal mengubah status pembayaran: " . $e->getMessage();
+            $feedback_type = 'error';
+            error_log($feedback_message);
+        }
+    } else {
+        $feedback_message = "Permintaan update status pembayaran tidak valid.";
+        $feedback_type = 'error';
+    }
+    
+    $filter_params = http_build_query([
+        'search' => $_GET['search'] ?? '',
+        'tanggal' => $_GET['tanggal'] ?? '', 
+        'bayar' => $_GET['bayar'] ?? 'Semua',
+        'kirim' => $_GET['kirim'] ?? 'Semua'
+    ]);
+    header("Location: laporanPenjualan.php?feedback=" . urlencode($feedback_message) . "&type=" . $feedback_type . "&" . $filter_params); exit;
+}
+
+
+// =========================================================================
+// === BLOK PENGAMBILAN DATA & TAMPILAN LAPORAN ===
+// =========================================================================
+
+// --- KEAMANAN LAPORAN (Admin) ---
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+    header('Location: login.php'); exit();
+}
+if(isset($_GET['feedback'])) { $feedback_message = htmlspecialchars($_GET['feedback']); $feedback_type = $_GET['type'] ?? 'info'; }
+
+// --- Ambil nilai filter ---
+$search = trim($_GET['search'] ?? '');
+$filter_tanggal = $_GET['tanggal'] ?? ''; 
+$filter_bayar = $_GET['bayar'] ?? 'Semua';
+$filter_kirim = $_GET['kirim'] ?? 'Semua';
+
+// --- LOGIKA LAPORAN HARIAN ---
+$master_dapur = [];
+$dapur_sudah_pesan_ids = [];
+$laporan_harian = [];
+$stmt_dapur_all = $koneksi->prepare("SELECT id, nama FROM user WHERE role = 'dapur' ORDER BY nama ASC");
+if ($stmt_dapur_all) {
+    $stmt_dapur_all->execute();
+    $stmt_dapur_all->store_result();
+    $stmt_dapur_all->bind_result($dapur_id, $dapur_nama);
+    while ($stmt_dapur_all->fetch()) {
+        $master_dapur[$dapur_id] = $dapur_nama; 
+    }
+    $stmt_dapur_all->free_result();
+    $stmt_dapur_all->close();
+}
+$stmt_pesan_today = $koneksi->prepare("SELECT DISTINCT id_dapur FROM pesanan WHERE DATE(tgl_pesan) = CURDATE()");
+if ($stmt_pesan_today) {
+    $stmt_pesan_today->execute();
+    $stmt_pesan_today->store_result();
+    $stmt_pesan_today->bind_result($id_dapur_pesan);
+    while ($stmt_pesan_today->fetch()) {
+        $dapur_sudah_pesan_ids[] = $id_dapur_pesan; 
+    }
+    $stmt_pesan_today->free_result();
+    $stmt_pesan_today->close();
+}
+foreach ($master_dapur as $id => $nama) {
+    if (in_array($id, $dapur_sudah_pesan_ids)) {
+        $laporan_harian[] = ['nama' => $nama, 'status' => 'Sudah'];
+    } else {
+        $laporan_harian[] = ['nama' => $nama, 'status' => 'Belum'];
+    }
+}
+// --- AKHIR LOGIKA LAPORAN HARIAN ---
+
+
+// --- LOGIKA PENGAMBILAN DATA RIWAYAT ---
+$riwayat_pembelian = [];
+$sql_pesanan = "SELECT id_pesanan, id_dapur, id_driver, nama_pemesan, email_pemesan, wa_pemesan, total_harga, status_pembayaran, status_pengiriman, tgl_pesan, nama_driver FROM pesanan";
+$where_conditions = [];
+$params = [];
+$types = "";
+if (!empty($filter_tanggal)) {
+    $where_conditions[] = "DATE(tgl_pesan) = ?";
+    $params[] = $filter_tanggal;
+    $types .= "s";
+}
+if ($filter_bayar !== 'Semua') {
+    $where_conditions[] = "status_pembayaran = ?";
+    $params[] = $filter_bayar;
+    $types .= "s";
+}
+if ($filter_kirim !== 'Semua') {
+    $where_conditions[] = "status_pengiriman = ?";
+    $params[] = $filter_kirim;
+    $types .= "s";
+}
+if (!empty($search)) {
+    if (ctype_digit($search)) {
+         $where_conditions[] = "(id_pesanan = ? OR nama_pemesan LIKE ? OR nama_driver LIKE ?)"; 
+         $search_param_like = "%" . $search . "%";
+         $params[] = $search; 
+         $params[] = $search_param_like;
+         $params[] = $search_param_like; 
+         $types .= "iss"; 
+    } else {
+         $where_conditions[] = "(nama_pemesan LIKE ? OR nama_driver LIKE ?)"; 
+         $search_param_like = "%" . $search . "%";
+         $params[] = $search_param_like;
+         $params[] = $search_param_like; 
+         $types .= "ss"; 
+    }
+}
+if (!empty($where_conditions)) {
+    $sql_pesanan .= " WHERE " . implode(' AND ', $where_conditions);
+}
+$order_by = " ORDER BY tgl_pesan DESC"; 
+$sql_pesanan .= $order_by;
+
+// --- Eksekusi query ---
+$stmt_pesanan = $koneksi->prepare($sql_pesanan);
+
+if ($stmt_pesanan) {
+    if (!empty($params)) {
+        $stmt_pesanan->bind_param($types, ...$params);
+    }
+    $stmt_pesanan->execute();
+    $stmt_pesanan->store_result();
+    $stmt_pesanan->bind_result($id_pesanan_db, $id_dapur_db, $id_driver_db, $nama_pemesan_db, $email_pemesan_db, $wa_pemesan_db, $total_harga_db, $status_pembayaran_db, $status_pengiriman_db, $tgl_pesan_db, $nama_driver_db);
+    
+    if ($stmt_pesanan->num_rows > 0) {
+        while ($stmt_pesanan->fetch()) {
+            $pesanan = [
+                'id_pesanan' => $id_pesanan_db,
+                'id_dapur' => $id_dapur_db,
+                'id_driver' => $id_driver_db,
+                'nama_pemesan' => $nama_pemesan_db,
+                'email_pemesan' => $email_pemesan_db,
+                'wa_pemesan' => $wa_pemesan_db,
+                'total_harga' => $total_harga_db,
+                'status_pembayaran' => $status_pembayaran_db,
+                'status_pengiriman' => $status_pengiriman_db,
+                'tgl_pesan' => $tgl_pesan_db,
+                'nama_driver' => $nama_driver_db
+            ];
+            $id_dapur = $pesanan['id_dapur']; 
+            $id_driver = $pesanan['id_driver']; 
+            $nama_driver_manual = $pesanan['nama_driver']; 
+            $nama_dapur = 'User Dihapus'; 
+            $nama_driver = 'Belum Ditugaskan'; 
+            if($id_dapur) { 
+                $stmt_dapur = $koneksi->prepare("SELECT nama FROM user WHERE id = ?"); 
+                if($stmt_dapur){
+                    $stmt_dapur->bind_param("i", $id_dapur);
+                    if($stmt_dapur->execute()){
+                        $stmt_dapur->store_result();
+                        $stmt_dapur->bind_result($nama_dapur_db);
+                        if($stmt_dapur->fetch()) { $nama_dapur = $nama_dapur_db; }
+                        $stmt_dapur->free_result();
+                    } else { error_log("Gagal exec query nama dapur: " . $stmt_dapur->error); }
+                    $stmt_dapur->close();
+                } else { error_log("Gagal prepare query nama dapur: " . $koneksi->error); }
+            }
+            if (!empty($nama_driver_manual)) {
+                $nama_driver = $nama_driver_manual;
+            } 
+            elseif ($id_driver !== null && $id_driver > 0) { 
+                $stmt_driver = $koneksi->prepare("SELECT nama FROM user WHERE id = ?"); 
+                if($stmt_driver){
+                    $stmt_driver->bind_param("i", $id_driver);
+                    if($stmt_driver->execute()){
+                        $stmt_driver->store_result();
+                        $stmt_driver->bind_result($nama_driver_db);
+                        if($stmt_driver->fetch()) { $nama_driver = $nama_driver_db; }
+                        $stmt_driver->free_result();
+                    } else { error_log("Gagal exec query nama driver: " . $stmt_driver->error); }
+                    $stmt_driver->close();
+                } else { error_log("Gagal prepare query nama driver: " . $koneksi->error); }
+            }
+            $riwayat_pembelian[] = [ 
+                'id' => $pesanan['id_pesanan'], 
+                'tanggal' => date('d F Y H:i', strtotime($pesanan['tgl_pesan'])), 
+                'status_pembayaran' => $pesanan['status_pembayaran'], 
+                'status_pengiriman' => $pesanan['status_pengiriman'], 
+                'total_harga' => filter_var($pesanan['total_harga'], FILTER_VALIDATE_FLOAT) ?: 0, 
+                'nama_dapur' => $nama_dapur, 
+                'nama_driver' => $nama_driver,
+                'wa_pemesan' => $pesanan['wa_pemesan'] 
+            ];
+        }
+    } 
+    $stmt_pesanan->close();
+} else {
+     error_log("Gagal prepare query pesanan utama: " . $koneksi->error);
+     $feedback_message = "Gagal memuat data riwayat pesanan (prepare)."; 
+     $feedback_type = 'error';
+}
+?>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan Penjualan - MBG Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+         :root { --primary: #3b82f6; --success: #10b981; --danger: #ef4444; --warning: #f59e0b; --teal: #14b8a6; } 
+         body { font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif; }
+         .sidebar { width: 250px; }
+         @media (max-width: 768px) { .sidebar { width: 100%; height: auto; position: relative;} main { padding-top: 1rem;} } 
+         .invoice-card { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); border: 1px solid #e5e7eb; }
+         .badge { padding-left: 0.75rem; padding-right: 0.75rem; padding-top: 0.25rem; padding-bottom: 0.25rem; border-radius: 9999px; font-weight: 500;}
+         .badge-pending { background-color: #e0f2fe; color: #0284c7; } 
+         .badge-ongoing { background-color: #fef3c7; color: #d97706; } 
+         .badge-done { background-color: #d1fae5; color: #059669; } 
+         .badge-belum-bayar { background-color: #fef3c7; color: #d97706; } 
+         .badge-lunas { background-color: #d1fae5; color: #059669; } 
+         .badge-batal { background-color: #fee2e2; color: #b91c1c; } 
+         .badge-selesai { background-color: #ccfbf1; color: #0f766e; } 
+         .feedback { padding: 1rem; margin-bottom: 1.5rem; border-radius: 0.5rem; border-width: 1px; }
+         .feedback-success { background-color: #d1fae5; border-color: #6ee7b7; color: #065f46; }
+         .feedback-error { background-color: #fee2e2; border-color: #fca5a5; color: #991b1b; }
+         .feedback-info { background-color: #e0f2fe; border-color: #7dd3fc; color: #075985; }
+         .action-btn { font-size: 0.75rem; font-weight: 500; padding: 0.5rem 0.75rem; border-radius: 0.375rem; text-align: center; transition: background-color 0.2s; display: inline-flex; align-items: center;}
+         .action-btn i { margin-right: 0.25rem;}
+         
+         .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.75);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 1000;
+         }
+         
+         input[type="date"]::-webkit-calendar-picker-indicator {
+            opacity: 1;
+            cursor: pointer;
+         }
+         input[type="date"] {
+            position: relative;
+            min-width: 170px; 
+         }
+         input[type="date"]:before {
+            content: attr(data-placeholder);
+            display: block;
+            color: #6b7280; /* text-gray-500 */
+            position: absolute;
+            left: 0.75rem; /* padding-x 3 */
+            top: 0.5rem; /* padding-y 2 */
+            pointer-events: none;
+         }
+         input[type="date"]:focus:before,
+         input[type="date"]:valid:before {
+            display: none; 
+         }
+    </style>
+</head>
+<body class="bg-gray-100 flex flex-col md:flex-row min-h-screen">
+
+    <?php
+    $current_page = basename($_SERVER['PHP_SELF']);
+    // Kita juga perlu tahu jika halaman saat ini adalah sub-halaman
+    $is_dapur_page = strpos($_SERVER['REQUEST_URI'], '/page/dapur') !== false;
+    ?>
+    
+    <aside class="sidebar bg-blue-600 text-white p-6 shadow-xl flex-shrink-0">
+        <div class="text-3xl font-extrabold mb-8 border-b border-blue-500 pb-4">MBG Admin</div>
+        
+        <nav class="space-y-3">
+            
+            <a href="./index.php"
+               class="flex items-center p-3 rounded-xl transition 
+               <?php echo ($current_page == 'index.php') ? 'bg-blue-700 text-white' : 'hover:bg-blue-700'; ?>">
+                <i class="fas fa-boxes-stacked mr-3"></i> <p>Inventaris Bahan</p>
+            </a>
+    
+            <div>
+                <div class="w-full flex justify-between items-center p-3 rounded-xl transition 
+                    <?php 
+                    // Highlight jika halaman laporan atau halaman dapur aktif
+                    $is_laporan_page = ($current_page == 'laporanPenjualan.php' || $is_dapur_page);
+                    echo $is_laporan_page ? 'bg-blue-700 text-white' : 'hover:bg-blue-700 hover:text-white'; 
+                    ?>">
+                
+                    <a href="./laporanPenjualan.php" class="flex items-center flex-1">
+                        <i class="fas fa-file-invoice mr-3"></i>
+                        <p>Laporan Penjualan </p>
+                    </a>
+            
+                    <button id="toggleLaporanBtn" class="p-1 rounded-md hover:bg-blue-500 ml-2">
+                        <i id="toggleLaporanIcon" class="fas fa-chevron-down transition-transform duration-300"></i>
+                    </button>
+                </div>
+            
+                <ul id="submenuLaporan" class="ml-8 mt-2 space-y-2 overflow-hidden transition-all duration-500 ease-in-out <?php echo $is_dapur_page ? '' : 'hidden'; ?>"
+                    style="<?php echo $is_dapur_page ? 'max-height: 500px; opacity: 1;' : 'max-height: 0; opacity: 0;'; ?>"> <li>
+                        <a href="./page/dapur1.php"
+                           class="flex items-center p-3 rounded-xl transition <?php echo ($current_page == 'dapur1.php') ? 'bg-blue-700 text-white' : 'hover:bg-blue-700 hover:text-white'; ?>">
+                           <i class="fas fa-utensils mr-3"></i> SPPG MBS Wanayasa
+                        </a>
+                    </li>
+                    <li>
+                        <a href="./page/dapur2.php"
+                           class="flex items-center p-3 rounded-xl transition <?php echo ($current_page == 'dapur2.php') ? 'bg-blue-700 text-white' : 'hover:bg-blue-700 hover:text-white'; ?>">
+                           <i class="fas fa-utensils mr-3"></i> SPPG Kutabanjarnegara
+                        </a>
+                    </li>
+                    <li>
+                        <a href="./page/dapur3.php"
+                           class="flex items-center p-3 rounded-xl transition <?php echo ($current_page == 'dapur3.php') ? 'bg-blue-700 text-white' : 'hover:bg-blue-700 hover:text-white'; ?>">
+                           <i class="fas fa-utensils mr-3"></i> SPPG Pingit
+                        </a>
+                    </li>
+                    <li>
+                        <a href="./page/dapur4.php"
+                           class="flex items-center p-3 rounded-xl transition <?php echo ($current_page == 'dapur4.php') ? 'bg-blue-700 text-white' : 'hover:bg-blue-700 hover:text-white'; ?>">
+                           <i class="fas fa-utensils mr-3"></i> SPPG Merden
+                        </a>
+                    </li>
+                    <li>
+                        <a href="./page/dapur5.php"
+                           class="flex items-center p-3 rounded-xl transition <?php echo ($current_page == 'dapur5.php') ? 'bg-blue-700 text-white' : 'hover:bg-blue-700 hover:text-white'; ?>">
+                           <i class="fas fa-utensils mr-3"></i> SPPG Susukan
+                        </a>
+                    </li>
+                    <li>
+                        <a href="./page/dapur6.php"
+                           class="flex items-center p-3 rounded-xl transition <?php echo ($current_page == 'dapur6.php') ? 'bg-blue-700 text-white' : 'hover:bg-blue-700 hover:text-white'; ?>">
+                           <i class="fas fa-utensils mr-3"></i> SPPG Pandanarum
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <a href="./pengaturanAkun.php"
+               class="flex items-center p-3 rounded-xl transition 
+               <?php echo ($current_page == 'pengaturanAkun.php') ? 'bg-blue-700 text-white' : 'hover:bg-blue-700'; ?>">
+                <i class="fas fa-user-gear mr-3"></i> <p>Pengaturan Akun</p>
+            </a>
+            
+            <a href="./inputdatasuplayer.php"
+               class="flex items-center p-3 rounded-xl transition 
+               <?php echo ($current_page == 'inputdatasuplayer.php') ? 'bg-blue-700 text-white' : 'hover:bg-blue-700'; ?>">
+                <i class="fas fa-truck mr-3"></i> <p>Input Data Supplier</p>
+            </a>
+            
+            <a href="./driver.php"
+                class="flex items-center p-3 rounded-xl transition 
+                <?php echo ($current_page == 'driver.php') ? 'bg-blue-700 text-white' : 'hover:bg-blue-700'; ?>">
+                <i class="fas fa-route mr-3"></i> <p>Halaman Driver</p>
+            </a>
+    
+            <a href="logout.php"
+               class="flex items-center p-3 rounded-xl hover:bg-red-700 transition mt-6 pt-4 border-t border-blue-500 text-red-100">
+                <i class="fas fa-sign-out-alt mr-3"></i> <p>Logout</p>
+            </a>
+        </nav>
+        
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const toggleBtn = document.getElementById('toggleLaporanBtn');
+                const submenu = document.getElementById('submenuLaporan');
+                const icon = document.getElementById('toggleLaporanIcon');
+            
+                if (toggleBtn && submenu && icon) {
+                    
+                    let isOpen = !submenu.classList.contains('hidden');
+                    
+                    if (isOpen) {
+                        icon.classList.add('rotate-180');
+                    } else {
+                        icon.classList.remove('rotate-180');
+                    }
+
+                    toggleBtn.addEventListener('click', (e) => {
+                        e.preventDefault(); 
+                        
+                        isOpen = !isOpen; 
+            
+                        if (isOpen) {
+                            submenu.classList.remove('hidden');
+                            setTimeout(() => {
+                                submenu.style.maxHeight = submenu.scrollHeight + 'px';
+                                submenu.style.opacity = '1';
+                                icon.classList.add('rotate-180');
+                            }, 10);
+                        } else {
+                            submenu.style.maxHeight = '0';
+                            submenu.style.opacity = '0';
+                            icon.classList.remove('rotate-180');
+                            setTimeout(() => {
+                                submenu.classList.add('hidden');
+                            }, 500); // Durasi transisi
+                        }
+                    });
+                }
+            });
+        </script>
+        </aside>
+    <main class="flex-1 p-6 md:p-10 content-area">
+        
+        <div class="mb-8 bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4 border-b pb-3">
+                <i class="fas fa-calendar-day mr-2"></i> Laporan Pemesanan Harian (Hari Ini)
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="text-lg font-semibold text-green-600 mb-3">
+                        <i class="fas fa-check-circle mr-2"></i> Sudah Memesan
+                    </h3>
+                    <ul class="space-y-2">
+                        <?php 
+                        $count_sudah = 0;
+                        foreach ($laporan_harian as $laporan) {
+                            if ($laporan['status'] == 'Sudah') {
+                                echo '<li class="bg-green-50 text-green-800 p-3 rounded-lg flex items-center shadow-sm"><i class="fas fa-utensils fa-fw mr-3"></i>' . htmlspecialchars($laporan['nama']) . '</li>';
+                                $count_sudah++;
+                            }
+                        }
+                        if ($count_sudah == 0) {
+                            echo '<li class="text-gray-500 p-3">Belum ada dapur yang memesan hari ini.</li>';
+                        }
+                        ?>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-red-600 mb-3">
+                        <i class="fas fa-clock mr-2"></i> Belum Memesan
+                    </h3>
+                    <ul class="space-y-2">
+                        <?php 
+                        $count_belum = 0;
+                        foreach ($laporan_harian as $laporan) {
+                            if ($laporan['status'] == 'Belum') {
+                                echo '<li class="bg-red-50 text-red-800 p-3 rounded-lg flex items-center shadow-sm"><i class="fas fa-exclamation-triangle fa-fw mr-3"></i>' . htmlspecialchars($laporan['nama']) . '</li>';
+                                $count_belum++;
+                            }
+                        }
+                        if ($count_belum == 0 && count($master_dapur) > 0) {
+                            echo '<li class="text-gray-500 p-3">Semua dapur sudah memesan.</li>';
+                        } elseif (count($master_dapur) == 0) {
+                            echo '<li class="text-gray-500 p-3">Tidak ada data dapur di sistem.</li>';
+                        }
+                        ?>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">Riwayat Pemesanan Barang</h1>
+
+        <?php if (!empty($feedback_message)): ?>
+            <div class="feedback feedback-<?php echo $feedback_type; ?>" role="alert">
+                <?php echo htmlspecialchars($feedback_message); ?>
+            </div>
+        <?php endif; ?>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+             <div class="bg-blue-600 text-white p-6 rounded-lg shadow-lg"> <h2 class="font-bold text-lg">Total Pesanan</h2> <p class="text-2xl font-bold mt-1"><?php echo count($riwayat_pembelian); ?></p> </div>
+             <div class="bg-green-600 text-white p-6 rounded-lg shadow-lg"> <h2 class="font-bold text-lg">Sudah Dibayar</h2> <p class="text-2xl font-bold mt-1"><?php echo count(array_filter($riwayat_pembelian, fn($p) => $p['status_pembayaran'] == 'Lunas')); ?></p> </div>
+             <div class="bg-yellow-600 text-white p-6 rounded-lg shadow-lg"> <h2 class="font-bold text-lg">Belum Dibayar</h2> <p class="text-2xl font-bold mt-1"><?php echo count(array_filter($riwayat_pembelian, fn($p) => $p['status_pembayaran'] == 'Belum Bayar')); ?></p> </div>
+             <div class="bg-teal-600 text-white p-6 rounded-lg shadow-lg"> <h2 class="font-bold text-lg">Pengiriman Selesai</h2> <p class="text-2xl font-bold mt-1"><?php echo count(array_filter($riwayat_pembelian, fn($p) => $p['status_pengiriman'] == 'Done')); ?></p> </div> 
+        </div>
+
+        <form action="laporanPenjualan.php" method="GET" class="flex flex-wrap items-center gap-4 mb-6">
+            <div class="relative">
+                <label for="searchLaporan" class="sr-only">Cari</label>
+                <input type="text" id="searchLaporan" name="search" value="<?php echo htmlspecialchars($search); ?>" placeholder="Cari ID, Nama, atau Driver..." class="appearance-none bg-white border border-gray-300 rounded-lg py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:border-blue-500">
+            </div>
+            <div class="relative"> 
+                <label for="filterTanggal" class="sr-only">Pilih Tanggal</label>
+                <input type="date" id="filterTanggal" name="tanggal" 
+                       value="<?php echo htmlspecialchars($filter_tanggal); ?>" 
+                       data-placeholder="Pilih Tanggal"
+                       class="appearance-none bg-white border border-gray-300 rounded-lg py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:border-blue-500">
+            </div>
+            <div class="relative"> 
+                <label for="filterBayar" class="sr-only">Status Pembayaran</label>
+                <select id="filterBayar" name="bayar" class="appearance-none bg-white border border-gray-300 rounded-lg py-2 px-4 pr-8 text-gray-700 leading-tight focus:outline-none focus:border-blue-500"> 
+                    <option value="Semua" <?php if($filter_bayar === 'Semua') echo 'selected'; ?>>Semua Pembayaran</option> 
+                    <option value="Belum Bayar" <?php if($filter_bayar === 'Belum Bayar') echo 'selected'; ?>>Belum Bayar</option> 
+                    <option value="Lunas" <?php if($filter_bayar === 'Lunas') echo 'selected'; ?>>Lunas</option> 
+                    <option value="Batal" <?php if($filter_bayar === 'Batal') echo 'selected'; ?>>Batal</option> 
+                </select> 
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"><svg class="fill-current h-4 w-4" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg></div> 
+            </div>
+            <div class="relative"> 
+                <label for="filterKirim" class="sr-only">Status Pengiriman</label>
+                <select id="filterKirim" name="kirim" class="appearance-none bg-white border border-gray-300 rounded-lg py-2 px-4 pr-8 text-gray-700 leading-tight focus:outline-none focus:border-blue-500"> 
+                    <option value="Semua" <?php if($filter_kirim === 'Semua') echo 'selected'; ?>>Semua Pengiriman</option> 
+                    <option value="Pending" <?php if($filter_kirim === 'Pending') echo 'selected'; ?>>Pending</option> 
+                    <option value="Ongoing" <?php if($filter_kirim === 'Ongoing') echo 'selected'; ?>>Ongoing</option> 
+                    <option value="Done" <?php if($filter_kirim === 'Done') echo 'selected'; ?>>Done</option> 
+                </select> 
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"><svg class="fill-current h-4 w-4" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg></div> 
+            </div>
+            <button type="submit" class="bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 transition">
+                <i class="fas fa-filter mr-2"></i>Filter
+            </button>
+            <a href="laporanPenjualan.php" class="text-sm text-gray-600 hover:text-blue-600">Reset</a>
+        </form>
+
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <?php if (empty($riwayat_pembelian)): ?>
+                <div class="col-span-1 md:col-span-2 bg-white p-8 rounded-xl text-center text-gray-500 shadow-lg"> 
+                    <?php if (!empty($search) || !empty($filter_tanggal) || $filter_bayar !== 'Semua' || $filter_kirim !== 'Semua'): ?>
+                        Tidak ada pesanan yang cocok dengan filter Anda.
+                    <?php else: ?>
+                        Belum ada riwayat pesanan yang masuk. 
+                    <?php endif; ?>
+                </div>
+            <?php else: ?>
+                <?php foreach ($riwayat_pembelian as $pesanan): ?>
+                    <div class="bg-white rounded-xl invoice-card overflow-hidden flex flex-col"> 
+                        <div class="p-6 flex-grow"> 
+                            <div class="flex justify-between items-start mb-4 gap-2"> 
+                                <div>
+                                    <span class="text-sm text-gray-500"><?php echo htmlspecialchars($pesanan['tanggal']); ?></span>
+                                    <h3 class="text-lg font-bold text-gray-900 mt-1"> Pesanan #<?php echo $pesanan['id']; ?></h3>
+                                </div>
+                                <div class="flex flex-col items-end gap-1 text-xs"> 
+                                    <?php 
+                                        $pembayaran_color_class = 'badge-belum-bayar'; 
+                                        if ($pesanan['status_pembayaran'] == 'Lunas') $pembayaran_color_class = 'badge-lunas'; 
+                                        elseif ($pesanan['status_pembayaran'] == 'Batal') $pembayaran_color_class = 'badge-batal'; 
+                                    ?>
+                                    <span class="badge <?php echo $pembayaran_color_class; ?>"> Bayar: <?php echo htmlspecialchars($pesanan['status_pembayaran']); ?> </span>
+                                    
+                                    <?php 
+                                        $pengiriman_color_class = 'badge-pending'; 
+                                        if ($pesanan['status_pengiriman'] == 'Ongoing') $pengiriman_color_class = 'badge-ongoing'; 
+                                        elseif ($pesanan['status_pengiriman'] == 'Done') $pengiriman_color_class = 'badge-done'; 
+                                    ?>
+                                    <span class="badge <?php echo $pengiriman_color_class; ?>"> Kirim: <?php echo htmlspecialchars($pesanan['status_pengiriman']); ?> </span>
+                                </div>
+                            </div>
+                            
+                            <div class="border-t border-gray-200 mt-4 pt-4">
+                                <div class="flex justify-between items-center mb-3"> 
+                                    <span class="text-sm text-gray-500">Total Harga</span> 
+                                    <span class="text-xl font-bold text-gray-900">Rp<?php echo number_format($pesanan['total_harga'], 0, ',', '.'); ?></span> 
+                                </div>
+                                <p class="text-xs text-gray-500 leading-relaxed"> 
+                                    <span class="font-semibold">Pemesan (Dapur):</span> <?php echo htmlspecialchars($pesanan['nama_dapur']); ?><br> 
+                                    <span class="font-semibold">Kontak WA:</span> <?php echo htmlspecialchars($pesanan['wa_pemesan']); ?><br> 
+                                    <span class="font-semibold">Driver:</span> <?php echo htmlspecialchars($pesanan['nama_driver']); ?> 
+                                </p>
+                            </div>
+                        </div>
+                          <div class="bg-gray-50 p-4 flex flex-wrap gap-2 justify-end">
+                             
+                             <a href="detailPesanan.php?id=<?php echo $pesanan['id']; ?>" 
+                                class="action-btn bg-blue-600 text-white hover:bg-blue-700 btn-detail-modal"> 
+                                <i class="fas fa-eye"></i> Detail 
+                             </a>
+                             
+                             <?php
+                             $filter_query_string = http_build_query([
+                                  'search' => $search,
+                                  'tanggal' => $filter_tanggal,
+                                  'bayar' => $filter_bayar,
+                                  'kirim' => $filter_kirim
+                             ]);
+                             ?>
+                             
+                             <?php if ($pesanan['status_pembayaran'] === 'Belum Bayar'): ?>
+                                 <a href="laporanPenjualan.php?action=update_bayar&id=<?php echo $pesanan['id']; ?>&status=Lunas&<?php echo $filter_query_string; ?>" 
+                                    class="action-btn bg-green-600 text-white hover:bg-green-700"
+                                    onclick="return confirm('Yakin ingin menandai pesanan #<?php echo $pesanan['id']; ?> sebagai LUNAS?');"> 
+                                    <i class="fas fa-check"></i> Tandai Lunas
+                                 </a>
+                                 <a href="laporanPenjualan.php?action=update_bayar&id=<?php echo $pesanan['id']; ?>&status=Batal&<?php echo $filter_query_string; ?>" 
+                                    class="action-btn bg-red-600 text-white hover:bg-red-700"
+                                    onclick="return confirm('Yakin ingin MEMBATALKAN pesanan #<?php echo $pesanan['id']; ?>? Stok akan dikembalikan.');"> 
+                                    <i class="fas fa-times"></i> Batalkan
+                                 </a>
+                             <?php elseif ($pesanan['status_pembayaran'] === 'Lunas' && $pesanan['status_pengiriman'] !== 'Done'): ?>
+                                 <a href="laporanPenjualan.php?action=update_bayar&id=<?php echo $pesanan['id']; ?>&status=Batal&<?php echo $filter_query_string; ?>" 
+                                    class="action-btn bg-red-600 text-white hover:bg-red-700"
+                                    onclick="return confirm('Yakin ingin MEMBATALKAN pesanan #<?php echo $pesanan['id']; ?> yang sudah LUNAS? Stok akan dikembalikan.');"> 
+                                    <i class="fas fa-times"></i> Batalkan
+                                 </a>
+                             <?php elseif ($pesanan['status_pembayaran'] === 'Lunas'): ?>
+                                     <span class="action-btn bg-green-100 text-green-700 cursor-default"> <i class="fas fa-check-circle"></i> Sudah Lunas </span>
+                             <?php elseif ($pesanan['status_pembayaran'] === 'Batal'): ?>
+                                     <span class="action-btn bg-red-100 text-red-700 cursor-default"> <i class="fas fa-ban"></i> Dibatalkan </span>
+                             <?php endif; ?>
+
+                             <?php if ($pesanan['status_pembayaran'] === 'Lunas' && $pesanan['status_pengiriman'] !== 'Done'): ?>
+                                 
+                                 <?php if ($pesanan['status_pengiriman'] === 'Pending'): ?>
+                                      <a href="laporanPenjualan.php?action=update_status&id=<?php echo $pesanan['id']; ?>&status=Ongoing&<?php echo $filter_query_string; ?>" 
+                                         class="action-btn bg-yellow-500 text-white hover:bg-yellow-600"
+                                          onclick="return confirm('Yakin ingin mengubah status pesanan #<?php echo $pesanan['id']; ?> menjadi DIKIRIM?');"> 
+                                         <i class="fas fa-truck-fast"></i> Kirim Sekarang
+                                      </a>
+                                 <?php endif; ?>
+                                 
+                                 <a href="laporanPenjualan.php?action=update_status&id=<?php echo $pesanan['id']; ?>&status=Done&<?php echo $filter_query_string; ?>" 
+                                    class="action-btn bg-teal-600 text-white hover:bg-teal-700" 
+                                    onclick="return confirm('Yakin ingin menandai pesanan #<?php echo $pesanan['id']; ?> sebagai SELESAI?');"> 
+                                    <i class="fas fa-check-double"></i> Tandai Selesai 
+                                 </a>
+                                 
+                             <?php elseif($pesanan['status_pengiriman'] === 'Done'): ?>
+                                 <span class="action-btn bg-teal-100 text-teal-700 cursor-default"> <i class="fas fa-people-carry-box"></i> Pengiriman Selesai </span> 
+                             <?php endif; ?>
+                             
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </div>
+    </main>
+    
+    <div id="detail-modal-overlay" class="modal-overlay p-4 hidden">
+        <div class="bg-white p-6 rounded-xl shadow-2xl w-full max-w-3xl h-5/6 flex flex-col">
+            <div class="flex justify-between items-center border-b pb-3 mb-4">
+                <h2 class="text-xl font-bold text-gray-800">Detail Pesanan</h2>
+                <button id="detail-modal-close" class="text-3xl font-light text-gray-500 hover:text-gray-800">&times;</button>
+            </div>
+            <iframe id="detail-modal-iframe" src="" class="w-full h-full border-0"></iframe>
+        </div>
+    </div>
+
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Script untuk filter (Tidak Berubah)
+            const params = new URLSearchParams(window.location.search);
+            if (params.has('search')) {
+                const searchInput = document.getElementById('searchLaporan');
+                if(searchInput) searchInput.value = params.get('search');
+            }
+            const tanggalInput = document.getElementById('filterTanggal');
+            if (params.has('tanggal') && params.get('tanggal') !== '') {
+                if(tanggalInput) tanggalInput.value = params.get('tanggal');
+            } else {
+                if(tanggalInput) tanggalInput.value = '';
+            }
+            if (params.has('bayar')) {
+                const bayarSelect = document.getElementById('filterBayar');
+                if(bayarSelect) bayarSelect.value = params.get('bayar');
+            }
+            if (params.has('kirim')) {
+                const kirimSelect = document.getElementById('filterKirim');
+                if(kirimSelect) kirimSelect.value = params.get('kirim');
+            }
+            
+            // JAVASCRIPT UNTUK MODAL DETAIL (Tidak berubah)
+            const modalOverlay = document.getElementById('detail-modal-overlay');
+            const modalIframe = document.getElementById('detail-modal-iframe');
+            const modalCloseBtn = document.getElementById('detail-modal-close');
+
+            if (modalOverlay && modalIframe && modalCloseBtn) {
+                
+                document.querySelectorAll('.btn-detail-modal').forEach(button => {
+                    button.addEventListener('click', function(event) {
+                        event.preventDefault(); 
+                        const url = this.getAttribute('href');
+                        modalIframe.setAttribute('src', url); 
+                        modalOverlay.classList.remove('hidden'); 
+                    });
+                });
+
+                modalCloseBtn.addEventListener('click', function() {
+                    modalOverlay.classList.add('hidden'); 
+                    modalIframe.setAttribute('src', ''); 
+                });
+                
+                modalOverlay.addEventListener('click', function(event) {
+                    if (event.target === modalOverlay) {
+                        modalOverlay.classList.add('hidden');
+                        modalIframe.setAttribute('src', '');
+                    }
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>

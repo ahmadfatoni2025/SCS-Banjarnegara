@@ -1,0 +1,121 @@
+Tanggal,No. Reff,Keterangan,Kode Akun,Debit,Kredit
+2025-11-02,REF-158,Penjualan Produk Kredit,41000,0,1300000
+2025-11-02,REF-158,Penjualan Produk Kredit,11200,1300000,0
+2025-11-02,REF-102,Biaya Admin Bank,53000,4400000,0
+2025-11-02,REF-102,Biaya Admin Bank,11111,0,4400000
+2025-11-03,REF-154,Bayar Listrik & Air,52300,100000,0
+2025-11-03,REF-154,Bayar Listrik & Air,11101,0,100000
+2025-11-03,REF-101,Pembayaran Gaji Karyawan,52100,1200000,0
+2025-11-03,REF-101,Pembayaran Gaji Karyawan,11101,0,1200000
+2025-11-04,REF-144,Pembelian Persediaan Beras Kredit,11301,3600000,0
+2025-11-04,REF-144,Pembelian Persediaan Beras Kredit,21201,0,3600000
+2025-11-05,REF-138,Pembayaran Gaji Karyawan,52100,1300000,0
+2025-11-05,REF-138,Pembayaran Gaji Karyawan,11101,0,1300000
+2025-11-05,REF-114,Pembelian Persediaan Beras Kredit,11301,1400000,0
+2025-11-05,REF-114,Pembelian Persediaan Beras Kredit,21201,0,1400000
+2025-11-06,REF-147,Penerimaan Pelunasan Piutang,11200,0,400000
+2025-11-06,REF-147,Penerimaan Pelunasan Piutang,11101,400000,0
+2025-11-06,REF-130,Setoran Modal Awal,11101,600000,0
+2025-11-06,REF-130,Setoran Modal Awal,31000,0,600000
+2025-11-07,REF-151,Pembayaran Gaji Karyawan,52100,4600000,0
+2025-11-07,REF-151,Pembayaran Gaji Karyawan,11101,0,4600000
+2025-11-07,REF-106,Penerimaan Pelunasan Piutang,11200,0,2000000
+2025-11-07,REF-106,Penerimaan Pelunasan Piutang,11101,2000000,0
+2025-11-08,REF-117,Bayar Listrik & Air,11101,0,2300000
+2025-11-08,REF-117,Bayar Listrik & Air,52300,2300000,0
+2025-11-09,REF-146,Pembelian Persediaan Beras Kredit,11301,4000000,0
+2025-11-09,REF-146,Pembelian Persediaan Beras Kredit,21201,0,4000000
+2025-11-10,REF-143,Pelunasan Utang Usaha via Bank,21201,1300000,0
+2025-11-10,REF-143,Pelunasan Utang Usaha via Bank,11111,0,1300000
+2025-11-10,REF-135,Pembelian Persediaan Beras Kredit,11301,3700000,0
+2025-11-10,REF-135,Pembelian Persediaan Beras Kredit,21201,0,3700000
+2025-11-17,REF-124,Penerimaan Pelunasan Piutang,11200,0,4100000
+2025-11-17,REF-124,Penerimaan Pelunasan Piutang,11101,4100000,0
+2025-11-17,REF-105,Penjualan Produk Tunai,11101,4600000,0
+2025-11-17,REF-105,Penjualan Produk Tunai,41000,0,4600000
+2025-11-19,REF-142,Pelunasan Utang Usaha via Bank,21201,2300000,0
+2025-11-19,REF-142,Pelunasan Utang Usaha via Bank,11111,0,2300000
+2025-11-21,REF-111,Pelunasan Utang Usaha via Bank,11111,0,1200000
+2025-11-21,REF-111,Pelunasan Utang Usaha via Bank,21201,1200000,0
+2025-11-22,REF-112,Penjualan Produk Tunai,41000,0,4400000
+2025-11-22,REF-112,Penjualan Produk Tunai,11101,4400000,0
+2025-11-24,REF-155,Setor Tunai ke Bank,11101,0,4800000
+2025-11-24,REF-155,Setor Tunai ke Bank,11111,4800000,0
+2025-11-25,REF-156,Pembelian Perlengkapan Tunai,11500,2000000,0
+2025-11-25,REF-156,Pembelian Perlengkapan Tunai,11101,0,2000000
+2025-11-27,REF-148,Penjualan Produk Tunai,11101,2700000,0
+2025-11-27,REF-148,Penjualan Produk Tunai,41000,0,2700000
+2025-11-29,REF-159,Bayar Listrik & Air,11101,0,3300000
+2025-11-29,REF-159,Bayar Listrik & Air,52300,3300000,0
+2025-11-30,REF-131,Setor Tunai ke Bank,11111,3000000,0
+2025-11-30,REF-131,Setor Tunai ke Bank,11101,0,3000000
+2025-11-30,REF-125,Biaya Admin Bank,53000,4600000,0
+2025-11-30,REF-125,Biaya Admin Bank,11111,0,4600000
+2025-12-02,REF-157,Pembelian Perlengkapan Tunai,11101,0,2400000
+2025-12-02,REF-157,Pembelian Perlengkapan Tunai,11500,2400000,0
+2025-12-04,REF-152,Biaya Admin Bank,11111,0,2200000
+2025-12-04,REF-152,Biaya Admin Bank,53000,2200000,0
+2025-12-04,REF-128,Setoran Modal Awal,11101,5000000,0
+2025-12-04,REF-128,Setoran Modal Awal,31000,0,5000000
+2025-12-04,REF-123,Penjualan Produk Tunai,41000,0,4300000
+2025-12-04,REF-123,Penjualan Produk Tunai,11101,4300000,0
+2025-12-04,REF-118,Pelunasan Utang Usaha via Bank,11111,0,1900000
+2025-12-04,REF-118,Pelunasan Utang Usaha via Bank,21201,1900000,0
+2025-12-05,REF-100,Penjualan Produk Kredit,11200,1400000,0
+2025-12-05,REF-100,Penjualan Produk Kredit,41000,0,1400000
+2025-12-06,REF-104,Pembelian Peralatan Kredit,12100,3800000,0
+2025-12-06,REF-104,Pembelian Peralatan Kredit,21201,0,3800000
+2025-12-06,REF-133,Pembayaran Gaji Karyawan,52100,2500000,0
+2025-12-06,REF-133,Pembayaran Gaji Karyawan,11101,0,2500000
+2025-12-07,REF-129,Biaya Admin Bank,11111,0,1800000
+2025-12-07,REF-129,Biaya Admin Bank,53000,1800000,0
+2025-12-08,REF-127,Pelunasan Utang Usaha via Bank,11111,0,4200000
+2025-12-08,REF-127,Pelunasan Utang Usaha via Bank,21201,4200000,0
+2025-12-09,REF-145,Setor Tunai ke Bank,11101,0,600000
+2025-12-09,REF-145,Setor Tunai ke Bank,11111,600000,0
+2025-12-09,REF-139,Biaya Admin Bank,53000,1100000,0
+2025-12-09,REF-139,Biaya Admin Bank,11111,0,1100000
+2025-12-10,REF-153,Penerimaan Pelunasan Piutang,11200,0,4900000
+2025-12-10,REF-153,Penerimaan Pelunasan Piutang,11101,4900000,0
+2025-12-10,REF-113,Setor Tunai ke Bank,11111,2200000,0
+2025-12-10,REF-113,Setor Tunai ke Bank,11101,0,2200000
+2025-12-11,REF-120,Pelunasan Utang Usaha via Bank,21201,3200000,0
+2025-12-11,REF-120,Pelunasan Utang Usaha via Bank,11111,0,3200000
+2025-12-11,REF-126,Setoran Modal Awal,31000,0,4700000
+2025-12-11,REF-126,Setoran Modal Awal,11101,4700000,0
+2025-12-13,REF-103,Bayar Listrik & Air,52300,1700000,0
+2025-12-13,REF-103,Bayar Listrik & Air,11101,0,1700000
+2025-12-13,REF-140,Pelunasan Utang Usaha via Bank,11111,0,4500000
+2025-12-13,REF-140,Pelunasan Utang Usaha via Bank,21201,4500000,0
+2025-12-16,REF-141,Penerimaan Pelunasan Piutang,11200,0,800000
+2025-12-16,REF-141,Penerimaan Pelunasan Piutang,11101,800000,0
+2025-12-16,REF-109,Setor Tunai ke Bank,11101,0,1900000
+2025-12-16,REF-109,Setor Tunai ke Bank,11111,1900000,0
+2025-12-16,REF-110,Pembelian Peralatan Kredit,12100,2900000,0
+2025-12-16,REF-110,Pembelian Peralatan Kredit,21201,0,2900000
+2025-12-17,REF-122,Penerimaan Pelunasan Piutang,11200,0,1600000
+2025-12-17,REF-122,Penerimaan Pelunasan Piutang,11101,1600000,0
+2025-12-17,REF-136,Penjualan Produk Kredit,11200,1200000,0
+2025-12-17,REF-136,Penjualan Produk Kredit,41000,0,1200000
+2025-12-19,REF-107,Penjualan Produk Kredit,11200,3400000,0
+2025-12-19,REF-107,Penjualan Produk Kredit,41000,0,3400000
+2025-12-20,REF-119,Biaya Admin Bank,11111,0,4900000
+2025-12-20,REF-119,Biaya Admin Bank,53000,4900000,0
+2025-12-21,REF-116,Penerimaan Pelunasan Piutang,11101,1200000,0
+2025-12-21,REF-116,Penerimaan Pelunasan Piutang,11200,0,1200000
+2025-12-24,REF-150,Penjualan Produk Kredit,41000,0,1100000
+2025-12-24,REF-150,Penjualan Produk Kredit,11200,1100000,0
+2025-12-26,REF-115,Bayar Listrik & Air,52300,1000000,0
+2025-12-26,REF-115,Bayar Listrik & Air,11101,0,1000000
+2025-12-27,REF-137,Pembelian Persediaan Beras Kredit,21201,0,2700000
+2025-12-27,REF-137,Pembelian Persediaan Beras Kredit,11301,2700000,0
+2025-12-27,REF-134,Pelunasan Utang Usaha via Bank,11111,0,1800000
+2025-12-27,REF-134,Pelunasan Utang Usaha via Bank,21201,1800000,0
+2025-12-28,REF-108,Setoran Modal Awal,31000,0,3900000
+2025-12-28,REF-108,Setoran Modal Awal,11101,3900000,0
+2025-12-28,REF-121,Pelunasan Utang Usaha via Bank,21201,3500000,0
+2025-12-28,REF-121,Pelunasan Utang Usaha via Bank,11111,0,3500000
+2025-12-31,REF-149,Pembelian Perlengkapan Tunai,11101,0,1400000
+2025-12-31,REF-149,Pembelian Perlengkapan Tunai,11500,1400000,0
+2025-12-31,REF-132,Setor Tunai ke Bank,11101,0,3100000
+2025-12-31,REF-132,Setor Tunai ke Bank,11111,3100000,0

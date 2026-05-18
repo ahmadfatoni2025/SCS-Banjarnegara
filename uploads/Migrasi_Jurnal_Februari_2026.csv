@@ -1,0 +1,1049 @@
+;01/02/2026;Kas masuk ke kas harian dari kas di bank;-;1111;2000000;0
+;01/02/2026;Kas masuk ke kas harian dari kas di bank;-;1112;0;2000000
+;01/02/2026;Kas bon belanja persediaan;-;1121;2000000;0
+;01/02/2026;Kas bon belanja persediaan;-;1111;0;2000000
+;01/02/2026;Pelunasan kas bon;-;1111;2000000;0
+;01/02/2026;Pelunasan kas bon;-;1121;0;2000000
+;01/02/2026;Pelunasan kas bon (transaksi 31/1);-;1111;5000000;0
+;01/02/2026;Pelunasan kas bon (transaksi 31/1);-;1121;0;5000000
+;01/02/2026;Pembelian 110 anggur ke bu lis;-;1131;5390000;0
+;01/02/2026;Pembelian 110 anggur ke bu lis;-;2111;0;5390000
+;01/02/2026;Pembelian 95 kelengkeng ke bu lis;-;1131;4607500;0
+;01/02/2026;Pembelian 95 kelengkeng ke bu lis;-;2111;0;4607500
+;01/02/2026;Pembelian abon ayam 1kg ke bu fitri;-;1131;200000;0
+;01/02/2026;Pembelian abon ayam 1kg ke bu fitri;-;2111;0;200000
+;01/02/2026;Pembelian persediaan sayur ke bu rini;-;1131;1426000;0
+;01/02/2026;Pembelian persediaan sayur ke bu rini;-;2111;0;1426000
+;01/02/2026;Pengiriman SPPG Kutabanjarnegara;-;5111;21125000;0
+;01/02/2026;Pengiriman SPPG Kutabanjarnegara;-;1131;0;21125000
+;01/02/2026;Pengiriman SPPG Kutabanjarnegara;-;1121;23368950;0
+;01/02/2026;Pengiriman SPPG Kutabanjarnegara;-;4111;0;23368950
+;01/02/2026;Pengiriman SPPG MBS Wanayasa;-;5111;7955600;0
+;01/02/2026;Pengiriman SPPG MBS Wanayasa;-;1131;0;7955600
+;01/02/2026;Pengiriman SPPG MBS Wanayasa;-;1121;8398500;0
+;01/02/2026;Pengiriman SPPG MBS Wanayasa;-;4111;0;8398500
+;01/02/2026;Pengiriman SPPG Susukan;-;5111;5277365;0
+;01/02/2026;Pengiriman SPPG Susukan;-;1131;0;5277365
+;01/02/2026;Pengiriman SPPG Susukan;-;1121;5683500;0
+;01/02/2026;Pengiriman SPPG Susukan;-;4111;0;5683500
+;01/02/2026;Pelunasan utang ikan dori & bandeng presto pak wandi (pembelian 25-26 januari);-;2111;16657500;0
+;01/02/2026;Pelunasan utang ikan dori & bandeng presto pak wandi (pembelian 25-26 januari);-;5221;2500;0
+;01/02/2026;Pelunasan utang ikan dori & bandeng presto pak wandi (pembelian 25-26 januari);-;1112;0;16660000
+;01/02/2026;Pembelian barang persediaan kentang di solikhah mart;-;1131;42000;0
+;01/02/2026;Pembelian barang persediaan kentang di solikhah mart;-;1111;0;42000
+;01/02/2026;Pembelian barang persediaan toko al zahra;-;1131;39000;0
+;01/02/2026;Pembelian barang persediaan toko al zahra;-;1111;0;39000
+;01/02/2026;Pembelian akomodasi makan;-;5171;50000;0
+;01/02/2026;Pembelian akomodasi makan;-;1111;0;50000
+;01/02/2026;Parkir di purwokerto;-;5191;6000;0
+;01/02/2026;Parkir di purwokerto;-;1111;0;6000
+;01/02/2026;Parkir di BRI;-;5191;3000;0
+;01/02/2026;Parkir di BRI;-;1111;0;3000
+;01/02/2026;Pembelian Barang Persediaan di Indogrosir pwt;-;1131;2233770;0
+;01/02/2026;Pembelian  Barang Persediaan di Indogrosir pwt;-;1111;0;2233770
+;01/02/2026;Pembelian barang persediaan di pasar induk;-;1131;645000;0
+;01/02/2026;Pembelian barang persediaan di pasar induk;-;1111;0;645000
+;01/02/2026;Pembelian barang persediaan di rita pasar raya;-;1131;483000;0
+;01/02/2026;Pembelian barang persediaan di rita pasar raya;-;1111;0;483000
+;01/02/2026;Pembelian barang persediaan di P&D Aroma;-;1131;504000;0
+;01/02/2026;Pembelian barang persediaan di P&D Aroma;-;1111;0;504000
+;01/02/2026;Pembelian barang persediaan di rita pasar raya;-;1131;766900;0
+;01/02/2026;Pembelian barang persediaan di rita pasar raya;-;1111;0;766900
+;01/02/2026;Parkir di pasar induk;-;5191;4000;0
+;01/02/2026;Parkir di pasar induk;-;1111;0;4000
+;01/02/2026;Pembelian BBM;-;5172;200000;0
+;01/02/2026;Pembelian BBM;-;1111;0;200000
+;01/02/2026;Pembelian barang persediaan di toko raja tawon;-;1131;380000;0
+;01/02/2026;Pembelian barang persediaan di toko raja tawon;-;1111;0;380000
+;01/02/2026;Pembelian barang persediaan di frozen food sumber sari;-;1131;462000;0
+;01/02/2026;Pembelian barang persediaan di frozen food sumber sari;-;1111;0;462000
+;01/02/2026;Pembelian barang persediaan di yubar;-;1131;1190000;0
+;01/02/2026;Pembelian barang persediaan di yubar;-;1111;0;1190000
+;01/02/2026;Parkir di topaz;-;5191;3000;0
+;01/02/2026;Parkir di topaz;-;1111;0;3000
+;01/02/2026;Parkir di depo pelita;-;5191;3000;0
+;01/02/2026;Parkir di depo pelita;-;1111;0;3000
+;01/02/2026;Pelunasan hutang tepung ke hagoz (pembelian 25/01/2026);-;2111;800000;0
+;01/02/2026;Pelunasan hutang tepung ke hagoz (pembelian 25/01/2026);-;1112;0;800000
+;02/02/2026;Pengiriman SPPG Kutabanjarnegara;-;5111;20125000;0
+;02/02/2026;Pengiriman SPPG Kutabanjarnegara;-;1131;0;20125000
+;02/02/2026;Pengiriman SPPG Kutabanjarnegara;-;1121;22399050;0
+;02/02/2026;Pengiriman SPPG Kutabanjarnegara;-;4111;0;22399050
+;02/02/2026;Pengiriman SPPG MBS Wanayasa;-;5111;2447420;0
+;02/02/2026;Pengiriman SPPG MBS Wanayasa;-;1131;0;2447420
+;02/02/2026;Pengiriman SPPG MBS Wanayasa;-;1121;2617500;0
+;02/02/2026;Pengiriman SPPG MBS Wanayasa;-;4111;0;2617500
+;02/02/2026;Pengiriman SPPG Susukan;-;5111;4330600;0
+;02/02/2026;Pengiriman SPPG Susukan;-;1131;0;4330600
+;02/02/2026;Pengiriman SPPG Susukan;-;1121;4743950;0
+;02/02/2026;Pengiriman SPPG Susukan;-;4111;0;4743950
+;02/02/2026;Pembelian selada hidroponik 27,5 kg;-;1131;963000;0
+;02/02/2026;Pembelian selada hidroponik 27,5 kg;-;2111;0;963000
+;02/02/2026;Pembelian kaki naga 138 pack dari suplayer jogja;-;1131;11805000;0
+;02/02/2026;Pembelian kaki naga 138 pack dari suplayer jogja;-;2111;0;11805000
+;02/02/2026;Pembelian buah naga 13kg dari bu lis;-;1131;169000;0
+;02/02/2026;Pembelian buah naga 13kg dari bu lis;-;2111;0;169000
+;02/02/2026;Pembelian pisang ulin 2281 pcs dari bu lis;-;1131;2166950;0
+;02/02/2026;Pembelian pisang ulin 2281 pcs dari bu lis;-;2111;0;2166950
+;02/02/2026;Pembelian beras 1000kg dari nu lis;-;1131;13900000;0
+;02/02/2026;Pembelian beras 1000kg dari nu lis;-;2111;0;13900000
+;02/02/2026;Pembelian akomodasi BBM mas denny;-;5171;50000;0
+;02/02/2026;Pembelian akomodasi BBM mas denny;-;2142;0;50000
+;02/02/2026;Pembelian akomodasi makan mas denny;-;5171;36000;0
+;02/02/2026;Pembelian akomodasi makan mas denny;-;2141;0;36000
+;02/02/2026;Beban perlengkapan 1pcs nota 3ply;-;5151;5000;0
+;02/02/2026;Beban perlengkapan 1pcs nota 3ply;-;1141;0;5000
+;02/02/2026;Pembelian selada ke fajar okta;-;1131;962500;0
+;02/02/2026;Pembelian selada ke fajar okta;-;2111;0;962500
+;02/02/2026;Pelunasan piutang SPPG MBS Wanayasa (pengiriman 22/01/2026);-;1112;7319600;0
+;02/02/2026;Pelunasan piutang SPPG MBS Wanayasa (pengiriman 22/01/2026);-;1121;0;7319600
+;02/02/2026;Pembelian akomodasi makan pak sodik;-;5171;20000;0
+;02/02/2026;Pembelian akomodasi makan pak sodik;-;1111;0;10000
+;02/02/2026;Pembelian akomodasi makan pak sodik;-;2141;0;10000
+;02/02/2026;Pembelian persediaan sayur(wortel,bw,bm,cesim,kembang kol) dari pasar uang mas denny;-;1131;2149000;0
+;02/02/2026;Pembelian persediaan sayur(wortel,bw,bm,cesim,kembang kol) dari pasar uang mas denny;-;2111;0;2149000
+;02/02/2026;Pelunasan piutang SPPG MBS Wanayasa (pengiriman 25/01/2026);-;1112;6840000;0
+;02/02/2026;Pelunasan piutang SPPG MBS Wanayasa (pengiriman 25/01/2026);-;1121;0;6840000
+;02/02/2026;Pelunasan piutang SPPG MBS Wanayasa (pengiriman 26/01/2026);-;1112;5313000;0
+;02/02/2026;Pelunasan piutang SPPG MBS Wanayasa (pengiriman 26/01/2026);-;1121;0;5313000
+;02/02/2026;Pelunasan piutang SPPG MBS Wanayasa (pengiriman 27/01/2026);-;1112;5494000;0
+;02/02/2026;Pelunasan piutang SPPG MBS Wanayasa (pengiriman 27/01/2026);-;1121;0;5494000
+;02/02/2026;Pelunasan piutang SPPG MBS Wanayasa (pengiriman 28/01/2026);-;1112;12979000;0
+;02/02/2026;Pelunasan piutang SPPG MBS Wanayasa (pengiriman 28/01/2026);-;1121;0;12979000
+;02/02/2026;Pelunasan piutang SPPG MBS Wanayasa (pengiriman 29/01/2026);-;1112;5086500;0
+;02/02/2026;Pelunasan piutang SPPG MBS Wanayasa (pengiriman 29/01/2026);-;1121;0;5086500
+;02/02/2026;Pembelian barang persediaan bawang merah 1kg;-;1131;40000;0
+;02/02/2026;Pembelian barang persediaan bawang merah 1kg;-;2111;0;40000
+;02/02/2026;Pembelian persediaan di gunung mas;-;1131;30000;0
+;02/02/2026;Pembelian persediaan di gunung mas;-;1111;0;30000
+;02/02/2026;Pembelian bawang putih di solikhah mart;-;1131;40000;0
+;02/02/2026;Pembelian bawang putih di solikhah mart;-;1111;0;40000
+;03/02/2026;Pembelian Perlengkapan carger mobil;-;1141;56000;0
+;03/02/2026;Pembelian Perlengkapan carger mobil;-;2111;0;56000
+;03/02/2026;Pengiriman SPPG Kutabanjarnegara;-;5111;20726909;0
+;03/02/2026;Pengiriman SPPG Kutabanjarnegara;-;1131;0;20726909
+;03/02/2026;Pengiriman SPPG Kutabanjarnegara;-;1121;24504750;0
+;03/02/2026;Pengiriman SPPG Kutabanjarnegara;-;4111;0;24504750
+;03/02/2026;Pengiriman SPPG MBS Wanayasa;-;5111;1751000;0
+;03/02/2026;Pengiriman SPPG MBS Wanayasa;-;1131;0;1751000
+;03/02/2026;Pengiriman SPPG MBS Wanayasa;-;1121;1755500;0
+;03/02/2026;Pengiriman SPPG MBS Wanayasa;-;4111;0;1755500
+;03/02/2026;Pelunasan piutang SPPG Susukan;-;1112;20470436;0
+;03/02/2026;Pelunasan piutang SPPG Susukan;-;1121;0;20470436
+;03/02/2026;Transfer pembayaran piutang dua kali SPPG Susukan;-;1112;6196000;0
+;03/02/2026;Transfer pembayaran piutang dua kali SPPG Susukan;-;2151;0;6196000
+;03/02/2026;Pembelian ayam potong sayap di restu jaya;-;1131;8610000;0
+;03/02/2026;Pembelian ayam potong sayap di restu jaya;-;2111;0;8610000
+;03/02/2026;Pembelian edamame di citra sayur;-;1131;1440000;0
+;03/02/2026;Pembelian edamame di citra sayur;-;2111;0;1440000
+;03/02/2026;Pembelian buah anggur 85kg ke bu lis;-;1131;4165000;0
+;03/02/2026;Pembelian buah anggur 85kg ke bu lis;-;2111;0;4165000
+;03/02/2026;Pembelian tepung hagos 35kg;-;1131;560000;0
+;03/02/2026;Pembelian tepung hagos 35kg;-;2111;0;560000
+;03/02/2026;Pembelian selada 10kg;-;1131;250000;0
+;03/02/2026;Pembelian selada 10kg;-;2111;0;250000
+;03/02/2026;Reimburse akomodasi makan pak sodik;-;2141;10000;0
+;03/02/2026;Reimburse akomodasi makan pak sodik;-;1111;0;10000
+;03/02/2026;Pembelian barang persediaan sayur (kol ungu,kol putih,b.w,wortel,selada tanah) dipasar;-;1131;1620000;0
+;03/02/2026;Pembelian barang persediaan sayur (kol ungu,kol putih,b.w,wortel,selada tanah) dipasar;-;2111;0;1620000
+;03/02/2026;Pembayaran beras pandanarum ke lazismu lewat scs + admin;-;2151;26400000;0
+;03/02/2026;Pembayaran beras pandanarum ke lazismu lewat scs + admin;-;5221;2500;0
+;03/02/2026;Pembayaran beras pandanarum ke lazismu lewat scs + admin;-;1112;0;26402500
+;03/02/2026;Pembayaran gaji diki setiawan bulan januari;-;2121;940000;0
+;03/02/2026;Pembayaran gaji diki setiawan bulan januari;-;1112;0;940000
+;03/02/2026;Pembayaran gaji triana sukmawati bulan januari;-;2121;1003000;0
+;03/02/2026;Pembayaran gaji triana sukmawati bulan januari;-;1112;0;1003000
+;03/02/2026;Pembayaran gaji ruhma bulan januari;-;2121;2148744;0
+;03/02/2026;Pembayaran gaji ruhma bulan januari;-;5221;2500;0
+;03/02/2026;Pembayaran gaji ruhma bulan januari;-;1112;0;2151244
+;03/02/2026;Pembayaran gaji pak sodik bulan januari;-;2121;2148744;0
+;03/02/2026;Pembayaran gaji pak sodik bulan januari;-;1112;0;2148744
+;03/02/2026;Pelunasan piutang SPPG Kutabanjarnegara (pengiriman 29/01/2026);-;1112;19488750;0
+;03/02/2026;Pelunasan piutang SPPG Kutabanjarnegara (pengiriman 29/01/2026);-;1121;0;19488750
+;03/02/2026;Pelunasan piutang SPPG Kutabanjarnegara (pengiriman 29/01/2026);-;1112;18156750;0
+;03/02/2026;Pelunasan piutang SPPG Kutabanjarnegara (pengiriman 29/01/2026);-;1121;0;18156750
+;03/02/2026;Pelunasan piutang SPPG Kutabanjarnegara (pengiriman 21/01/2026);-;1112;18000;0
+;03/02/2026;Pelunasan piutang SPPG Kutabanjarnegara (pengiriman 21/01/2026);-;1121;0;18000
+;03/02/2026;Pelunasan piutang SPPG Kutabanjarnegara (pengiriman 28/01/2026);-;1112;22524350;0
+;03/02/2026;Pelunasan piutang SPPG Kutabanjarnegara (pengiriman 28/01/2026);-;1121;0;22524350
+;03/02/2026;Pelunasan piutang SPPG Kutabanjarnegara (pengiriman 27/01/2026);-;1112;28626100;0
+;03/02/2026;Pelunasan piutang SPPG Kutabanjarnegara (pengiriman 27/01/2026);-;1121;0;28626100
+;03/02/2026;Pelunasan utang roti ke bu sri (pembelian 18 &21 januari );-;2111;615000;0
+;03/02/2026;Pelunasan utang roti ke bu sri (pembelian 18 &21 januari );-;5221;2500;0
+;03/02/2026;Pelunasan utang roti ke bu sri (pembelian 18 &21 januari );-;1112;0;617500
+;03/02/2026;Pelunasan utang keripik tempe ke bu fitri (pembelian 28/01/2026);-;2111;1330000;0
+;03/02/2026;Pelunasan utang keripik tempe ke bu fitri (pembelian 28/01/2026);-;5221;2500;0
+;03/02/2026;Pelunasan utang keripik tempe ke bu fitri (pembelian 28/01/2026);-;1112;0;1332500
+;03/02/2026;Pelunasan utang bola daging ke CV mas brengozz;-;2111;8075000;0
+;03/02/2026;Pelunasan utang bola daging ke CV mas brengozz;-;5221;2500;0
+;03/02/2026;Pelunasan utang bola daging ke CV mas brengozz;-;1112;0;8077500
+;03/02/2026;Pelunasan piutang SPPG Susukan (pengiriman 11/01/2026);-;1112;4645500;0
+;03/02/2026;Pelunasan piutang SPPG Susukan (pengiriman 11/01/2026);-;1121;0;4645500
+;03/02/2026;Pelunasan piutang SPPG Susukan (pengiriman 12/01/2026);-;1112;1482000;0
+;03/02/2026;Pelunasan piutang SPPG Susukan (pengiriman 12/01/2026);-;1121;0;1482000
+;03/02/2026;Pelunasan piutang SPPG Susukan (pengiriman 25/01/2026);-;1112;20470436;0
+;03/02/2026;Pelunasan piutang SPPG Susukan (pengiriman 25/01/2026);-;1121;0;20470436
+;03/02/2026;Pelunasan piutang SPPG Susukan (pengiriman 14/01/2026);-;1112;7255000;0
+;03/02/2026;Pelunasan piutang SPPG Susukan (pengiriman 14/01/2026);-;1121;0;7255000
+;03/02/2026;Pembelian barang persediaan maestro mayonaise yu bar frozen;-;1131;300000;0
+;03/02/2026;Pembelian barang persediaan maestro mayonaise yu bar frozen;-;1111;0;300000
+;03/02/2026;Pembelian barang persediaan  dayinta frozen food;-;1131;160000;0
+;03/02/2026;Pembelian barang persediaan  dayinta frozen food;-;1111;0;160000
+;03/02/2026;Pembelian barang persediaan di warung buntil;-;1131;793500;0
+;03/02/2026;Pembelian barang persediaan di warung buntil;-;1111;0;793500
+;03/02/2026;Kas bon pembelian BBM;-;1122;150000;0
+;03/02/2026;Kas bon pembelian BBM;-;1111;0;150000
+;04/02/2026;Pelunasan kas bon pembelian BBM;-;1111;150000;0
+;04/02/2026;Pelunasan kas bon pembelian BBM;-;1122;0;150000
+;04/02/2026;Pembelian BBM;-;5172;150000;0
+;04/02/2026;Pembelian BBM;-;1111;0;150000
+;04/02/2026;Pembelian perlengkapan cctv;-;1141;669446;0
+;04/02/2026;Pembelian perlengkapan cctv;-;2111;0;669446
+;04/02/2026;Pengiriman SPPG Kutabanjarnegara (pemesanan 04/01/2026);-;5111;17706976;0
+;04/02/2026;Pengiriman SPPG Kutabanjarnegara (pemesanan 04/01/2026);-;1131;0;17706976
+;04/02/2026;Pengiriman SPPG Kutabanjarnegara (pemesanan 04/01/2026);-;1121;20916570;0
+;04/02/2026;Pengiriman SPPG Kutabanjarnegara (pemesanan 04/01/2026);-;4111;0;20916570
+;04/02/2026;Pengiriman SPPG MBS Wanayasa (pemesanan 04/01/2026);-;5111;2709000;0
+;04/02/2026;Pengiriman SPPG MBS Wanayasa (pemesanan 04/01/2026);-;1131;0;2709000
+;04/02/2026;Pengiriman SPPG MBS Wanayasa (pemesanan 04/01/2026);-;1121;2913000;0
+;04/02/2026;Pengiriman SPPG MBS Wanayasa (pemesanan 04/01/2026);-;4111;0;2913000
+;04/02/2026;Kas bon pak sodik;-;1121;3500000;0
+;04/02/2026;Kas bon pak sodik;-;1112;0;3500000
+;04/02/2026;Pelunasan kas bon pak sodik;-;1111;3500000;0
+;04/02/2026;Pelunasan kas bon pak sodik;-;1121;0;3500000
+;04/02/2026;Pembelian BBM;-;5172;200000;0
+;04/02/2026;Pembelian BBM;-;1111;0;200000
+;04/02/2026;Pembelian barang persediaan ultramilk fullcream 250ml 2karton;-;1131;2983200;0
+;04/02/2026;Pembelian barang persediaan ultramilk fullcream 250ml 2karton;-;1111;0;2983200
+;04/02/2026;Parkir di rita pwt;-;5191;6000;0
+;04/02/2026;Parkir di rita pwt;-;1111;0;6000
+;04/02/2026;Kas bon mas diki;-;1121;400000;0
+;04/02/2026;Kas bon mas diki;-;1111;0;400000
+;04/02/2026;Pelunasan kas bon mas diki;-;1111;400000;0
+;04/02/2026;Pelunasan kas bon mas diki;-;1121;0;400000
+;04/02/2026;Parkir di gayam dan pasar;-;5191;6000;0
+;04/02/2026;Parkir di gayam dan pasar;-;1111;0;6000
+;04/02/2026;Pembelian barang persediaan di gunung mas;-;1131;243000;0
+;04/02/2026;Pembelian barang persediaan di gunung mas;-;1111;0;243000
+;04/02/2026;Pembelian barang persediaan di toko alzahra;-;1131;116000;0
+;04/02/2026;Pembelian barang persediaan di toko alzahra;-;1111;0;116000
+;04/02/2026;Beban perlengkapan bolpoint 1 pack;-;5151;23000;0
+;04/02/2026;Beban perlengkapan bolpoint 1 pack;-;1141;0;23000
+;04/02/2026;Pembelian barang persediaan sayur;-;1131;8869000;0
+;04/02/2026;Pembelian barang persediaan sayur;-;1112;0;8869000
+;04/02/2026;Pembayaran utang barang persediaan sayur;-;2111;8869000;0
+;04/02/2026;Pembayaran utang barang persediaan sayur;-;1112;0;8869000
+;04/02/2026;Pembelian barang dagang sayur di rini sayur;-;1131;244000;0
+;04/02/2026;Pembelian barang dagang sayur di rini sayur;-;2111;0;244000
+;04/02/2026;Pembelian 100 karton minyak sania 2L ke bu lis;-;1131;23700000;0
+;04/02/2026;Pembelian 100 karton minyak sania 2L ke bu lis;-;2111;0;23700000
+;04/02/2026;Pembelian barang persediaan jinten di topaz gayam;-;1131;62300;0
+;04/02/2026;Pembelian barang persediaan jinten di topaz gayam;-;1111;0;62300
+;04/02/2026;Pelunasan hutang dan pembelian sayur;-;1131;1109000;0
+;04/02/2026;Pelunasan hutang dan pembelian sayur;-;2111;244000;0
+;04/02/2026;Pelunasan hutang dan pembelian sayur;-;1112;0;1353000
+;04/02/2026;Reimburse pembelian akomodasi rapat dan duplikat kuci ke mas denny (28 januari);-;2141;165000;0
+;04/02/2026;Reimburse pembelian akomodasi rapat dan duplikat kuci ke mas denny (28 januari);-;1111;0;165000
+;04/02/2026;Pembelian sayur (baso,wortel,bm,salam,laos,sereh,d.jeruk,jahe) di rini sayur;-;1131;7249000;0
+;04/02/2026;Pembelian sayur (baso,wortel,bm,salam,laos,sereh,d.jeruk,jahe) di rini sayur;-;2111;0;7249000
+;04/02/2026;Pembelian sayur (c.kriting, gula jawa, kobis) di rini sayur;-;1131;244000;0
+;04/02/2026;Pembelian sayur (c.kriting, gula jawa, kobis) di rini sayur;-;2111;0;244000
+;04/02/2026;Pembelian daun pisang;-;1131;365000;0
+;04/02/2026;Pembelian daun pisang;-;2111;0;365000
+;04/02/2026;Pembelian roti keju 317 ke bu lis;-;1131;760000;0
+;04/02/2026;Pembelian roti keju 317 ke bu lis;-;2111;0;760000
+;04/02/2026;Pembelian pisang ulin ke bu lis;-;1131;2116950;0
+;04/02/2026;Pembelian pisang ulin ke bu lis;-;2111;0;2116950
+;04/02/2026;Kas bon belanja persediaan;-;1121;200000;0
+;04/02/2026;Kas bon belanja persediaan;-;1111;0;200000
+;05/02/2026;Pelunasan kas bon belanja persediaan;-;1111;200000;0
+;05/02/2026;Pelunasan kas bon belanja persediaan;-;1121;0;200000
+;05/02/2026;Pembelian bawang merah dan bawang putih;-;1131;160000;0
+;05/02/2026;Pembelian bawang merah dan bawang putih;-;1111;0;160000
+;05/02/2026;Akomodasi makan pak sodik;-;5171;45000;0
+;05/02/2026;Akomodasi makan pak sodik;-;1111;0;40000
+;05/02/2026;Akomodasi makan pak sodik;-;2141;0;5000
+;05/02/2026;Reimburse dari akomodasi makan pak sodik;-;2141;5000;0
+;05/02/2026;Reimburse dari akomodasi makan pak sodik;-;1111;0;5000
+;05/02/2026;Pembelian roti pisang 1371 dari bu lis;-;1131;3290400;0
+;06/02/2026;Pembelian roti pisang 1371 dari bu lis;-;2111;0;3290400
+;05/02/2026;Pembelian buah kelengkeng (95kg) dan semangka (175kg) dari bu lis;-;1131;6620000;0
+;05/02/2026;Pembelian buah kelengkeng (95kg) dan semangka (175kg) dari bu lis;-;2111;0;6620000
+;05/02/2026;Pelunasan utang beras SPPG Susukan dan SPPG Merden (pembelian 22&26 januari);-;2111;14175000;0
+;05/02/2026;Pelunasan utang beras SPPG Susukan dan SPPG Merden (pembelian 22&26 januari);-;5221;2500;0
+;05/02/2026;Pelunasan utang beras SPPG Susukan dan SPPG Merden (pembelian 22&26 januari);-;1112;0;14177500
+;05/02/2026;Pelunasan piutang mas hanang (transaksi tgl 28/01/2026);-;1112;3000000;0
+;05/02/2026;Pelunasan piutang mas hanang (transaksi tgl 28/01/2026);-;1124;0;3000000
+;05/02/2026;Pembelian 1 papan tempe di sulihkah;-;1131;7000;0
+;05/02/2026;Pembelian 1 papan tempe di sulihkah;-;1111;0;7000
+;05/02/2026;pembelian kecap sedap 700 gr di delima mart;-;1131;101000;0
+;05/02/2026;pembelian kecap sedap 700 gr di delima mart;-;1111;0;101000
+;05/02/2026;Pembelian buah rambutan 96,5 di ude berkah buah;-;1131;1254500;0
+;05/02/2026;Pembelian buah rambutan 96,5 di ude berkah buah;-;1112;0;1254500
+;05/02/2026;Parkir toko buah;-;5191;5000;0
+;05/02/2026;Parkir toko buah;-;1111;0;5000
+;05/02/2026;Pembelian rambutan binjai 1 kg sample;-;5171;13000;0
+;05/02/2026;Pembelian rambutan binjai 1 kg sample;-;1111;0;13000
+;05/02/2026;Penjualan sarung tangan bestaf;-;5111;7500;0
+;05/02/2026;Penjualan sarung tangan bestaf;-;1131;0;7500
+;05/02/2026;Penjualan sarung tangan bestaf;-;1111;8000;0
+;05/02/2026;Penjualan sarung tangan bestaf;-;4111;0;8000
+;05/02/2026;Pembelian perlengkapan 2 pcs display book & 1 pak bolpoint di ria;-;1141;59000;0
+;05/02/2026;Pembelian perlengkapan 2 pcs display book & 1 pak bolpoint di ria;-;1111;0;59000
+;05/02/2026;Pembelian telur asin dg qty 2.290 di telasin bos;-;1131;6562000;0
+;05/02/2026;Pembelian telur asin dg qty 2.290 di telasin bos;-;2111;0;6562000
+;05/02/2026;Kas bon belanja persediaan;-;1121;3000000;0
+;05/02/2026;Kas bon belanja persediaan;-;1112;0;3000000
+;05/02/2026;Pelunasan kas bon belanja persediaan;-;1111;3000000;0
+;05/02/2026;Pelunasan kas bon belanja persediaan;-;1121;0;3000000
+;05/02/2026;Pembelian barang persediaan di indogrosir;-;1131;2551200;0
+;05/02/2026;Pembelian barang persediaan di indogrosir;-;1111;0;2551200
+;05/02/2026;Pembelian desaku marinasi 24pcs di rita pasar raya;-;1131;274900;0
+;05/02/2026;Pembelian desaku marinasi 24pcs di rita pasar raya;-;1111;0;274900
+;05/02/2026;Pembelian BBM;-;5172;200000;0
+;05/02/2026;Pembelian BBM;-;2142;0;44100
+;05/02/2026;Pembelian BBM;-;1111;0;155900
+;05/02/2026;reimburse pembelian bbm ke pak sodik;-;2142;44100;0
+;05/02/2026;reimburse pembelian bbm ke pak sodik;-;1111;0;44100
+;05/02/2026;Parkir di rita supermall;-;5191;15000;0
+;05/02/2026;Parkir di rita supermall;-;1111;0;15000
+;05/02/2026;parkir di P&D aroma;-;5191;3000;0
+;05/02/2026;parkir di P&D aroma;-;1111;0;3000
+;05/02/2026;Pembelian barang persediaan sayur di rini sayur;-;1131;1109000;0
+;05/02/2026;pembelian barang persediaan sayur di rini sayur;-;1112;0;1109000
+;05/02/2026;Pembelian tempe 230 pcs;-;1131;598000;0
+;05/02/2026;Pembelian tempe 230 pcs;-;2111;0;598000
+;05/02/2026;Pembelian wortel 40kg;-;1131;435000;0
+;05/02/2026;Pembelian wortel 40kg;-;2111;0;435000
+;05/02/2026;Pembelian bawang putih kating;-;1131;0;0
+;05/02/2026;Pembelian bawang putih kating;-;2111;0;0
+;05/02/2026;Pengiriman SPPG MBS Wanayasa;-;5111;4852800;0
+;05/02/2026;Pengiriman SPPG MBS Wanayasa;-;1131;0;4852800
+;05/02/2026;Pengiriman SPPG MBS Wanayasa;-;1121;5096000;0
+;05/02/2026;Pengiriman SPPG MBS Wanayasa;-;4111;0;5096000
+;05/02/2026;Pengiriman SPPG kutabanjarnegara;-;5111;18957900;0
+;05/02/2026;Pengiriman SPPG kutabanjarnegara;-;1131;0;18957900
+;05/02/2026;Pengiriman SPPG kutabanjarnegara;-;1121;21399350;0
+;05/02/2026;Pengiriman SPPG kutabanjarnegara;-;4111;0;21399350
+;05/02/2026;Pengiriman SPPG kutabanjarnegara;-;5111;10598210;0
+;05/02/2026;Pengiriman SPPG kutabanjarnegara;-;1131;0;10598210
+;05/02/2026;Pengiriman SPPG kutabanjarnegara;-;1121;11130950;0
+;05/02/2026;Pengiriman SPPG kutabanjarnegara;-;4111;0;11130950
+;05/02/2026;Akomodasi makan pak sodik;-;2141;4000;0
+;05/02/2026;Akomodasi makan pak sodik;-;1111;0;4000
+;06/02/2026;Kas keluar dari kas rekening ke kas harian;-;1111;600000;0
+;06/02/2026;Kas keluar dari kas rekening ke kas harian;-;1112;0;600000
+;06/02/2026;Kas bon belanja persediaan;-;1121;9000000;0
+;06/02/2026;Kas bon belanja persediaan;-;1112;0;9000000
+;06/02/2026;Pelunasan kas bon belanja persediaan;-;1111;9000000;0
+;06/02/2026;Pelunasan kas bon belanja persediaan;-;1121;0;9000000
+;06/02/2026;Akomodasi las dan baud;-;5171;112000;0
+;06/02/2026;Akomodasi las dan baud;-;1111;0;112000
+;06/02/2026;Akomodasi rokok,jajan,makan;-;5171;50000;0
+;06/02/2026;Akomodasi rokok,jajan,makan;-;1111;0;50000
+;06/02/2026;Pembelian beras 500 kg;-;1131;6750000;0
+;06/02/2026;Pembelian beras 500 kg;-;2111;0;6750000
+;07/02/2026;Pembelian perlengkapan isi ulang stella;-;1141;31700;0
+;07/02/2026;Pembelian perlengkapan isi ulang stella;-;1111;0;31700
+;07/02/2026;Akomodasi makan pak agus;-;5171;8000;0
+;07/02/2026;Akomodasi makan pak agus;-;1111;0;8000
+;07/02/2026;Parkir tamkot;-;5191;2000;0
+;07/02/2026;Parkir tamkot;-;1111;0;2000
+;07/02/2026;service & ganti oli grand max;-;5161;315000;0
+;07/02/2026;service & ganti oli grand max;-;1111;0;315000
+;07/02/2026;Pembelian amplop 1 pak;-;1141;8000;0
+;07/02/2026;Pembelian amplop 1 pak;-;1111;0;8000
+;07/02/2026;Pembelian susu full cream 250 20 kardus di bu liss;-;1131;3072000;0
+;07/02/2026;Pembelian susu full cream 250 20 kardus di bu liss;-;2111;0;3072000
+;07/02/2026;Upah pemasangan cctv;-;5121;50000;0
+;07/02/2026;Upah pemasangan cctv;-;1111;0;50000
+;07/02/2026;penjualan kripik tempe;-;5111;1900;0
+;07/02/2026;penjualan kripik tempe;-;1131;0;1900
+;07/02/2026;penjualan kripik tempe;-;1111;3000;0
+;07/02/2026;penjualan kripik tempe;-;4111;0;3000
+;07/02/2026;Akomodasi makan pak sodik;-;5171;57000;0
+;07/02/2026;Akomodasi makan pak sodik;-;1111;0;57000
+;07/02/2026;Pembelian barang persediaan di indogrosir;-;1131;1711500;0
+;07/02/2026;Pembelian barang persediaan di indogrosir;-;2111;0;1711500
+;07/02/2026;Pembelian  diamond susu diamond susu full cream;-;1131;252000;0
+;07/02/2026;Pembelian  diamond susu diamond susu full cream;-;1111;0;252000
+;07/02/2026;Pembelian BBM;-;5172;200000;0
+;07/02/2026;Pembelian BBM;-;1111;0;200000
+;07/02/2026;Parkir;-;5191;11000;0
+;07/02/2026;Parkir;-;1111;0;11000
+;07/02/2026;Akomodasi makan;-;5171;40000;0
+;07/02/2026;Akomodasi makan;-;1111;0;40000
+;08/02/2026;Pembelian minyak kita 3 kardus di lancar bersama toko;-;1131;642000;0
+;08/02/2026;Pembelian minyak kita 3 kardus di lancar bersama toko;-;1111;0;642000
+;08/02/2026;Pembelian perlengkapan kresek bambu sedang;-;1141;44000;0
+;08/02/2026;Pembelian perlengkapan kresek bambu sedang;-;1111;0;44000
+;08/02/2026;Pembelian desaku ketumbar di pasar;-;1131;100000;0
+;08/02/2026;Pembelian desaku ketumbar di pasar;-;1111;0;100000
+;08/02/2026;Pembelian minyak kita 2L 1 dus di pasar;-;1131;200000;0
+;08/02/2026;Pembelian minyak kita 2L 1 dus di pasar;-;1111;0;200000
+;08/02/2026;Beban perlengkapan 1 pak tissu (pembelian di tgl 31 januari);-;5151;9850;0
+;08/02/2026;Beban perlengkapan 1 pak tissu (pembelian di tgl 31 januari);-;1141;0;9850
+;08/02/2026;Parkir di pasar;-;5191;3000;0
+;08/02/2026;Parkir di pasar;-;1111;0;3000
+;08/02/2026;Pembelian daun pisang uang mas denny;-;1131;425000;0
+;08/02/2026;Pembelian daun pisang uang mas denny;-;2111;0;425000
+;08/02/2026;Pembelian barang persediaan sayur di pasar;-;1131;2672000;0
+;08/02/2026;Pembelian barang persediaan sayur di pasar;-;2111;0;2672000
+;08/02/2026;Pembelian roti 1271 dari bu lis;-;1131;122400;0
+;08/02/2026;Pembelian roti 1271 dari bu lis;-;2111;0;122400
+;08/02/2026;Pembelian rambutan 105 kg di bu lis;-;1131;1181250;0
+;08/02/2026;Pembelian rambutan 105 kg di bu lis;-;2111;0;1181250
+;08/02/2026;Pembelian roti 1271 dari bu lis;-;1131;3050000;0
+;08/02/2026;Pembelian roti 1271 dari bu lis;-;2111;0;3050000
+;08/02/2026;Pembelian jeruk santang 150kg dari bu lis;-;1131;8400000;0
+;08/02/2026;Pembelian jeruk santang 150kg dari bu lis;-;2111;0;8400000
+;08/02/2026;Pembelian roti pisang 51 pcs;-;1131;122400;0
+;08/02/2026;Pembelian roti pisang 51 pcs;-;2111;0;122400
+;08/02/2026;Pembelian daun pisang di bu marchati;-;1131;425000;0
+;08/02/2026;Pembelian daun pisang di bu marchati;-;2111;0;425000
+;08/02/2026;Pengiriman SPPG MBS Wanayasa;-;5111;10740250;0
+;08/02/2026;Pengiriman SPPG MBS Wanayasa;-;1131;0;10740250
+;08/02/2026;Pengiriman SPPG MBS Wanayasa;-;1121;11008625;0
+;08/02/2026;Pengiriman SPPG MBS Wanayasa;-;4111;0;11008625
+;08/02/2026;Pengiriman SPPG Kutabanjarnegara;-;5111;17802840;0
+;08/02/2026;Pengiriman SPPG Kutabanjarnegara;-;1131;0;17802840
+;08/02/2026;Pengiriman SPPG Kutabanjarnegara;-;1121;20058200;0
+;08/02/2026;Pengiriman SPPG Kutabanjarnegara;-;4111;0;20058200
+;08/02/2026;Pengiriman SPPG Kutabanjarnegara;-;5111;12274855;0
+;08/02/2026;Pengiriman SPPG Kutabanjarnegara;-;1131;0;12274855
+;08/02/2026;Pengiriman SPPG Kutabanjarnegara;-;1121;12886350;0
+;08/02/2026;Pengiriman SPPG Kutabanjarnegara;-;4111;0;12886350
+;08/02/2026;Pembelian beras 400kg ke SPPG Susukan;-;1131;5400000;0
+;08/02/2026;Pembelian beras 400kg ke SPPG Susukan;-;2111;0;5400000
+;08/02/2026;Pengiriman SPPG Susukan beras 400kg;-;5111;5400000;0
+;08/02/2026;Pengiriman SPPG Susukan beras 400kg;-;1131;0;5400000
+;08/02/2026;Pengiriman SPPG Susukan beras 400kg;-;1121;6000000;0
+;08/02/2026;Pengiriman SPPG Susukan beras 400kg;-;4111;0;6000000
+;08/02/2026;Pembelian beras 500kg ke SPPG Susukan;-;1131;6750000;0
+;08/02/2026;Pembelian beras 500kg ke SPPG Susukan;-;2111;0;6750000
+;08/02/2026;Pengiriman SPPG Susukan beras 500kg;-;5111;6750000;0
+;08/02/2026;Pengiriman SPPG Susukan beras 500kg;-;1131;0;6750000
+;08/02/2026;Pengiriman SPPG Susukan beras 500kg;-;1121;7500000;0
+;08/02/2026;Pengiriman SPPG Susukan beras 500kg;-;4111;0;7500000
+;09/02/2026;Pembelian desaku ketumbar bubuk ditoko eka sari;-;1131;33000;0
+;09/02/2026;Pembelian desaku ketumbar bubuk ditoko eka sari;-;1111;0;33000
+;09/02/2026;Pembelian cuka suka sari di toko eka sari;-;1131;46000;0
+;09/02/2026;Pembelian cuka suka sari di toko eka sari;-;2111;0;46000
+;09/02/2026;Reimburse pembelian cuka sari ke mas denny;-;2111;46000;0
+;09/02/2026;Reimburse pembelian cuka sari ke mas denny;-;1111;0;46000
+;09/02/2026;Pembelian margarin amanda di gunung mas;-;1131;36000;0
+;09/02/2026;Pembelian margarin amanda di gunung mas;-;1111;0;36000
+;09/02/2026;Pembelian bawang dan ketumbar;-;1131;336000;0
+;09/02/2026;Pembelian bawang dan ketumbar;-;1111;0;336000
+;09/02/2026;Pembelian bah naga 120kg di bu lis;-;1131;2040000;0
+;09/02/2026;Pembelian bah naga 120kg di bu lis;-;2111;0;2040000
+;09/02/2026;Pembelian persediaan galon 2;-;5171;10000;0
+;09/02/2026;Pembelian persediaan galon 2;-;1111;0;10000
+;09/02/2026;Kas bon pembelian bbm;-;1122;200000;0
+;09/02/2026;Kas bon pembelian bbm;-;1111;0;200000
+;09/02/2026;Pelunasan kas bon bbm;-;1111;200000;0
+;09/02/2026;Pelunasan kas bon bbm;-;1122;0;200000
+;09/02/2026;Pembelian bbm;-;5172;150000;0
+;09/02/2026;Pembelian bbm;-;1111;0;150000
+;09/02/2026;Akomodasi makan;-;5171;45000;0
+;09/02/2026;Akomodasi makan;-;1111;0;45000
+;09/02/2026;Pembelian ayam sayap 125 kg di restu jaya;-;1131;4125000;0
+;09/02/2026;Pembelian ayam sayap 125 kg di restu jaya;-;2111;0;4125000
+;09/02/2026;Pembelian kurma curah 85kg dari pradipta;-;1131;2295000;0
+;09/02/2026;Pembelian kurma curah85kg dari pradipta;-;2111;0;2295000
+;09/02/2026;Pembelian sayur di rini sayur;-;1131;3802000;0
+;09/02/2026;Pembelian sayur di rini sayur;-;2111;0;3802000
+;09/02/2026;Beban perlengkapan 6 pack kresek putih (pembelian 11 november);-;5151;61500;0
+;09/02/2026;Beban perlengkapan 6 pack kresek putih (pembelian 11 november);-;1141;0;61500
+;09/02/2026;Beban perlengkapan 1 pack kresek hitam (pembelian 14 desember);-;5151;10500;0
+;09/02/2026;Beban perlengkapan 1 pack kresek hitam (pembelian 14 desember);-;1141;0;10500
+;09/02/2026;Pembelian gula jawa uang mas denny;-;1131;140000;0
+;09/02/2026;Pembelian gula jawa uang mas denny;-;2111;0;140000
+;09/02/2026;Pembelian gula jawa di zam zam;-;1131;104000;0
+;09/02/2026;Pembelian gula jawa di zam zam;-;1111;0;104000
+;09/02/2026;Pelunasan utang ayam di restu jaya;-;2111;18960000;0
+;09/02/2026;Pelunasan utang ayam di restu jaya;-;5221;2500;0
+;09/02/2026;Pelunasan utang ayam di restu jaya;-;1112;0;18962500
+;09/02/2026;Pelunasan utang rini sayur;-;2111;3802000;0
+;09/02/2026;Pelunasan utang rini sayur;-;1112;0;3802000
+;09/02/2026;Pelunasan ikan dori dari pak wandi;-;2111;9000000;0
+;09/02/2026;Pelunasan ikan dori dari pak wandi;-;5221;2500;0
+;09/02/2026;Pelunasan ikan dori dari pak wandi;-;1112;0;9002500
+;09/02/2026;Pelunasan ekado dimsum;-;2111;18450000;0
+;09/02/2026;Pelunasan ekado dimsum;-;1112;0;18450000
+;09/02/2026;Pelunasan tepung hagoz;-;2111;560000;0
+;09/02/2026;Pelunasan tepung hagoz;-;1112;0;560000
+;09/02/2026;Pelunasan abon bu fitri;-;2111;200000;0
+;09/02/2026;Pelunasan abon bu fitri;-;5221;2500;0
+;09/02/2026;Pelunasan abon bu fitri;-;1112;0;202500
+;09/02/2026;Pelunasan telur tadus;-;2111;490000;0
+;09/02/2026;Pelunasan telur tadus;-;5221;2500;0
+;09/02/2026;Pelunasan telur tadus;-;1112;0;492500
+;09/02/2026;Pelunasan hutang sayur ke rini sayur;-;2111;2672000;0
+;09/02/2026;Pelunasan hutang sayur ke rini sayur;-;1112;0;2672000
+;09/02/2026;Pelunasan piutang SPPG Banjarnegara (pengiriman 5-2-2026);-;1112;21399350;0
+;09/02/2026;Pelunasan piutang SPPG Banjarnegara (pengiriman 5-2-2026);-;1121;0;21399350
+;09/02/2026;Pelunasan piutang SPPG Banjarnegara (pengiriman 2-2-2026);-;1112;22399050;0
+;09/02/2026;Pelunasan piutang SPPG Banjarnegara (pengiriman 2-2-2026);-;1121;0;22399050
+;09/02/2026;Pelunasan piutang SPPG Banjarnegara (pengiriman 3-2-2026);-;1112;24504750;0
+;09/02/2026;Pelunasan piutang SPPG Banjarnegara (pengiriman 3-2-2026);-;1121;0;24504750
+;09/02/2026;Pelunasan piutang SPPG Banjarnegara (pengiriman 5-2-2026);-;1112;11130950;0
+;09/02/2026;Pelunasan piutang SPPG Banjarnegara (pengiriman 5-2-2026);-;1121;0;11130950
+;09/02/2026;Pengiriman SPPG Wanayasaa;-;5111;4391600;0
+;09/02/2026;Pengiriman SPPG Wanayasaa;-;1131;0;4391600
+;09/02/2026;Pengiriman SPPG Wanayasaa;-;1121;4615000;0
+;09/02/2026;Pengiriman SPPG Wanayasaa;-;4111;0;4615000
+;09/02/2026;Pengiriman SPPG Kutabanjarnegara;-;5111;16275246;0
+;09/02/2026;Pengiriman SPPG Kutabanjarnegara;-;1131;0;16275246
+;09/02/2026;Pengiriman SPPG Kutabanjarnegara;-;1121;18718900;0
+;09/02/2026;Pengiriman SPPG Kutabanjarnegara;-;4111;0;18718900
+;09/02/2026;Pembelian jeruk kino;-;1131;5405000;0
+;09/02/2026;Pembelian jeruk kino;-;2111;0;5405000
+;10/02/2026;Pembelian ayam potong 2290 pcs di restu jaya;-;1131;8358500;0
+;10/02/2026;Pembelian ayam potong 2290 pcs di restu jaya;-;2111;0;8358500
+;10/02/2026;Kas bon belanja persediaan;-;1121;2000000;0
+;10/02/2026;Kas bon belanja persediaan;-;1112;0;2000000
+;10/02/2026;Pelunasan kas bon belanja persediaan;-;1111;2000000;0
+;10/02/2026;Pelunasan kas bon belanja persediaan;-;1121;0;2000000
+;10/02/2026;Pembelian minyak kita 6 kardus di toko eka sari;-;1131;1188000;0
+;10/02/2026;Pembelian minyak kita 6 kardus di toko eka sari;-;1111;0;1188000
+;10/02/2026;Parkir pasar;-;5191;3000;0
+;10/02/2026;Parkir pasar;-;1111;0;3000
+;10/02/2026;Pembelian kecap sedap putih di toko eka  sari;-;1131;220000;0
+;10/02/2026;Pembelian kecap sedap putih di toko eka  sari;-;1111;0;220000
+;10/02/2026;Pembelian wijen di gunung mas;-;1131;69000;0
+;10/02/2026;Pembelian wijen di gunung mas;-;1111;0;69000
+;10/02/2026;Pembelian tepung bumbu hagoz;-;1131;240000;0
+;10/02/2026;Pembelian tepung bumbu hagoz;-;2111;0;240000
+;10/02/2026;Pembelian sayur di rini sayur;-;1131;2549000;0
+;10/02/2026;Pembelian sayur di rini sayur;-;2111;0;2549000
+;10/02/2026;penjualan kripik tempe;-;5111;1900;0
+;10/02/2026;penjualan kripik tempe;-;1131;0;1900
+;10/02/2026;penjualan kripik tempe;-;1111;3000;0
+;10/02/2026;penjualan kripik tempe;-;4111;0;3000
+;10/02/2026;Pembelian melon 107 di kancil junior;-;1131;1765000;0
+;10/02/2026;Pembelian melon 107 di kancil junior;-;2111;0;1765000
+;10/02/2026;Pembelian bawang bombay di solikhah mart;-;1131;160000;0
+;10/02/2026;Pembelian bawang bombay di solikhah mart;-;1111;0;160000
+;10/02/2026;Pelunasan piutang SPPG MBS Wanayasa (pengiriman 2/2);-;1112;2617500;0
+;10/02/2026;Pelunasan piutang SPPG MBS Wanayasa (pengiriman 2/2);-;1121;0;2617500
+;10/02/2026;Pelunasan piutang SPPG MBS Wanayasa (pengiriman 5/2);-;1112;5096000;0
+;10/02/2026;Pelunasan piutang SPPG MBS Wanayasa (pengiriman 5/2);-;1121;0;5096000
+;10/02/2026;Pelunasan piutang SPPG MBS Wanayasa (pengiriman 8/2);-;1112;7933625;0
+;10/02/2026;Pelunasan piutang SPPG MBS Wanayasa (pengiriman 8/2);-;1121;0;7933625
+;10/02/2026;Pelunasan piutang SPPG MBS Wanayasa (pengiriman 3/2);-;1112;1755500;0
+;10/02/2026;Pelunasan piutang SPPG MBS Wanayasa (pengiriman 3/2);-;1121;0;1755500
+;10/02/2026;Pelunasan piutang SPPG MBS Wanayasa (pengiriman 1/2);-;1112;8398500;0
+;10/02/2026;Pelunasan piutang SPPG MBS Wanayasa (pengiriman 1/2);-;1121;0;8398500
+;10/02/2026;Pelunasan piutang SPPG MBS Wanayasa (pengiriman 4/2);-;1112;2913000;0
+;10/02/2026;Pelunasan piutang SPPG MBS Wanayasa (pengiriman 4/2);-;1121;0;2913000
+;10/02/2026;Pelunasan piutang SPPG Merden (pengiriman 26/1);-;1112;8250000;0
+;10/02/2026;Pelunasan piutang SPPG Merden (pengiriman 26/1);-;1121;0;8250000
+;10/02/2026;Pelunasan hutang edamame bu dewi;-;2111;1440000;0
+;10/02/2026;Pelunasan hutang edamame bu dewi;-;1112;0;1440000
+;10/02/2026;Pelunasan hutang telur asin di niro setiaji;-;2111;6562000;0
+;10/02/2026;Pelunasan hutang telur asin di niro setiaji;-;5221;2500;0
+;10/02/2026;Pelunasan hutang telur asin di niro setiaji;-;1112;0;6564500
+;10/02/2026;Pembelian akomodasi makan uang pak sodik;-;5171;50000;0
+;10/02/2026;Pembelian akomodasi makan uang pak sodik;-;1111;0;50000
+;10/02/2026;Pembelian selada 20kg;-;1131;640000;0
+;10/02/2026;Pembelian selada 20kg;-;1111;0;640000
+;10/02/2026;Pembelian barang persediaan di pwt;-;1131;1711500;0
+;10/02/2026;Pembelian barang persediaan di pwt;-;2111;0;1711500
+;10/02/2026;Pengiriman SPPG Kutabanjarnegara;-;5111;31599404;0
+;10/02/2026;Pengiriman SPPG Kutabanjarnegara;-;1131;0;31599404
+;10/02/2026;Pengiriman SPPG Kutabanjarnegara;-;1121;34410000;0
+;10/02/2026;Pengiriman SPPG Kutabanjarnegara;-;4111;0;34410000
+;10/02/2026;Pengiriman SPPG MBS Wanayasa;-;5111;3226000;0
+;10/02/2026;Pengiriman SPPG MBS Wanayasa;-;1131;0;3226000
+;10/02/2026;Pengiriman SPPG MBS Wanayasa;-;1121;3333000;0
+;10/02/2026;Pengiriman SPPG MBS Wanayasa;-;4111;0;3333000
+;11/02/2026;Akomodasi Pembelian BBM;-;5172;200000;0
+;11/02/2026;Akomodasi Pembelian BBM;-;1111;0;200000
+;11/02/2026;Pembelian barang perlengkapan di topaz gayam;-;1141;11500;0
+;11/02/2026;Pembelian barang perlengkapan di topaz gayam;-;1111;0;11500
+;11/02/2026;Pembelian barang perlengkapan di topaz gayam;-;1141;8500;0
+;11/02/2026;Pembelian barang perlengkapan di topaz gayam;-;1111;0;8500
+;11/02/2026;Pembelian perlengkapan keranjang  sampah di topaz gayam;-;1141;16000;0
+;11/02/2026;Pembelian perlengkapan keranjang  sampah di topaz gayam;-;1111;0;16000
+;11/02/2026;Pembelian perlengkapan tempat sabun di topaz gayam;-;1141;11500;0
+;11/02/2026;Pembelian perlengkapan tempat sabun di topaz gayam;-;1111;0;11500
+;11/02/2026;Pembelian perlengkapan mangkok di topaz gayam;-;1141;9500;0
+;11/02/2026;Pembelian perlengkapan mangkok di topaz gayam;-;1111;0;9500
+;11/02/2026;Pembelian perlengkapan keset di topaz gayam;-;1141;11000;0
+;11/02/2026;Pembelian perlengkapan keset di topaz gayam;-;1111;0;11000
+;11/02/2026;Kresek putih di topaz gayam;-;5211;500;0
+;11/02/2026;Kresek putih di topaz gayam;-;1111;0;500
+;11/02/2026;Parkir topaz gayam;-;5191;4000;0
+;11/02/2026;Parkir topaz gayam;-;1111;0;4000
+;11/02/2026;Pembelian kunyit bubuk di toko eka sari;-;1131;22000;0
+;11/02/2026;Pembelian kunyit bubuk di toko eka sari;-;1111;0;22000
+;11/02/2026;Pembelian jeruk medan 153kg di bu lis;-;1131;3213000;0
+;11/02/2026;Pembelian jeruk medan 153kg di bu lis;-;2111;0;3213000
+;11/02/2026;Pembelian persediaan sayur di rini sayur;-;1131;6932000;0
+;11/02/2026;Pembelian persediaan sayur di rini sayur;-;2111;0;6932000
+;11/02/2026;Parkir pasar;-;5191;3000;0
+;11/02/2026;Parkir pasar;-;1111;0;3000
+;11/02/2026;Pembelian kulit tahu 2270;-;1131;1136000;0
+;11/02/2026;Pembelian kulit tahu 2270;-;2111;0;1136000
+;11/02/2026;Pembelian daun pisang 2290;-;1131;320600;0
+;11/02/2026;Pembelian daun pisang 2290;-;2111;0;320600
+;11/02/2026;Pembelian telur di tadus;-;1131;4726000;0
+;11/02/2026;Pembelian telur di tadus;-;2111;0;4726000
+;11/02/2026;Akomodasi makan pak sodik;-;5171;30000;0
+;11/02/2026;Akomodasi makan pak sodik;-;2141;0;30000
+;11/02/2026;Pengiriman SPPG Kutabanjarnegara;-;5111;15526791;0
+;11/02/2026;Pengiriman SPPG Kutabanjarnegara;-;1131;0;15526791
+;11/02/2026;Pengiriman SPPG Kutabanjarnegara;-;1121;18261345;0
+;11/02/2026;Pengiriman SPPG Kutabanjarnegara;-;4111;0;18261345
+;11/02/2026;Pengiriman SPPG MBS Wanayasa;-;5111;2601400;0
+;11/02/2026;Pengiriman SPPG MBS Wanayasa;-;1131;0;2601400
+;11/02/2026;Pengiriman SPPG MBS Wanayasa;-;1121;2825850;0
+;11/02/2026;Pengiriman SPPG MBS Wanayasa;-;4111;0;2825850
+;11/02/2026;Pelunasan piutang SPPG Kutabanjarnegara (pengiriman 1/2);-;1112;23368950;0
+;11/02/2026;Pelunasan piutang SPPG Kutabanjarnegara (pengiriman 1/2);-;1121;0;23368950
+;11/02/2026;Pelunasan piutang SPPG Kutabanjarnegara (pengiriman 4/2);-;1112;20916570;0
+;11/02/2026;Pelunasan piutang SPPG Kutabanjarnegara (pengiriman 4/2);-;1121;0;20916570
+;11/02/2026;Pelunasan utang kje Triyono;-;2111;13300000;0
+;11/02/2026;Pelunasan utang kje Triyono;-;1112;0;13300000
+;11/02/2026;Pelunasan utang ke triyani rosmala;-;2111;3795000;0
+;11/02/2026;Pelunasan utang ke triyani rosmala;-;1112;0;3795000
+;11/02/2026;Pelunasan utang  ke Tri Sulistyaningsih;-;2111;60330750;0
+;11/02/2026;Pelunasan utang  ke Tri Sulistyaningsih;-;5221;2500;0
+;11/02/2026;Pelunasan utang  ke Tri Sulistyaningsih;-;1112;0;60333250
+;11/02/2026;Pembelian kulit kebab;-;1131;3795000;0
+;11/02/2026;Pembelian kulit kebab;-;2111;0;3795000
+;11/02/2026;Pembelian Beras 900 kg;-;1131;12240000;0
+;11/02/2026;Pembelian Beras 900 kg;-;2111;0;12240000
+;12/02/2026;Pelunasan utang ke sidi hartono;-;2111;6932000;0
+;12/02/2026;Pelunasan utang ke sidi hartono;-;1112;0;6932000
+;12/02/2026;Pelunasan utang ke listyorini Habiba;-;2111;13006000;0
+;12/02/2026;Pelunasan utang ke listyorini Habiba;-;1112;0;13006000
+;12/02/2026;Pelunasan utang ke marsem;-;2111;20250000;0
+;12/02/2026;Pelunasan utang ke marsem;-;5221;2500;0
+;12/02/2026;Pelunasan utang ke marsem;-;1112;0;20252500
+;12/02/2026;Penjualan kripik tempe 2 biji;-;5111;1900;0
+;12/02/2026;Penjualan kripik tempe 2 biji;-;1131;0;1900
+;12/02/2026;Penjualan kripik tempe 2 biji;-;1111;3000;0
+;12/02/2026;Penjualan kripik tempe 2 biji;-;4111;0;3000
+;12/02/2026;Kas bon pak sodik;-;1121;2000000;0
+;12/02/2026;Kas bon pak sodik;-;1112;0;2000000
+;12/02/2026;Pelunasan kas bon;-;1111;2000000;0
+;12/02/2026;Pelunasan kas bon;-;1121;0;2000000
+;12/02/2026;Pembelian barang persediaan di gunung mas;-;1131;233500;0
+;12/02/2026;Pembelian barang persediaan di gunung mas;-;1111;0;233500
+;12/02/2026;Parkir pasar;-;5191;3000;0
+;12/02/2026;Parkir pasar;-;1111;0;3000
+;12/02/2026;Parkir gunung mas;-;5191;3000;0
+;12/02/2026;Parkir gunung mas;-;1111;0;3000
+;12/02/2026;Parkir pasar;-;5191;3000;0
+;12/02/2026;Parkir pasar;-;1111;0;3000
+;12/02/2026;Penjualan minyak sania 4 kardus;-;5111;1020000;0
+;12/02/2026;Penjualan minyak sania 4 kardus;-;1131;0;1020000
+;12/02/2026;Penjualan minyak sania 4 kardus;-;1111;1020000;0
+;12/02/2026;Penjualan minyak sania 4 kardus;-;4111;0;1020000
+;12/02/2026;Reimburse akomodasi makan;-;2141;50000;0
+;12/02/2026;Reimburse akomodasi makan;-;1111;0;50000
+;12/02/2026;Pembelian barang persediaan sayur di rini sayur;-;1131;10834000;0
+;12/02/2026;Pembelian barang persediaan sayur di rini sayur;-;2111;0;10834000
+;12/02/2026;Pembelian beras 50kg;-;1131;0;0
+;12/02/2026;Pembelian beras 50kg;-;2111;0;0
+;12/02/2026;Pembelian anggur 110kg di bu lis;-;1131;6545000;0
+;12/02/2026;Pembelian anggur 110kg di bu lis;-;2111;0;6545000
+;12/02/2026;Pengiriman SPPG Kutabanjarnegara;-;5111;19318350;0
+;12/02/2026;Pengiriman SPPG Kutabanjarnegara;-;1131;0;19318350
+;12/02/2026;Pengiriman SPPG Kutabanjarnegara;-;1121;22284650;0
+;12/02/2026;Pengiriman SPPG Kutabanjarnegara;-;4111;0;22284650
+;12/02/2026;Pengiriman SPPG MBS Wanayasa;-;5111;8077400;0
+;12/02/2026;Pengiriman SPPG MBS Wanayasa;-;1131;0;8077400
+;12/02/2026;Pengiriman SPPG MBS Wanayasa;-;1121;8320500;0
+;12/02/2026;Pengiriman SPPG MBS Wanayasa;-;4111;0;8320500
+;12/02/2026;Pembelian kacang telur 1170 pcs;-;1131;1228500;0
+;12/02/2026;Pembelian kacang telur 1170 pcs;-;2111;0;1228500
+;12/02/2026;Pembelian roti manis 1170 di bu lis;-;1131;2808000;0
+;12/02/2026;Pembelian roti manis 1170 di bu lis;-;2111;0;2808000
+;12/02/2026;Pembelian puding 1170;-;1131;2808000;0
+;12/02/2026;Pembelian puding 1170;-;2111;0;2808000
+;12/02/2026;Pembelian pisang;-;1131;2168850;0
+;12/02/2026;Pembelian pisang;-;2111;0;2168850
+;12/02/2026;Pembelian kantong plastik 2 pcs di garuda mas;-;1131;17000;0
+;12/02/2026;Pembelian kantong plastik 2 pcs di garuda mas;-;1111;0;17000
+;12/02/2026;Pembelian tahu mas denny;-;5171;125000;0
+;12/02/2026;Pembelian tahu mas denny;-;2141;0;125000
+;12/02/2026;Pelunasan piutang SPPG Wanayasa bawang putih (pengiriman 9 feb);-;1112;316000;0
+;12/02/2026;Pelunasan piutang SPPG Wanayasa bawang putih (pengiriman 9 feb);-;1121;0;316000
+;12/02/2026;Pelunasan piutang SPPG Wanayasa buah naga 120 (pengiriman 9 feb);-;1112;2040000;0
+;12/02/2026;Pelunasan piutang SPPG Wanayasa buah naga 120 (pengiriman 9 feb);-;1121;0;2040000
+;12/02/2026;Pelunasan piutang SPPG Wanayasa bawang merah (pengiriman 9 feb);-;1112;249000;0
+;12/02/2026;Pelunasan piutang SPPG Wanayasa bawang merah (pengiriman 9 feb);-;1121;0;249000
+;12/02/2026;Pelunasan piutang SPPG Wanayasa 100kg beras (pengiriman 9 feb);-;1112;1500000;0
+;12/02/2026;Pelunasan piutang SPPG Wanayasa 100kg beras (pengiriman 9 feb);-;1121;0;1500000
+;12/02/2026;Pelunasan piutang SPPG Wanayasa Minyak goreng 2L 12 pcs (pengiriman 9 feb);-;1112;510000;0
+;12/02/2026;Pelunasan piutang SPPG Wanayasa Minyak goreng 2L 12 pcs (pengiriman 9 feb);-;1121;0;510000
+;12/02/2026;Pelunasan piutang SPPG Wanayasa Minyak goreng 2L 24 pcs (pengiriman 10 feb);-;1112;1020000;0
+;12/02/2026;Pelunasan piutang SPPG Wanayasa Minyak goreng 2L 24 pcs (pengiriman 10 feb);-;1121;0;1020000
+;12/02/2026;Pelunasan piutang SPPG Wanayasa Semangka 180kg (pengiriman 10 feb);-;1112;2070000;0
+;12/02/2026;Pelunasan piutang SPPG Wanayasa Semangka 180kg (pengiriman 10 feb);-;1121;0;2070000
+;12/02/2026;Pelunasan piutang SPPG Wanayasa Bawang putih 3kg (pengiriman 10 feb);-;1112;118500;0
+;12/02/2026;Pelunasan piutang SPPG Wanayasa Bawang putih 3kg (pengiriman 10 feb);-;1121;0;118500
+;12/02/2026;Pelunasan piutang SPPG Wanayasa Bawang merah 3kg (pengiriman 10 feb);-;1112;124500;0
+;12/02/2026;Pelunasan piutang SPPG Wanayasa Bawang merah 3kg (pengiriman 10 feb);-;1121;0;124500
+;13/02/2026;Reimburse pembelian bbm ke mas deni (18 januari 2026);-;2142;200000;0
+;13/02/2026;Reimburse pembelian bbm ke mas deni (18 januari 2026);-;1111;0;200000
+;13/02/2026;Pelunasan utang pembelian tahu 12 feb;-;2141;125000;0
+;13/02/2026;Pelunasan utang pembelian tahu 12 feb;-;1111;0;125000
+;13/02/2026;Pembelian telur di solikhah mart;-;1131;17000;0
+;13/02/2026;Pembelian telur di solikhah mart;-;1111;0;17000
+;13/02/2026;Pembelian kacang telur madu 1170 & 1113 pcs;-;1131;2397150;0
+;13/02/2026;Pembelian kacang telur madu 1170 & 1113 pcs;-;2111;0;2397150
+;13/02/2026;Pembelian roti manis di bu lis;-;1131;2617200;0
+;13/02/2026;Pembelian roti manis di bu lis;-;2111;0;2617200
+;13/02/2026;Pembelian puding 1113 pcs;-;1131;2671200;0
+;13/02/2026;Pembelian puding 1113 pcs;-;2111;0;2671200
+;13/02/2026;Pengiriman SPPG Kutabanjarnegara;-;5111;19954800;0
+;13/02/2026;Pengiriman SPPG Kutabanjarnegara;-;2111;0;19954800
+;13/02/2026;Pengiriman SPPG Kutabanjarnegara;-;1121;22158100;0
+;13/02/2026;Pengiriman SPPG Kutabanjarnegara;-;4111;0;22158100
+;14/02/2026;Kas rekening keluar ke kas harian;-;1111;4000000;0
+;14/02/2026;Kas rekening keluar ke kas harian;-;1112;0;4000000
+;14/02/2026;Pelunasan hutang sayur din rini sayur (pembelian tgl 12 feb);-;2111;10834000;0
+;14/02/2026;Pelunasan hutang sayur din rini sayur (pembelian tgl 12 feb);-;1112;0;10834000
+;15/02/2026;Pembelian vitamin lemon tab 6;-;1141;12000;0
+;15/02/2026;Pembelian vitamin lemon tab 6;-;1111;0;12000
+;15/02/2026;Akomodasi BBM Pak sodik;-;5171;200000;0
+;15/02/2026;Akomodasi BBM Pak sodik;-;2141;0;200000
+;15/02/2026;Pembelian belanja persediaan di toko alzahra;-;1131;62500;0
+;15/02/2026;Pembelian belanja persediaan di toko alzahra;-;2111;0;62500
+;15/02/2026;Pelunasan hutang ke fajar okta fianto (pengiriman 8 feb);-;2111;435000;0
+;15/02/2026;Pelunasan hutang ke fajar okta fianto (pengiriman 8 feb);-;1112;0;435000
+;15/02/2026;Pelunasan hutang ke restu jaya banjarnegara (pengiriman tgl 8&9);-;2111;12483500;0
+;15/02/2026;Pelunasan hutang ke restu jaya banjarnegara (pengiriman tgl 8&9);-;1112;0;12483500
+;15/02/2026;Pelunasan hutang tahu,tempe,selada (pengiriman tgl 21,25,26,27,29,2,3,4) PAK SAFRUDIN;-;2111;10427500;0
+;15/02/2026;Pelunasan hutang tahu,tempe,selada (pengiriman tgl 21,25,26,27,29,2,3,4) PAK SAFRUDIN;-;1112;0;10427500
+;15/02/2026;Penjualan paket sembako ke lazis 230 paket;-;5111;0;0
+;15/02/2026;Penjualan paket sembako ke lazis 230 paket;-;2111;0;0
+;15/02/2026;Penjualan paket sembako ke lazis 230 paket;-;1121;21505000;0
+;15/02/2026;Penjualan paket sembako ke lazis 230 paket;-;4111;0;21505000
+;16/02/2026;Akomodasi makan ke jogja;-;5171;46000;0
+;16/02/2026;Akomodasi makan ke jogja;-;2141;0;46000
+;16/02/2026;Akomodasi bbm;-;5172;200000;0
+;16/02/2026;Akomodasi bbm;-;2142;0;200000
+;16/02/2026;Akomodasi makan di lamongan;-;5171;75000;0
+;16/02/2026;Akomodasi makan di lamongan;-;2141;0;75000
+;16/02/2026;Akomodasi bbm;-;5172;50000;0
+;16/02/2026;Akomodasi bbm;-;2142;0;50000
+;16/02/2026;Pembelian BBM;-;5172;50000;0
+;16/02/2026;Pembelian BBM;-;2142;0;50000
+;17/02/2026;Akomodasi belanja BBM;-;5172;100000;0
+;17/02/2026;Akomodasi belanja BBM;-;2142;0;100000
+;17/02/2026;Pelunasan piutang SPPG Wanayasa beras 100kg (pengiriman tgl 11);-;1112;1500000;0
+;17/02/2026;Pelunasan piutang SPPG Wanayasa beras 100kg (pengiriman tgl 11);-;1121;0;1500000
+;17/02/2026;Pelunasan piutang SPPG Wanayasa putren 60kg (pengiriman tgl 11);-;1112;510000;0
+;17/02/2026;Pelunasan piutang SPPG Wanayasa putren 60kg (pengiriman tgl 11);-;1121;0;510000
+;17/02/2026;Pelunasan piutang SPPG Wanayasa bawang putih 8kg (pengiriman tgl 11);-;1112;316000;0
+;17/02/2026;Pelunasan piutang SPPG Wanayasa bawang putih 8kg (pengiriman tgl 11);-;1121;0;316000
+;17/02/2026;Pelunasan piutang SPPG Wanayasa minyak goreng 2L 6pcs (pengiriman tgl 11);-;1112;255000;0
+;17/02/2026;Pelunasan piutang SPPG Wanayasa minyak goreng 2L 6pcs (pengiriman tgl 11);-;1121;0;255000
+;17/02/2026;Pelunasan piutang SPPG Wanayasa bawang merah 5,9kg (pengiriman tgl 11);-;1112;244850;0
+;17/02/2026;Pelunasan piutang SPPG Wanayasa bawang merah 5,9kg (pengiriman tgl 11);-;1121;0;244850
+;18/02/2026;Akomodasi bbm pak sodik;-;5172;200000;0
+;18/02/2026;Akomodasi bbm pak sodik;-;2142;0;200000
+;18/02/2026;Pembelian perlengkapan nota di toko QTA;-;1141;8000;0
+;18/02/2026;Pembelian perlengkapan nota di toko QTA;-;2111;0;8000
+;19/02/2026;Reimburse pembelian bbm tgl 15;-;2142;200000;0
+;19/02/2026;Reimburse pembelian bbm tgl 15;-;1111;0;200000
+;19/02/2026;Reimburse pembelian barang persediaan;-;2111;62500;0
+;19/02/2026;Reimburse pembelian barang persediaan;-;1111;0;62500
+;19/02/2026;reimburse pembelian mie ayam bawang tgl 15;-;1131;7000;0
+;19/02/2026;reimburse pembelian mie ayam bawang tgl 16;-;1111;0;7000
+;19/02/2026;Reimburse pembelian bbm tgl 17;-;2142;100000;0
+;19/02/2026;Reimburse pembelian bbm tgl 17;-;1111;0;100000
+;19/02/2026;Reimburse pembelian barang perlengkapan nota tgl 18;-;2111;8000;0
+;19/02/2026;Reimburse pembelian barang perlengkapan nota tgl 18;-;1111;0;8000
+;19/02/2026;Reimburse pembelian bbm tgl 18;-;2142;200000;0
+;19/02/2026;Reimburse pembelian bbm tgl 18;-;1111;0;200000
+;19/02/2026;Reimburse pembelian bawang putih tgl 22 januari;-;2111;284000;0
+;19/02/2026;Reimburse pembelian bawang putih tgl 22 januari;-;1111;0;284000
+;19/02/2026;Reimburse pembelian makan tgl 16;-;2141;46000;0
+;19/02/2026;Reimburse pembelian makan tgl 16;-;1111;0;46000
+;19/02/2026;Reimburse pembelian bbm tgl 16;-;2142;200000;0
+;19/02/2026;Reimburse pembelian bbm tgl 16;-;1111;0;200000
+;19/02/2026;Reimburse pembelian makan tgl 16;-;2141;75000;0
+;19/02/2026;Reimburse pembelian makan tgl 16;-;1111;0;75000
+;19/02/2026;Beban perlengkapan 4 pack tisu (pembelian 31 januari);-;5151;39400;0
+;19/02/2026;Beban perlengkapan 4 pack tisu (pembelian 31 januari);-;1141;0;39400
+;19/02/2026;Reimburse uang mas deni pembelian kaligrafi tgl 30,cctv tgl 4,dan cas mobil tgl 3;-;2111;944341;0
+;19/02/2026;Reimburse uang mas deni pembelian kaligrafi tgl 30,cctv tgl 4,dan cas mobil tgl 3;-;6111;0;341
+;19/02/2026;Reimburse uang mas deni pembelian kaligrafi tgl 30,cctv tgl 4,dan cas mobil tgl 3;-;1112;0;944000
+;19/02/2026;Pembayaran tagihan PLN;-;5141;173544;0
+;19/02/2026;Pembayaran tagihan PLN;-;1112;0;173544
+;19/02/2026;Pelunasan utang ke giri cahyono;-;2111;5479200;0
+;19/02/2026;Pelunasan utang ke giri cahyono;-;1112;0;5479200
+;19/02/2026;Kas masuk dari triana;-;1112;57250;0
+;19/02/2026;Kas masuk dari triana;-;1124;0;57250
+;19/02/2026;Kas masuk dari ruhma;-;1112;95994;0
+;19/02/2026;Kas masuk dari ruhma;-;1124;0;95994
+;21/02/2026;Akomodasi pembelian BBM Mas denny;-;5172;100000;0
+;21/02/2026;Akomodasi pembelian BBM Mas denny;-;2142;0;100000
+;21/02/2026;Pelunasan Piutang SPPG Banjarnegara (pengiriman tgl 8);-;1112;20058200;0
+;21/02/2026;Pelunasan Piutang SPPG Banjarnegara (pengiriman tgl 8);-;1121;0;20058200
+;21/02/2026;Pelunasan Piutang SPPG Banjarnegara (pengiriman tgl 9);-;1112;18718900;0
+;21/02/2026;Pelunasan Piutang SPPG Banjarnegara (pengiriman tgl 9);-;1121;0;18718900
+;21/02/2026;Pelunasan Piutang SPPG Banjarnegara (pengiriman tgl 10);-;1112;34342500;0
+;21/02/2026;Pelunasan Piutang SPPG Banjarnegara (pengiriman tgl 10);-;1121;0;34342500
+;21/02/2026;Pelunasan Piutang SPPG Banjarnegara (pengiriman tgl 11);-;1112;18261345;0
+;21/02/2026;Pelunasan Piutang SPPG Banjarnegara (pengiriman tgl 11);-;1121;0;18261345
+;21/02/2026;Pelunasan Piutang SPPG Banjarnegara (pengiriman tgl 13);-;1112;22158100;0
+;21/02/2026;Pelunasan Piutang SPPG Banjarnegara (pengiriman tgl 13);-;1121;0;22158100
+;21/02/2026;Kas bon pak sodik;-;1121;5000000;0
+;21/02/2026;Kas bon pak sodik;-;1112;0;5000000
+;22/02/2026;Pelunasan Piutang SPPG Banjarnegara (pengiriman tgl 10);-;1112;22284650;0
+;22/02/2026;Pelunasan Piutang SPPG Banjarnegara (pengiriman tgl 10);-;1121;0;22284650
+;22/02/2026;Reimburse pembelian bbm ke mas denny;-;2142;100000;0
+;22/02/2026;Reimburse pembelian bbm ke mas denny;-;1111;0;100000
+;22/02/2026;Pembelian bbm;-;5172;200000;0
+;22/02/2026;Pembelian bbm;-;1111;0;200000
+;22/02/2026;Pembelian telur 20 peti di tadus;-;1131;5720000;0
+;22/02/2026;Pembelian telur 20 peti di tadus;-;2111;0;5720000
+;22/02/2026;Pembelian abon ayam 15kg di bu fitri;-;1131;3000000;0
+;22/02/2026;Pembelian abon ayam 15kg di bu fitri;-;2111;0;3000000
+;22/02/2026;Pembelian kurma 2112 pcs di pradipta;-;1131;2762500;0
+;22/02/2026;Pembelian kurma 2112 pcs di pradipta;-;2111;0;2762500
+;22/02/2026;Pembelian roti premium 2609 pcs;-;1131;7566100;0
+;22/02/2026;Pembelian roti premium 2609 pcs;-;2111;0;7566100
+;22/02/2026;Pembelian buah apel fuji dan jeruk santang (pengiriman tgl 23 feb);-;1131;16355000;0
+;22/02/2026;Pembelian buah apel fuji dan jeruk santang (pengiriman tgl 23 feb);-;5211;1554595;0
+;22/02/2026;Pembelian buah apel fuji dan jeruk santang (pengiriman tgl 23 feb);-;1112;0;17909595
+;22/02/2026;Pengiriman SPPG Kutabanjarnegara;-;5111;24904058;0
+;22/02/2026;Pengiriman SPPG Kutabanjarnegara;-;2111;0;24904058
+;22/02/2026;Pengiriman SPPG Kutabanjarnegara;-;1121;26097350;0
+;22/02/2026;Pengiriman SPPG Kutabanjarnegara;-;4111;0;26097350
+;22/02/2026;Pembelian bawang putih;-;1131;22200;0
+;22/02/2026;Pembelian bawang putih;-;1111;0;22200
+;22/02/2026;Pembelian indomilk full cream;-;1131;11390000;0
+;22/02/2026;Pembelian indomilk full cream;-;1112;0;11390000
+;22/02/2026;Pembelian akomodasi makan mas deny;-;5171;90000;0
+;22/02/2026;Pembelian akomodasi makan mas deny;-;2141;0;90000
+;22/02/2026;Pembelian BBM;-;5172;100000;0
+;22/02/2026;Pembelian BBM;-;2142;0;100000
+;22/02/2026;Akomodasi makan;-;5171;90000;0
+;22/02/2026;Akomodasi makan;-;2141;0;90000
+;22/02/2026;Pembelian BBM;-;5172;100000;0
+;22/02/2026;Pembelian BBM;-;2142;0;100000
+;22/02/2026;Pembelian BBM;-;5172;100000;0
+;22/02/2026;Pembelian BBM;-;2142;0;100000
+;22/02/2026;Akomodasi makan;-;5171;90000;0
+;22/02/2026;Akomodasi makan;-;1111;0;90000
+;23/02/2026;Akomodasi makan;-;5171;50000;0
+;23/02/2026;Akomodasi makan;-;2141;0;50000
+;23/02/2026;Pembelian ubi cilembu 305kg;-;1131;5490000;0
+;23/02/2026;Pembelian ubi cilembu 305kg;-;1112;0;5490000
+;23/02/2026;Pembelian bawang putih;-;1131;51000;0
+;23/02/2026;Pembelian bawang putih;-;1112;0;51000
+;23/02/2026;Pembelian bawang merah;-;1131;585000;0
+;23/02/2026;Pembelian bawang merah;-;1112;0;585000
+;23/02/2026;Akomodasi makan;-;5171;25000;0
+;23/02/2026;Akomodasi makan;-;1111;0;25000
+;23/02/2026;Akomodasi makan;-;5171;50000;0
+;23/02/2026;Akomodasi makan;-;1111;0;50000
+;23/02/2026;Pembelian roti selai;-;1131;6261600;0
+;23/02/2026;Pembelian roti selai;-;2111;0;6261600
+;23/02/2026;Pengiriman SPPG Kutabanjarnegara;-;5111;25314650;0
+;23/02/2026;Pengiriman SPPG Kutabanjarnegara;-;1131;0;25314650
+;23/02/2026;Pengiriman SPPG Kutabanjarnegara;-;1121;26537750;0
+;23/02/2026;Pengiriman SPPG Kutabanjarnegara;-;4111;0;26537750
+;23/02/2026;Pengiriman SPPG Wanayasa;-;5111;20839000;0
+;23/02/2026;Pengiriman SPPG Wanayasa;-;1131;0;20839000
+;23/02/2026;Pengiriman SPPG Wanayasa;-;1121;21976000;0
+;23/02/2026;Pengiriman SPPG Wanayasa;-;4111;0;21976000
+;23/02/2026;Pelunasan piutang SPPG Wanayasa;-;1112;13830500;0
+;23/02/2026;Pelunasan piutang SPPG Wanayasa;-;1121;0;13830500
+;23/02/2026;Pembelian indomilk full cream 90;-;1131;12105000;0
+;23/02/2026;Pembelian indomilk full cream 90;-;1112;0;12105000
+;23/02/2026;Pembelian akomodasi makan mas deny;-;5171;50000;0
+;23/02/2026;Pembelian akomodasi makan mas deny;-;2141;0;50000
+;23/02/2026;Pembelian BBM;-;5172;100000;0
+;23/02/2026;Pembelian BBM;-;2142;0;100000
+;23/02/2026;Pembelian BBM;-;5172;100000;0
+;23/02/2026;Pembelian BBM;-;2142;0;100000
+;24/02/2026;Pembelian BBM;-;5172;100000;0
+;24/02/2026;Pembelian BBM;-;2142;0;100000
+;24/02/2026;Pembelian BBM;-;5172;100000;0
+;24/02/2026;Pembelian BBM;-;2142;0;100000
+;24/02/2026;Pembelian BBM;-;5172;200000;0
+;24/02/2026;Pembelian BBM;-;1111;0;200000
+;24/02/2026;Pembelian abon ayam 2609pcs;-;1131;10500000;0
+;24/02/2026;Pembelian abon ayam 2609pcs;-;2111;0;10500000
+;24/02/2026;Pembelian roti selai nanas/blueberry 2609pcs;-;1131;6261600;0
+;24/02/2026;Pembelian roti selai nanas/blueberry 2609pcs;-;2111;0;6261600
+;24/02/2026;Pembelian pisang 2609 pcs;-;1131;5218000;0
+;24/02/2026;Pembelian pisang 2609 pcs;-;1112;0;5218000
+;24/02/2026;Pembelian strawberry 147kg;-;1131;6615000;0
+;24/02/2026;Pembelian strawberry 147kg;-;1112;0;6615000
+;24/02/2026;Pembelian strawberry 7;-;1131;70000;0
+;24/02/2026;Pembelian strawberry 7;-;1111;0;70000
+;24/02/2026;Pembelian strawberry 50 poch;-;1131;450000;0
+;24/02/2026;Pembelian strawberry 50 poch;-;1111;0;450000
+;24/02/2026;Pembelian strawberry 14 bungkus;-;1131;196000;0
+;24/02/2026;Pembelian strawberry 14 bungkus;-;1111;0;196000
+;24/02/2026;Pembelian bawang putih 11kg;-;1131;450000;0
+;24/02/2026;Pembelian bawang putih 11kg;-;1111;0;450000
+;24/02/2026;Pembelian bawang merah 11kg;-;1131;550000;0
+;24/02/2026;Pembelian bawang merah 11kg;-;1111;0;550000
+;24/02/2026;Pembelian apel 40kg;-;1131;1400000;0
+;24/02/2026;Pembelian apel 40kg;-;1111;0;1400000
+;24/02/2026;Pembelian carica;-;1131;6912000;0
+;24/02/2026;Pembelian carica;-;1112;0;6912000
+;24/02/2026;Service mobil box di mobil box tomo;-;5161;785000;0
+;24/02/2026;Service mobil box di mobil box tomo;-;1111;0;785000
+;24/02/2026;Akomodasi makan;-;5171;25000;0
+;24/02/2026;Akomodasi makan;-;1111;0;25000
+;24/02/2026;Cuci mobil;-;5161;45000;0
+;24/02/2026;Cuci mobil;-;1111;0;45000
+;24/02/2026;Pengiriman SPPG Kutabanjarnegara;-;5111;21678181;0
+;24/02/2026;Pengiriman SPPG Kutabanjarnegara;-;1131;0;21678181
+;24/02/2026;Pengiriman SPPG Kutabanjarnegara;-;1121;25307300;0
+;24/02/2026;Pengiriman SPPG Kutabanjarnegara;-;4111;0;25307300
+;24/02/2026;Pengiriman SPPG Wanayasa;-;5111;20839000;0
+;24/02/2026;Pengiriman SPPG Wanayasa;-;1131;0;20839000
+;24/02/2026;Pengiriman SPPG Wanayasa;-;1121;21976000;0
+;24/02/2026;Pengiriman SPPG Wanayasa;-;4111;0;21976000
+;24/02/2026;Pelunasan piutang sppg Susukan beras 400kg (pengiriman tgl 8feb);-;2151;6000000;0
+;24/02/2026;Pelunasan piutang sppg Susukan beras 400kg (pengiriman tgl 8feb);-;1121;0;6000000
+;24/02/2026;Akomodasi makan;-;5171;65000;0
+;24/02/2026;Akomodasi makan;-;2141;0;65000
+;24/02/2026;Pelunasan hutang ke marsem;-;2111;32400000;0
+;24/02/2026;Pelunasan hutang ke marsem;-;5221;2500;0
+;24/02/2026;Pelunasan hutang ke marsem;-;1112;0;32402500
+;24/02/2026;Pelunasan utang ke rizqi septiyanto;-;2111;5218000;0
+;24/02/2026;Pelunasan utang ke rizqi septiyanto;-;1112;0;5218000
+;24/02/2026;Pelunasan hutang ke rizqi septiyanto;-;2111;8964000;0
+;24/02/2026;Pelunasan hutang ke rizqi septiyanto;-;1112;0;8964000
+;24/02/2026;Pelunasan piutang MBG wanayasa (pengiriman 13 feb);-;1112;8320500;0
+;24/02/2026;Pelunasan piutang MBG wanayasa (pengiriman 13 feb);-;1121;0;8320500
+;24/02/2026;akomodasi makan;-;5171;50000;0
+;24/02/2026;akomodasi makan;-;1111;0;50000
+;25/02/2026;Pembelian bbm;-;5172;50000;0
+;25/02/2026;Pembelian bbm;-;1111;0;50000
+;25/02/2026;Kas bon belanja persediaan;-;1121;2000000;0
+;25/02/2026;Kas bon belanja persediaan;-;1112;0;2000000
+;25/02/2026;Pelunasan kas bon belanja persediaan;-;1111;2000000;0
+;25/02/2026;Pelunasan kas bon belanja persediaan;-;1121;0;2000000
+;25/02/2026;Pembelian perlengkapan lampu rem;-;5161;12000;0
+;25/02/2026;Pembelian perlengkapan lampu rem;-;1111;0;12000
+;25/02/2026;Perbaikan lampu mobil dan jasa pasang;-;5161;154000;0
+;25/02/2026;Perbaikan lampu mobil dan jasa pasang;-;1111;0;154000
+;25/02/2026;Pembelian kurma 100kg;-;1131;3250000;0
+;25/02/2026;Pembelian kurma 100kg;-;2111;0;3250000
+;25/02/2026;pembelian makan mas diki;-;5171;25000;0
+;25/02/2026;pembelian makan mas diki;-;1111;0;25000
+;25/02/2026;Pembelian bbm;-;5172;150000;0
+;25/02/2026;Pembelian bbm;-;1111;0;150000
+;25/02/2026;Pembelian barang persediaan;-;1131;1113600;0
+;25/02/2026;Pembelian barang persediaan;-;1111;0;1113600
+;25/02/2026;Pembelian barang persediaan di P&D Aroma;-;1131;762600;0
+;25/02/2026;Pembelian barang persediaan di P&D Aroma;-;1111;0;762600
+;25/02/2026;Pembelian ubi ungu;-;1131;3880000;0
+;25/02/2026;Pembelian ubi ungu;-;1111;0;3880000
+;25/02/2026;Pembelian susu kental manis merk 3 sapi;-;1131;52000;0
+;25/02/2026;Pembelian susu kental manis merk 3 sapi;-;1111;0;52000
+;25/02/2026;Pembelian margarin balok pastry flake;-;1131;231600;0
+;25/02/2026;Pembelian margarin balok pastry flake;-;1111;0;231600
+;25/02/2026;Pembelian kacang telur;-;1131;3070000;0
+;25/02/2026;Pembelian kacang telur;-;2111;0;3070000
+;25/02/2026;Pembelian BBM;-;5172;200000;0
+;25/02/2026;Pembelian BBM;-;1111;0;200000
+;25/02/2026;Pembelian pisang ambon 2609;-;1131;5218000;0
+;25/02/2026;Pembelian pisang ambon 2610;-;1112;0;5218000
+;25/02/2026;Pembelian susu indomilk full cream 63;-;1131;8946000;0
+;25/02/2026;Pembelian susu indomilk full cream 64;-;1112;0;8946000
+;25/02/2026;Kas bon belanja pak sodik;-;1121;2000000;0
+;25/02/2026;Kas bon belanja pak sodik;-;1112;0;2000000
+;25/02/2026;Pengiriman SPPG Banjarnegara;-;5111;13971900;0
+;25/02/2026;Pengiriman SPPG Banjarnegara;-;1131;0;13971900
+;25/02/2026;Pembelian lampu rem;-;5151;12000;0
+;25/02/2026;Pembelian lampu rem;-;1111;0;12000
+;25/02/2026;Perbaikan lampu mobil dan jasa pasang;-;5151;154000;0
+;25/02/2026;Perbaikan lampu mobil dan jasa pasang;-;1111;0;154000
+;25/02/2026;Pembelian makan mas diki;-;5171;25000;0
+;25/02/2026;Pembelian makan mas diki;-;1111;0;25000
+;25/02/2026;Pengiriman SPPG Banjarnegara;-;1121;15723450;0
+;25/02/2026;Pengiriman SPPG Banjarnegara;-;4111;0;15723450
+;26/02/2026;Pelunasan kas bon belanja persediaan;-;1111;5000000;0
+;26/02/2026;Pelunasan kas bon belanja persediaan;-;1121;0;5000000
+;26/02/2026;Kas rekening keluar ke kas harian;-;1111;2000000;0
+;26/02/2026;Kas rekening keluar ke kas harian;-;1112;0;2000000
+;26/02/2026;Pembelian susu UHT 142;-;1131;19170000;0
+;26/02/2026;Pembelian susu UHT 142;-;1112;0;19170000
+;26/02/2026;Pembelian telur tadus;-;1131;4896000;0
+;26/02/2026;Pembelian telur tadus;-;2111;0;4896000
+;26/02/2026;Kas bon belanja persediaan keju;-;1121;3500000;0
+;26/02/2026;Kas bon belanja persediaan keju;-;1111;0;3500000
+;26/02/2026;Pembelian gas;-;5151;22000;0
+;26/02/2026;Pembelian gas;-;1111;0;22000
+;26/02/2026;Parkir;-;5191;21000;0
+;26/02/2026;Parkir;-;1111;0;21000
+;26/02/2026;Reimburse Akomodasi makan;-;2141;25000;0
+;26/02/2026;Reimburse Akomodasi makan;-;1111;0;25000
+;26/02/2026;Akomodasi makan;-;5171;22000;0
+;26/02/2026;Akomodasi makan;-;2141;0;22000
+;26/02/2026;Pembelian barang persediaan keju di toko intisari;-;1131;2534100;0
+;26/02/2026;Pembelian barang persediaan keju di toko intisari;-;1111;0;2534100
+;26/02/2026;Pembelian barang persediaan di rita pasar raya;-;1131;464400;0
+;26/02/2026;Pembelian barang persediaan di rita pasar raya;-;1111;0;464400
+;26/02/2026;Pembelian barang persediaan di indogrosir pwt;-;1131;328357;0
+;26/02/2026;Pembelian barang persediaan di indogrosir pwt;-;1111;0;328357
+;26/02/2026;Akomodasi makan;-;5171;22000;0
+;26/02/2026;Akomodasi makan;-;2141;0;22000
+;26/02/2026;Pengiriman SPPG Banjarnegara;-;5111;38970940;0
+;26/02/2026;Pengiriman SPPG Banjarnegara;-;1131;0;38970940
+;26/02/2026;Pengiriman SPPG Banjarnegara;-;1121;44910000;0
+;26/02/2026;Pengiriman SPPG Banjarnegara;-;4111;0;44910000
+;26/02/2026;Pelunasan piutang SPPG Banjarnegara;-;1112;26097350;0
+;26/02/2026;Pelunasan piutang SPPG Banjarnegara;-;1121;0;26097350
+;26/02/2026;Pelunasan piutang SPPG Banjarnegara;-;1112;26537750;0
+;26/02/2026;Pelunasan piutang SPPG Banjarnegara;-;1121;0;26537750
+;26/02/2026;Pembayaran utang ke Dwi saputra wulan;-;2111;10596000;0
+;26/02/2026;Pembayaran utang ke Dwi saputra wulan;-;5221;2500;0
+;26/02/2026;Pembayaran utang ke Dwi saputra wulan;-;1112;0;10598500
+;26/02/2026;Pembayaran utang susu ke Andrianto;-;2111;7290000;0
+;26/02/2026;Pembayaran utang susu ke Andrianto;-;5221;2500;0
+;26/02/2026;Pembayaran utang susu ke Andrianto;-;1112;0;7292500
+;26/02/2026;Pembayaran utang stawberry ke Khamyati;-;2111;6300000;0
+;26/02/2026;Pembayaran utang stawberry ke Khamyati;-;1112;0;6300000
+;26/02/2026;Pelunasan piutang SPPG Banjarnegara;-;1112;25307300;0
+;26/02/2026;Pelunasan piutang SPPG Banjarnegara;-;1121;0;25307300
+;26/02/2026;Pembayaran utang ke sidi hartono;-;2111;4511000;0
+;26/02/2026;Pembayaran utang ke sidi hartono;-;1112;0;4511000
+;26/02/2026;Pembayaran utang ke Triyono;-;2111;19170000;0
+;26/02/2026;Pembayaran utang ke Triyono;-;1112;0;19170000
+;26/02/2026;akomodasi makan;-;5171;22000;0
+;26/02/2026;akomodasi makan;-;1111;0;22000
+;27/02/2026;Kas rekening keluar ke rekening triana;-;1111;3070000;0
+;27/02/2026;Kas rekening keluar ke rekening triana;-;1112;0;3070000
+;27/02/2026;Pembelian apel fuji 316kg;-;1131;10270000;0
+;27/02/2026;Pembelian apel fuji 316kg;-;2111;0;10270000
+;27/02/2026;Pembelian kurma 80kg;-;1131;2600000;0
+;27/02/2026;Pembelian kurma 80kg;-;1111;0;2600000
+;27/02/2026;Pembayaran sewa mobil grandmax;-;5133;4000000;0
+;27/02/2026;Pembayaran sewa mobil grandmax;-;1112;0;4000000
+;27/02/2026;Pelunasan utang kacang telur;-;2111;3070000;0
+;27/02/2026;Pelunasan utang kacang telur;-;1112;0;3070000
+;27/02/2026;Pelunasan utang jeruk santang;-;2111;3510000;0
+;27/02/2026;Pelunasan utang jeruk santang;-;1112;0;3510000
+;27/02/2026;Pelunasan utang ke bu lis selain minyak;-;2111;18075400;0
+;27/02/2026;Pelunasan utang ke bu lis selain minyak;-;5221;2500;0
+;27/02/2026;Pelunasan utang ke bu lis selain minyak;-;1112;0;18077900
+;27/02/2026;Pembayaran sewa mobil L300 Januari ke Pak Safrudin;-;5133;6000000;0
+;27/02/2026;Pembayaran sewa mobil L300 Januari ke Pak Safrudin;-;5221;2500;0
+;27/02/2026;Pembayaran sewa mobil L300 Januari ke Pak Safrudin;-;1112;0;6002500
+;27/02/2026;Beban gaji februari Triana;-;5121;1558000;0
+;27/02/2026;Beban gaji februari Triana;-;2121;0;1558000
+;27/02/2026;Beban gaji februari Pak Sodik;-;5121;2327000;0
+;27/02/2026;Beban gaji februari Pak Sodik;-;2121;0;2327000
+;27/02/2026;Beban gaji februari Mas Diki;-;5121;1558000;0
+;27/02/2026;Beban gaji februari Mas Diki;-;2121;0;1558000
+;27/02/2026;Beban gaji Februari amel;-;5121;1487000;0
+;27/02/2026;Beban gaji Februari amel;-;2121;0;1487000
+;27/02/2026;Beban sewa gedung Januari;-;2132;3000000;0
+;27/02/2026;Beban sewa gedung Januari;-;1112;0;3000000

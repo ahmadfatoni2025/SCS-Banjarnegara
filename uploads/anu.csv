@@ -1,0 +1,47 @@
+NO;Tanggal;Transaksi;Keterangan;Kode Akun;Debit;Kredit
+1;01/12/2025;Pembelian stok awal bulan (Susu Ultra 100 karton);kredit;1131;12500000;0
+1;01/12/2025;Pembelian stok awal bulan (Susu Ultra 100 karton);kredit;2111;0;12500000
+2;01/12/2025;Pembayaran sewa pick-up operasional;tunai;5181;300000;0
+2;01/12/2025;Pembayaran sewa pick-up operasional;tunai;1111;0;300000
+3;02/12/2025;Penjualan Harian Bazar Klampok;tunai;1111;2500000;0
+3;02/12/2025;Penjualan Harian Bazar Klampok;tunai;4111;0;2500000
+4;02/12/2025;HPP Penjualan Bazar Klampok;penyesuaian;5111;2100000;0
+4;02/12/2025;HPP Penjualan Bazar Klampok;penyesuaian;1131;0;2100000
+5;03/12/2025;Pelunasan Utang ke Bu Lis (Tagihan Nov);transfer;2111;5000000;0
+5;03/12/2025;Pelunasan Utang ke Bu Lis (Tagihan Nov);transfer;1112;0;5000000
+6;04/12/2025;Pembelian ATK dan Kertas Nota;tunai;1141;150000;0
+6;04/12/2025;Pembelian ATK dan Kertas Nota;tunai;1111;0;150000
+7;05/12/2025;Pemesanan dari SPPG Susukan;kredit;1121;8500000;0
+7;05/12/2025;Pemesanan dari SPPG Susukan;kredit;4111;0;8500000
+8;05/12/2025;Pengiriman Barang SPPG Susukan (HPP);kredit;5111;7200000;0
+8;05/12/2025;Pengiriman Barang SPPG Susukan (HPP);kredit;1131;0;7200000
+9;06/12/2025;Biaya BBM Pengiriman;uang Mas Denny;5181;100000;0
+9;06/12/2025;Biaya BBM Pengiriman;uang Mas Denny;1111;0;100000
+10;07/12/2025;Akomodasi Makan Siang Tim Gudang;tunai;5171;75000;0
+10;07/12/2025;Akomodasi Makan Siang Tim Gudang;tunai;1111;0;75000
+11;08/12/2025;Pembelian Sayur Mayur (Wortel, Kubis, Sawi);tunai;1131;850000;0
+11;08/12/2025;Pembelian Sayur Mayur (Wortel, Kubis, Sawi);tunai;1111;0;850000
+12;10/12/2025;Penerimaan Pelunasan Piutang SPPG Merden;transfer;1112;15000000;0
+12;10/12/2025;Penerimaan Pelunasan Piutang SPPG Merden;transfer;1121;0;15000000
+13;12/12/2025;Biaya Listrik dan Air Bulan November;transfer;5121;450000;0
+13;12/12/2025;Biaya Listrik dan Air Bulan November;transfer;1112;0;450000
+14;15/12/2025;Pembelian Telur 500kg (Supplier Pak Eko);kredit;1131;13500000;0
+14;15/12/2025;Pembelian Telur 500kg (Supplier Pak Eko);kredit;2111;0;13500000
+15;18/12/2025;Retur Pembelian Telur Pecah (5kg);retur;2111;135000;0
+15;18/12/2025;Retur Pembelian Telur Pecah (5kg);retur;1131;0;135000
+16;20/12/2025;Pemesanan Besar Akhir Tahun SPPG MBS;kredit;1121;25000000;0
+16;20/12/2025;Pemesanan Besar Akhir Tahun SPPG MBS;kredit;4111;0;25000000
+17;20/12/2025;HPP Pesanan Akhir Tahun;kredit;5111;21500000;0
+17;20/12/2025;HPP Pesanan Akhir Tahun;kredit;1131;0;21500000
+18;23/12/2025;Biaya Service Mobil Box;tunai;5141;1200000;0
+18;23/12/2025;Biaya Service Mobil Box;tunai;1111;0;1200000
+19;25/12/2025;Bonus Natal dan Akhir Tahun Karyawan;transfer;5151;5000000;0
+19;25/12/2025;Bonus Natal dan Akhir Tahun Karyawan;transfer;1112;0;5000000
+20;28/12/2025;Penjualan Sisa Stok (Cuci Gudang);tunai;1111;3000000;0
+20;28/12/2025;Penjualan Sisa Stok (Cuci Gudang);tunai;4111;0;3000000
+21;28/12/2025;HPP Cuci Gudang;penyesuaian;5111;2800000;0
+21;28/12/2025;HPP Cuci Gudang;penyesuaian;1131;0;2800000
+22;30/12/2025;Pelunasan Utang Dagang ke SBS;transfer;2111;10000000;0
+22;30/12/2025;Pelunasan Utang Dagang ke SBS;transfer;1112;0;10000000
+23;31/12/2025;Stock Opname (Penyesuaian Barang Hilang/Rusak);adjustment;5161;250000;0
+23;31/12/2025;Stock Opname (Penyesuaian Barang Hilang/Rusak);adjustment;1131;0;250000

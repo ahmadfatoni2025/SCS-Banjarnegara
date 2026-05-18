@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+    <rect width="512" height="512" fill="#3498db" rx="50"/>
+    <text x="256" y="256" font-family="Arial" font-size="100" fill="white" text-anchor="middle" dy=".3em">SCS</text>
+    <text x="256" y="350" font-family="Arial" font-size="40" fill="white" text-anchor="middle">BANJARNEGARA</text>
+</svg>

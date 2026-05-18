@@ -1,0 +1,41 @@
+NO;Tanggal;Transaksi;Keterangan;Kode Akun;Debit;Kredit
+1;01/11/2024;Setoran Modal Tambahan Pemilik;modal;1112;200000000;0
+1;01/11/2024;Setoran Modal Tambahan Pemilik;modal;3111;0;200000000
+2;02/11/2024;Pembayaran Sewa Gudang Tambahan (1 Tahun);tunai;5181;15000000;0
+2;02/11/2024;Pembayaran Sewa Gudang Tambahan (1 Tahun);tunai;1112;0;15000000
+3;05/11/2024;Pembelian Stok Barang Persediaan (Grosir);kredit;1131;50000000;0
+3;05/11/2024;Pembelian Stok Barang Persediaan (Grosir);kredit;2111;0;50000000
+4;10/11/2024;Penjualan Partai Besar ke Mitra;transfer;1112;85000000;0
+4;10/11/2024;Penjualan Partai Besar ke Mitra;transfer;4111;0;85000000
+5;10/11/2024;HPP Penjualan Partai Besar;penyesuaian;5111;60000000;0
+5;10/11/2024;HPP Penjualan Partai Besar;penyesuaian;1131;0;60000000
+6;15/11/2024;Biaya Iklan dan Promosi Digital;tunai;5171;2000000;0
+6;15/11/2024;Biaya Iklan dan Promosi Digital;tunai;1111;0;2000000
+7;20/11/2024;Pelunasan Utang Dagang (Sebagian);transfer;2111;25000000;0
+7;20/11/2024;Pelunasan Utang Dagang (Sebagian);transfer;1112;0;25000000
+8;25/11/2024;Penjualan Tunai Harian Toko;tunai;1111;15000000;0
+8;25/11/2024;Penjualan Tunai Harian Toko;tunai;4111;0;15000000
+9;25/11/2024;HPP Penjualan Tunai;penyesuaian;5111;10000000;0
+9;25/11/2024;HPP Penjualan Tunai;penyesuaian;1131;0;10000000
+10;30/11/2024;Pembayaran Gaji Karyawan November;transfer;5151;8000000;0
+10;30/11/2024;Pembayaran Gaji Karyawan November;transfer;1112;0;8000000
+11;01/12/2024;Pembelian Stok Barang Akhir Tahun;kredit;1131;75000000;0
+11;01/12/2024;Pembelian Stok Barang Akhir Tahun;kredit;2111;0;75000000
+12;05/12/2024;Penjualan Project Akhir Tahun (SPPG);piutang;1121;120000000;0
+12;05/12/2024;Penjualan Project Akhir Tahun (SPPG);piutang;4111;0;120000000
+13;05/12/2024;HPP Penjualan Project;penyesuaian;5111;85000000;0
+13;05/12/2024;HPP Penjualan Project;penyesuaian;1131;0;85000000
+14;10/12/2024;Biaya Operasional (Listrik & Air);tunai;5121;1500000;0
+14;10/12/2024;Biaya Operasional (Listrik & Air);tunai;1111;0;1500000
+15;15/12/2024;Penerimaan Pelunasan Piutang Project;transfer;1112;120000000;0
+15;15/12/2024;Penerimaan Pelunasan Piutang Project;transfer;1121;0;120000000
+16;20/12/2024;Pelunasan Utang Pembelian Stok (Des);transfer;2111;75000000;0
+16;20/12/2024;Pelunasan Utang Pembelian Stok (Des);transfer;1112;0;75000000
+17;24/12/2024;Penjualan Cuci Gudang Natal;tunai;1111;40000000;0
+17;24/12/2024;Penjualan Cuci Gudang Natal;tunai;4111;0;40000000
+18;24/12/2024;HPP Cuci Gudang;penyesuaian;5111;30000000;0
+18;24/12/2024;HPP Cuci Gudang;penyesuaian;1131;0;30000000
+19;28/12/2024;Bonus Akhir Tahun Tim;transfer;5151;10000000;0
+19;28/12/2024;Bonus Akhir Tahun Tim;transfer;1112;0;10000000
+20;31/12/2024;Biaya Admin Bank & Pajak;autodebet;5191;500000;0
+20;31/12/2024;Biaya Admin Bank & Pajak;autodebet;1112;0;500000

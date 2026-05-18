@@ -1,0 +1,1 @@
+npx browser-sync start --proxy "http://localhost:8000" --files "**/*.php, **/*.css"

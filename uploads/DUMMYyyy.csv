@@ -1,0 +1,11 @@
+Tanggal;No. Reff;Keterangan;Kode Akun;Debit;Kredit
+01/01/2025;JU-001;Setoran Modal Awal Owner;10001;10000000;0
+01/01/2025;JU-001;Setoran Modal Awal Owner;30001;0;10000000
+02/01/2025;JU-002;Pembelian Perlengkapan Dapur;10002;500000;0
+02/01/2025;JU-002;Pembelian Perlengkapan Dapur;10001;0;500000
+05/01/2025;JU-003;Pendapatan Penjualan Harian;10001;1500000;0
+05/01/2025;JU-003;Pendapatan Penjualan Harian;40001;0;1500000
+10/01/2025;JU-004;Bayar Tagihan Listrik;50001;300000;0
+10/01/2025;JU-004;Bayar Tagihan Listrik;10001;0;300000
+15/01/2025;JU-005;Utang Belanja Bahan Baku;50002;2000000;0
+15/01/2025;JU-005;Utang Belanja Bahan Baku;20001;0;2000000

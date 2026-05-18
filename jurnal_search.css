@@ -1,0 +1,197 @@
+/* jurnal_search.css */
+/* CSS untuk komponen search jurnal */
+
+/* Search highlight styling */
+.search-highlight {
+    border: 2px solid #F59E0B !important;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1) !important;
+    animation: search-pulse 2s infinite;
+    position: relative;
+    overflow: hidden;
+}
+
+.search-highlight::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(245, 158, 11, 0.1), transparent);
+    animation: search-shimmer 2s infinite;
+}
+
+@keyframes search-pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(245, 158, 11, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
+    }
+}
+
+@keyframes search-shimmer {
+    0% {
+        left: -100%;
+    }
+    100% {
+        left: 100%;
+    }
+}
+
+/* Search match highlight */
+mark.search-match {
+    background-color: #FEF3C7;
+    color: #92400E;
+    padding: 0.1rem 0.3rem;
+    border-radius: 0.25rem;
+    font-weight: 600;
+    animation: match-highlight 0.5s ease-in-out;
+}
+
+@keyframes match-highlight {
+    0% {
+        background-color: #FDE68A;
+        transform: scale(1);
+    }
+    50% {
+        background-color: #FCD34D;
+        transform: scale(1.05);
+    }
+    100% {
+        background-color: #FEF3C7;
+        transform: scale(1);
+    }
+}
+
+/* Search input styling */
+#searchInput {
+    transition: all 0.3s ease;
+    background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%);
+}
+
+#searchInput:focus {
+    background: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.15);
+}
+
+/* Search loading animation */
+#searchLoading .animate-spin {
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Advanced filters animation */
+#advancedSearchFilters {
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Quick stats animation */
+#searchQuickStats .bg-white {
+    transition: all 0.3s ease;
+}
+
+#searchQuickStats .bg-white:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* No results message animation */
+#noResultsMessage {
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .search-highlight {
+        border-width: 1px !important;
+    }
+    
+    #searchInput {
+        padding-left: 2.5rem !important;
+        padding-right: 2.5rem !important;
+    }
+}
+
+/* Filter checkbox styling */
+input[type="checkbox"]:checked {
+    background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
+}
+
+#filterDebit:checked {
+    background-color: #10B981;
+    border-color: #10B981;
+}
+
+#filterKredit:checked {
+    background-color: #EF4444;
+    border-color: #EF4444;
+}
+
+#filterManual:checked {
+    background-color: #3B82F6;
+    border-color: #3B82F6;
+}
+
+#filterOtomatis:checked {
+    background-color: #F59E0B;
+    border-color: #F59E0B;
+}
+
+/* Clear button animation */
+#clearSearch {
+    transition: all 0.2s ease;
+}
+
+#clearSearch:hover {
+    transform: scale(1.1);
+    color: #EF4444 !important;
+}
+
+/* Search results counter pulse */
+#searchResultsCount {
+    animation: count-pulse 2s ease-in-out;
+}
+
+@keyframes count-pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}

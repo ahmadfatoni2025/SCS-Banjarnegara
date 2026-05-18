@@ -1,0 +1,43 @@
+NO;Tanggal;Transaksi;Keterangan;Kode Akun;Debit;Kredit
+1;01/11/2025;Setoran Modal Tambahan untuk Ekspansi 2025;modal;1112;250000000;0
+1;01/11/2025;Setoran Modal Tambahan untuk Ekspansi 2025;modal;3111;0;250000000
+2;02/11/2025;Pembayaran Sewa Armada Pengiriman (Kontrak 1 Thn);tunai;5181;18000000;0
+2;02/11/2025;Pembayaran Sewa Armada Pengiriman (Kontrak 1 Thn);tunai;1112;0;18000000
+3;05/11/2025;Pembelian Stok Besar (Persiapan Akhir Tahun);kredit;1131;85000000;0
+3;05/11/2025;Pembelian Stok Besar (Persiapan Akhir Tahun);kredit;2111;0;85000000
+4;10/11/2025;Penjualan Partai Besar (Mitra Luar Kota);transfer;1112;110000000;0
+4;10/11/2025;Penjualan Partai Besar (Mitra Luar Kota);transfer;4111;0;110000000
+5;10/11/2025;HPP Penjualan Partai Besar;penyesuaian;5111;75000000;0
+5;10/11/2025;HPP Penjualan Partai Besar;penyesuaian;1131;0;75000000
+6;15/11/2025;Biaya Marketing & Endorsement Digital;tunai;5171;3500000;0
+6;15/11/2025;Biaya Marketing & Endorsement Digital;tunai;1111;0;3500000
+7;20/11/2025;Pelunasan Utang Dagang (Oktober);transfer;2111;40000000;0
+7;20/11/2025;Pelunasan Utang Dagang (Oktober);transfer;1112;0;40000000
+8;25/11/2025;Penjualan Retail Toko Fisik (November);tunai;1111;28000000;0
+8;25/11/2025;Penjualan Retail Toko Fisik (November);tunai;4111;0;28000000
+9;25/11/2025;HPP Penjualan Retail;penyesuaian;5111;18500000;0
+9;25/11/2025;HPP Penjualan Retail;penyesuaian;1131;0;18500000
+10;30/11/2025;Gaji Karyawan & Bonus Kinerja November;transfer;5151;12000000;0
+10;30/11/2025;Gaji Karyawan & Bonus Kinerja November;transfer;1112;0;12000000
+11;01/12/2025;Pembelian Stok Tambahan (Susu & Sembako);kredit;1131;60000000;0
+11;01/12/2025;Pembelian Stok Tambahan (Susu & Sembako);kredit;2111;0;60000000
+12;05/12/2025;Penjualan Project Catering Akhir Tahun;piutang;1121;150000000;0
+12;05/12/2025;Penjualan Project Catering Akhir Tahun;piutang;4111;0;150000000
+13;05/12/2025;HPP Project Catering;penyesuaian;5111;98000000;0
+13;05/12/2025;HPP Project Catering;penyesuaian;1131;0;98000000
+14;12/12/2025;Biaya Operasional Kantor (Listrik/Air/Wifi);tunai;5121;2500000;0
+14;12/12/2025;Biaya Operasional Kantor (Listrik/Air/Wifi);tunai;1111;0;2500000
+15;15/12/2025;Penerimaan Pelunasan Piutang Project Catering;transfer;1112;150000000;0
+15;15/12/2025;Penerimaan Pelunasan Piutang Project Catering;transfer;1121;0;150000000
+16;20/12/2025;Pelunasan Utang Pembelian Stok (Desember);transfer;2111;60000000;0
+16;20/12/2025;Pelunasan Utang Pembelian Stok (Desember);transfer;1112;0;60000000
+17;24/12/2025;Penjualan Event Natal & Tahun Baru;tunai;1111;65000000;0
+17;24/12/2025;Penjualan Event Natal & Tahun Baru;tunai;4111;0;65000000
+18;24/12/2025;HPP Penjualan Event;penyesuaian;5111;42000000;0
+18;24/12/2025;HPP Penjualan Event;penyesuaian;1131;0;42000000
+19;28/12/2025;Bonus Akhir Tahun Tim (Reward Target);transfer;5151;15000000;0
+19;28/12/2025;Bonus Akhir Tahun Tim (Reward Target);transfer;1112;0;15000000
+20;30/12/2025;Prive Pemilik (Pengambilan Keuntungan);prive;3112;20000000;0
+20;30/12/2025;Prive Pemilik (Pengambilan Keuntungan);prive;1112;0;20000000
+21;31/12/2025;Biaya Admin Bank & Pajak Final 2025;autodebet;5191;1200000;0
+21;31/12/2025;Biaya Admin Bank & Pajak Final 2025;autodebet;1112;0;1200000

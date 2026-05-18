@@ -1,0 +1,17 @@
+id,tanggal,no_reff,keterangan,keterangan_umum,kode_akun,debit,kredit,created_at,created_by
+NULL,2025-11-02,INV-2025-11-001,Penjualan Barang Partai Besar A,Penjualan,1112,50000000,0,2025-11-02 09:00:00,Admin
+NULL,2025-11-02,INV-2025-11-001,Pendapatan Penjualan Barang A,Penjualan,4111,0,50000000,2025-11-02 09:00:00,Admin
+NULL,2025-11-02,INV-2025-11-001,HPP Penjualan Barang A,HPP,5111,30000000,0,2025-11-02 09:00:00,Admin
+NULL,2025-11-02,INV-2025-11-001,Pengurangan Stok Barang A,HPP,1131,0,30000000,2025-11-02 09:00:00,Admin
+NULL,2025-11-05,PO-2025-11-005,Pembelian Stok Barang Tambahan,Pembelian,1131,20000000,0,2025-11-05 14:00:00,Admin
+NULL,2025-11-05,PO-2025-11-005,Utang Pembelian Stok ke Vendor,Pembelian,2111,0,20000000,2025-11-05 14:00:00,Admin
+NULL,2025-11-10,EXP-2025-11-010,Pembayaran Sewa Tempat November,Beban Operasional,5131,2000000,0,2025-11-10 10:00:00,Admin
+NULL,2025-11-10,EXP-2025-11-010,Keluar Kas Bank untuk Sewa,Beban Operasional,1112,0,2000000,2025-11-10 10:00:00,Admin
+NULL,2025-11-15,EXP-2025-11-015,Bayar Listrik dan Air,Beban Operasional,5141,1500000,0,2025-11-15 11:30:00,Admin
+NULL,2025-11-15,EXP-2025-11-015,Keluar Kas Harian untuk Listrik,Beban Operasional,1111,0,1500000,2025-11-15 11:30:00,Admin
+NULL,2025-11-20,INV-2025-11-020,Penjualan Retail Harian,Penjualan,1111,25000000,0,2025-11-20 16:00:00,Admin
+NULL,2025-11-20,INV-2025-11-020,Pendapatan Penjualan Retail,Penjualan,4111,0,25000000,2025-11-20 16:00:00,Admin
+NULL,2025-11-20,INV-2025-11-020,HPP Penjualan Retail,HPP,5111,15000000,0,2025-11-20 16:00:00,Admin
+NULL,2025-11-20,INV-2025-11-020,Pengurangan Stok Retail,HPP,1131,0,15000000,2025-11-20 16:00:00,Admin
+NULL,2025-11-25,PAY-2025-11-025,Pembayaran Gaji Karyawan,Gaji,5121,5000000,0,2025-11-25 17:00:00,Admin
+NULL,2025-11-25,PAY-2025-11-025,Keluar Kas Bank untuk Gaji,Gaji,1112,0,5000000,2025-11-25 17:00:00,Admin

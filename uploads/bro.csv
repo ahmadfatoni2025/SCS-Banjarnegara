@@ -1,0 +1,47 @@
+NO;Tanggal;Transaksi;Keterangan;Kode Akun;Debit;Kredit
+1;01/01/2024;Setoran Modal Awal Pemilik;modal;1112;500000000;0
+1;01/01/2024;Setoran Modal Awal Pemilik;modal;3111;0;500000000
+2;05/01/2024;Pembelian Inventaris Kantor & Gudang;tunai;1211;25000000;0
+2;05/01/2024;Pembelian Inventaris Kantor & Gudang;tunai;1112;0;25000000
+3;15/01/2024;Pembelian Stok Barang Dagang Q1;kredit;1131;75000000;0
+3;15/01/2024;Pembelian Stok Barang Dagang Q1;kredit;2111;0;75000000
+4;20/02/2024;Penjualan Partai Besar Februari;transfer;1112;45000000;0
+4;20/02/2024;Penjualan Partai Besar Februari;transfer;4111;0;45000000
+5;20/02/2024;HPP Penjualan Februari;penyesuaian;5111;38000000;0
+5;20/02/2024;HPP Penjualan Februari;penyesuaian;1131;0;38000000
+6;10/03/2024;Pembayaran Listrik & Internet Kantor;tunai;5121;750000;0
+6;10/03/2024;Pembayaran Listrik & Internet Kantor;tunai;1111;0;750000
+7;01/04/2024;Pelunasan Utang Dagang (Januari);transfer;2111;50000000;0
+7;01/04/2024;Pelunasan Utang Dagang (Januari);transfer;1112;0;50000000
+8;15/04/2024;Penjualan Momen Lebaran;tunai;1111;120000000;0
+8;15/04/2024;Penjualan Momen Lebaran;tunai;4111;0;120000000
+9;15/04/2024;HPP Penjualan Lebaran;penyesuaian;5111;95000000;0
+9;15/04/2024;HPP Penjualan Lebaran;penyesuaian;1131;0;95000000
+10;05/05/2024;Biaya THR Karyawan;tunai;5151;15000000;0
+10;05/05/2024;Biaya THR Karyawan;tunai;1111;0;15000000
+11;10/06/2024;Restock Barang Gudang;kredit;1131;60000000;0
+11;10/06/2024;Restock Barang Gudang;kredit;2111;0;60000000
+12;15/07/2024;Biaya Perbaikan Kendaraan Operasional;tunai;5141;2500000;0
+12;15/07/2024;Biaya Perbaikan Kendaraan Operasional;tunai;1111;0;2500000
+13;17/08/2024;Penjualan Promo Kemerdekaan;tunai;1111;35000000;0
+13;17/08/2024;Penjualan Promo Kemerdekaan;tunai;4111;0;35000000
+14;17/08/2024;HPP Promo Kemerdekaan;penyesuaian;5111;28000000;0
+14;17/08/2024;HPP Promo Kemerdekaan;penyesuaian;1131;0;28000000
+15;01/09/2024;Pelunasan Sisa Utang Dagang;transfer;2111;25000000;0
+15;01/09/2024;Pelunasan Sisa Utang Dagang;transfer;1112;0;25000000
+16;20/10/2024;Pemesanan Project Katering Besar;kredit;1121;85000000;0
+16;20/10/2024;Pemesanan Project Katering Besar;kredit;4111;0;85000000
+17;20/10/2024;HPP Project Katering;kredit;5111;65000000;0
+17;20/10/2024;HPP Project Katering;kredit;1131;0;65000000
+18;10/11/2024;Biaya Akomodasi & Perjalanan Dinas;uang saku;5171;1500000;0
+18;10/11/2024;Biaya Akomodasi & Perjalanan Dinas;uang saku;1111;0;1500000
+19;01/12/2024;Penerimaan Pelunasan Project Katering;transfer;1112;85000000;0
+19;01/12/2024;Penerimaan Pelunasan Project Katering;transfer;1121;0;85000000
+20;25/12/2024;Penjualan Akhir Tahun 2024;tunai;1111;55000000;0
+20;25/12/2024;Penjualan Akhir Tahun 2024;tunai;4111;0;55000000
+21;25/12/2024;HPP Penjualan Akhir Tahun;penyesuaian;5111;42000000;0
+21;25/12/2024;HPP Penjualan Akhir Tahun;penyesuaian;1131;0;42000000
+22;30/12/2024;Biaya Adm Bank & Pajak Tahunan;autodebet;5191;2000000;0
+22;30/12/2024;Biaya Adm Bank & Pajak Tahunan;autodebet;1112;0;2000000
+23;31/12/2024;Penyusutan Peralatan Tahun 2024;adjust;5131;5000000;0
+23;31/12/2024;Penyusutan Peralatan Tahun 2024;adjust;1212;0;5000000
