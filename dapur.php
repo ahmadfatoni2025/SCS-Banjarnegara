@@ -891,6 +891,20 @@ usort($products, function($a, $b) {
                         </button>
                     </div>
                 </div>
+                
+                <!-- Desktop Cart Summary -->
+                <div class="hidden lg:flex items-center space-x-4 bg-white p-2 rounded-xl border border-gray-200 shadow-sm">
+                    <div class="px-4 border-r border-gray-200">
+                        <p class="text-xs text-gray-500">Total Pesanan</p>
+                        <p id="total-harga-display" class="font-bold text-green-600 text-lg">Rp 0</p>
+                    </div>
+                    <button id="lanjut-bayar-btn" disabled
+                            class="relative bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 disabled:from-gray-400 disabled:to-gray-500 text-white px-6 py-2.5 rounded-lg font-semibold transition-all shadow-md disabled:shadow-none flex items-center space-x-2">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span>Checkout</span>
+                        <span id="total-items-badge" class="absolute -top-2 -right-2 bg-green-600 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center border-2 border-white">0</span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>

@@ -10,10 +10,30 @@ $current_page = basename($_SERVER['PHP_SELF']);
 // Ambil data dari session dengan fallback yang aman
 $user_foto = isset($_SESSION['user']['foto']) ? $_SESSION['user']['foto'] : null;
 $user_nama = isset($_SESSION['user']['nama']) ? $_SESSION['user']['nama'] : 'Administrator';
-$user_role = isset($_SESSION['role']) ? $_SESSION['role'] : 'Admin';
+$user_role = isset($_SESSION['role']) ? strtolower($_SESSION['role']) : 'admin';
+
+// Konfigurasi Portal berdasarkan Role
+$is_admin = ($user_role === 'admin');
+$is_akuntan = in_array($user_role, ['akuntan', 'owner']);
+$is_dapur = ($user_role === 'dapur');
 
 // Konfigurasi Akses Keuangan
-$akses_keuangan = in_array(strtolower($user_role), ['akuntan', 'owner']);
+$akses_keuangan = $is_akuntan;
+
+// Branding berdasarkan role
+if ($is_admin) {
+    $portal_label = 'Admin';
+    $sidebar_gradient = 'from-[#1e293b] to-[#334155]'; // Slate/dark
+    $sidebar_accent = '#94a3b8';
+} elseif ($is_akuntan) {
+    $portal_label = 'Akuntan';
+    $sidebar_gradient = 'from-[#3b82f6] to-[#1d4ed8]'; // Blue
+    $sidebar_accent = '#93c5fd';
+} else {
+    $portal_label = ucfirst($user_role);
+    $sidebar_gradient = 'from-[#059669] to-[#047857]'; // Green for dapur
+    $sidebar_accent = '#6ee7b7';
+}
 $halaman_keuangan = [
     'master_akun.php', 'jurnal_umum.php', 'buku_besar.php', 
     'laba_rugi.php', 'neraca.php', 'arus_kas.php', 
@@ -262,11 +282,11 @@ if (empty($user_foto) || $profile_image_src === 'https://upload.wikimedia.org/wi
 <body class="bg-[#f8f9fa] bg-gradient-to-br from-[#f8f9fa] to-[#e5e7eb]">
   <div id="sidebar-overlay" class="sidebar-overlay transition-opacity duration-300" onclick="toggleMobileSidebar()"></div>
 
-  <aside id="sidebar" class="sidebar bg-gradient-to-br from-[#3b82f6] to-[#1d4ed8]">
+  <aside id="sidebar" class="sidebar bg-gradient-to-br <?php echo $sidebar_gradient; ?>">
     <!-- Brand / Logo Area -->
     <div class="flex items-center justify-between p-5">
         <div class="flex items-center gap-3">
-            <span class="font-bold text-white text-lg brand-text tracking-tight">SCS<span class="font-light text-blue-200"> Akuntan</span></span>
+            <span class="font-bold text-white text-lg brand-text tracking-tight">SCS<span class="font-light" style="color: <?php echo $sidebar_accent; ?>"> <?php echo $portal_label; ?></span></span>
         </div>
         <button onclick="toggleDesktopCollapse()" class="collapse-btn-desktop text-blue-100 hover:text-white transition-colors bg-white/10 hover:bg-white/20 w-8 h-8 rounded-lg flex items-center justify-center">
             <i class="fas fa-bars-staggered text-sm"></i>
@@ -301,11 +321,10 @@ if (empty($user_foto) || $profile_image_src === 'https://upload.wikimedia.org/wi
            <span class="font-semibold text-sm sidebar-text">Dashboard</span>
         </a>
 
-      <?php if ($user_role === 'admin'): ?>
+      <?php if ($is_admin): ?>
       <a href="../index.php" class="nav-link <?php echo ($current_page == 'index.php') ? 'active-menu' : ''; ?>">
         <i class="fas fa-box-open"></i> 
         <span class="font-semibold text-sm sidebar-text flex-1">Inventaris Bahan</span>
-        <span class="sidebar-text text-[10px] font-bold bg-white/20 text-white px-2 py-0.5 rounded-full">12</span>
       </a>
       
       <div class="menu-group-title">Penjualan</div>
@@ -334,7 +353,7 @@ if (empty($user_foto) || $profile_image_src === 'https://upload.wikimedia.org/wi
       </a>
       <?php endif; ?>
 
-      <?php if ($akses_keuangan): ?>
+      <?php if ($is_akuntan): ?>
       <!-- DATA MASTER & INPUT -->
       <div class="menu-group-title">Master & Input</div>
       
@@ -392,10 +411,6 @@ if (empty($user_foto) || $profile_image_src === 'https://upload.wikimedia.org/wi
         <i class="fas fa-gear"></i> 
         <span class="font-semibold text-sm sidebar-text">Settings</span>
       </a>
-      <a href="#" class="nav-link">
-        <i class="fas fa-circle-question"></i> 
-        <span class="font-semibold text-sm sidebar-text">Help Desk</span>
-      </a>
       <a href="../logout.php" class="nav-link hover:text-red-600">
         <i class="fas fa-arrow-right-from-bracket"></i> 
         <span class="font-semibold text-sm sidebar-text">Log out</span>
@@ -419,10 +434,36 @@ if (empty($user_foto) || $profile_image_src === 'https://upload.wikimedia.org/wi
 
   </aside>
 
-  <!-- Mobile Toggle Button (Visible only on mobile) -->
-  <button id="mobile-menu-button" onclick="toggleMobileSidebar()" class="mobile-menu-button fixed top-4 left-4 z-40 bg-white border border-gray-200 text-gray-700 w-10 h-10 rounded-xl shadow-sm hover:bg-gray-50 transition-colors flex items-center justify-center">
-      <i class="fas fa-bars text-lg"></i>
-  </button>
+  <!-- Mobile Top Navigation Bar (Visible only on mobile) -->
+  <div class="mobile-topbar fixed top-0 left-0 right-0 h-14 bg-white/95 backdrop-blur-md border-b border-gray-200/80 z-40 flex items-center justify-between px-4 lg:hidden shadow-sm">
+      <div class="flex items-center w-1/4">
+          <button onclick="toggleMobileSidebar()" class="text-gray-700 hover:text-blue-600 transition-colors w-8 h-8 flex items-center justify-start">
+              <i class="fas fa-bars text-[20px]"></i>
+          </button>
+      </div>
+      <div class="flex-1 flex justify-center items-center w-2/4">
+          <span class="font-bold text-gray-900 text-[17px] tracking-tight">SCS<span class="font-light text-blue-600"> <?php echo $portal_label; ?></span></span>
+      </div>
+      <div class="flex items-center justify-end gap-5 text-gray-600 w-1/4">
+          <button class="w-6 h-6 flex items-center justify-center hover:text-blue-600 transition-colors relative">
+              <i class="fas fa-bell text-[18px]"></i>
+              <span class="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[8px] font-bold w-3.5 h-3.5 rounded-full flex items-center justify-center border border-white">2</span>
+          </button>
+          <a href="../pengaturanAkun.php" class="w-7 h-7 rounded-full overflow-hidden border border-gray-200 shadow-sm shrink-0">
+              <img src="<?php echo htmlspecialchars($profile_image_src); ?>" alt="Profil" class="w-full h-full object-cover">
+          </a>
+      </div>
+  </div>
+
+  <style>
+      /* Memastikan konten tidak tertutup topbar di mobile */
+      @media (max-width: 1024px) {
+          .sidebar-space, .ml-64, .md\:ml-64, .lg\:ml-64 {
+              padding-top: 1rem !important; /* Jarak ekstra di bawah topbar jika dibutuhkan */
+              margin-top: 3.5rem !important; /* h-14 = 3.5rem */
+          }
+      }
+  </style>
 
   <script>
     function handleProfileImageError(img) {

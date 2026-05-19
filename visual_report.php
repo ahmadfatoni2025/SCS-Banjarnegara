@@ -163,7 +163,7 @@ $avg_laba = ($total_p_tahun - $total_b_tahun) / 12;
             <!-- Header Dashboard -->
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                 <div>
-                    <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Selamat Datang Kembali, <?= htmlspecialchars($_SESSION['user']['nama'] ?? 'User') ?></h1>
+                    <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Berada Di, <?= htmlspecialchars($_SESSION['user']['nama'] ?? 'User') ?></h1>
                     <p class="text-sm text-gray-500 mt-1">Pantau dan kendalikan keuangan Anda hari ini untuk kesehatan finansial.</p>
                 </div>
                 
@@ -203,14 +203,6 @@ $avg_laba = ($total_p_tahun - $total_b_tahun) / 12;
                         <h2 class="text-4xl font-extrabold text-gray-900 mb-4"><?= formatRupiah($total_p_tahun) ?></h2>
                         <div class="inline-flex items-center px-2.5 py-1 rounded-md bg-green-50 text-green-600 text-[11px] font-bold tracking-wide mb-6">
                             <i class="fas fa-arrow-up mr-1"></i> Akumulasi tahunan
-                        </div>
-                        <div class="flex space-x-3">
-                            <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-xl text-sm font-semibold transition-colors flex-1 flex justify-center items-center">
-                                <i class="fas fa-arrow-down mr-2"></i>Pemasukan
-                            </button>
-                            <button class="bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-700 px-4 py-3 rounded-xl text-sm font-semibold transition-colors flex-1 flex justify-center items-center">
-                                <i class="fas fa-info-circle mr-2"></i>Detail
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -262,42 +254,48 @@ $avg_laba = ($total_p_tahun - $total_b_tahun) / 12;
 
                 <!-- Right: Overview -> Pendapatan vs Beban -->
                 <div class="lg:col-span-4 bg-white rounded-[24px] p-6 shadow-sm border border-gray-100 flex flex-col">
-                    <div class="flex justify-between items-start mb-6">
-                        <div>
+                    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-6">
+                        <div class="w-full lg:flex-1">
                             <h3 class="font-bold text-gray-900 text-lg mb-4">Ringkasan pendapatan dan beban</h3>
-                            <div class="flex space-x-6">
+                            <div class="flex flex-col sm:flex-row gap-5 sm:gap-6">
                                 <!-- Gross Volume (Pendapatan) -->
-                                <div>
+                                <div class="flex-1 min-w-0">
                                     <div class="flex items-center space-x-1 mb-1">
-                                        <div class="w-2.5 h-2.5 bg-[#4F46E5] rounded-sm"></div>
+                                        <div class="w-2.5 h-2.5 bg-[#4F46E5] rounded-sm shrink-0"></div>
                                         <span class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Pendapatan</span>
                                     </div>
-                                    <div class="flex items-center space-x-2">
-                                        <span class="text-2xl font-extrabold text-gray-900"><?= formatRupiah($total_p_tahun) ?></span>
-                                        <span class="text-[10px] font-bold text-green-600 bg-green-50 px-1.5 py-0.5 rounded"><i class="fas fa-arrow-up mr-1"></i>Akumulasi</span>
+                                    <div class="flex flex-wrap items-center gap-2">
+                                        <span class="text-xl md:text-2xl font-extrabold text-gray-900 truncate whitespace-nowrap"><?= formatRupiah($total_p_tahun) ?></span>
+                                        <span class="text-[10px] font-bold text-green-600 bg-green-50 px-1.5 py-0.5 rounded shrink-0"><i class="fas fa-arrow-up mr-1"></i>Akumulasi</span>
                                     </div>
                                 </div>
                                 <!-- Net Volume (Beban) -->
-                                <div class="border-l border-gray-100 pl-6">
+                                <div class="sm:border-l sm:border-gray-100 sm:pl-6 flex-1 min-w-0 pt-4 sm:pt-0 border-t border-gray-100 sm:border-t-0">
                                     <div class="flex items-center space-x-1 mb-1">
-                                        <div class="w-2.5 h-2.5 bg-gray-300 rounded-sm"></div>
+                                        <div class="w-2.5 h-2.5 bg-gray-300 rounded-sm shrink-0"></div>
                                         <span class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Beban</span>
                                     </div>
-                                    <div class="flex items-center space-x-2">
-                                        <span class="text-2xl font-extrabold text-gray-900"><?= formatRupiah($total_b_tahun) ?></span>
-                                        <span class="text-[10px] font-bold text-rose-500 bg-rose-50 px-1.5 py-0.5 rounded"><i class="fas fa-arrow-down mr-1"></i>Seluruh</span>
+                                    <div class="flex flex-wrap items-center gap-2">
+                                        <span class="text-xl md:text-2xl font-extrabold text-gray-900 truncate whitespace-nowrap"><?= formatRupiah($total_b_tahun) ?></span>
+                                        <span class="text-[10px] font-bold text-rose-500 bg-rose-50 px-1.5 py-0.5 rounded shrink-0"><i class="fas fa-arrow-down mr-1"></i>Seluruh</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="flex items-center space-x-2">
-                         <div class="flex items-center bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm">
-                            <i class="fas fa-calendar-alt mr-2 text-gray-500"></i>
-                            <select name="tahun" onchange="this.form.submit()" class="bg-transparent focus:outline-none cursor-pointer">
-                                <option value="2025" <?= $tahun_aktif == '2025' ? 'selected' : '' ?>>Tahun 2025</option>
-                                <option value="2026" <?= $tahun_aktif == '2026' ? 'selected' : '' ?>>Tahun 2026</option>
-                            </select>
-                        </div>
+                        
+                        <div class="w-full lg:w-auto">
+                            <form action="" method="GET">
+                                <div class="flex items-center bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm w-full justify-between relative">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-calendar-alt mr-2 text-gray-500"></i>
+                                        <select name="tahun" onchange="this.form.submit()" class="bg-transparent focus:outline-none cursor-pointer w-full appearance-none pr-6">
+                                            <option value="2025" <?= $tahun_aktif == '2025' ? 'selected' : '' ?>>Tahun 2025</option>
+                                            <option value="2026" <?= $tahun_aktif == '2026' ? 'selected' : '' ?>>Tahun 2026</option>
+                                        </select>
+                                    </div>
+                                    <i class="fas fa-chevron-down text-[10px] text-gray-400 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                                </div>
+                            </form>
                         </div>
                     </div>
                     <div class="chart-container flex-1" style="min-height: 280px;">

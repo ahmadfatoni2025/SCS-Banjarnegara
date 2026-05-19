@@ -308,87 +308,281 @@ if (isset($_POST['upload_excel'])) {
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <style>body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F1F5F9; }</style>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F8FAFC; }
+        .sidebar-space { margin-left: 16rem; }
+        @media (max-width: 1024px) { .sidebar-space { margin-left: 0; } }
+        /* Custom scrollbar for clean look */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
 </head>
 <body class="text-slate-800">
+    
     <?php include 'sidebar.php'; ?>
-    <div class="md:ml-64 min-h-screen p-8 transition-all duration-300">
-        <div class="max-w-7xl mx-auto mt-10">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- EXPORT -->
-                <div class="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden h-fit">
-                    <div class="bg-gradient-to-r from-indigo-600 to-blue-600 p-8 text-center text-white">
-                        <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4 backdrop-blur-sm">
-                            <i class="fas fa-file-excel text-3xl"></i>
-                        </div>
-                        <h1 class="text-2xl font-bold">Export Data Keuangan</h1>
-                        <p class="text-indigo-100 mt-2">Unduh semua laporan dalam satu file Excel.</p>
+
+    <div class="sidebar-space min-h-screen p-6 md:p-10 transition-all duration-300">
+        <div class="max-w-5xl mx-auto">
+            
+            <!-- Page Header -->
+            <div class="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-2xl bg-white shadow-sm border border-gray-100 flex items-center justify-center text-blue-600">
+                        <i class="fas fa-exchange-alt text-xl"></i>
                     </div>
-                    <div class="p-8">
-                        <form method="POST">
-                            <label class="block text-sm font-bold text-slate-700 mb-2">Pilih Periode Laporan</label>
-                            <div class="flex flex-col md:flex-row gap-3">
-                                <select name="bulan" class="flex-1 p-3 bg-slate-50 border border-slate-300 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-indigo-500 outline-none">
-                                    <option value="0">Semua Bulan (Tahunan)</option>
-                                    <?php 
-                                    for($m=1; $m<=12; $m++) {
-                                        $selected = (date('n') == $m) ? "selected" : "";
-                                        echo "<option value='$m' $selected>".getBulanIndonesia(str_pad($m, 2, '0', STR_PAD_LEFT))."</option>";
-                                    }
-                                    ?>
-                                </select>
-                                <select name="tahun" class="w-full md:w-32 p-3 bg-slate-50 border border-slate-300 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-indigo-500 outline-none">
-                                    <?php 
-                                    $cur = date('Y');
-                                    for($y=$cur; $y>=$cur-3; $y--) echo "<option value='$y'>$y</option>";
-                                    ?>
-                                </select>
-                            </div>
-                            <button type="submit" name="download_excel" class="w-full mt-4 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg shadow-green-600/30 transition-all flex items-center justify-center gap-2">
-                                <i class="fas fa-download"></i> Download Full Report (XLS)
-                            </button>
-                            <div class="mt-6 p-4 bg-blue-50 rounded-xl border border-blue-100 text-sm text-blue-700">
-                                <p class="font-bold mb-1"><i class="fas fa-info-circle mr-1"></i> Informasi:</p>
-                                <p>File Excel yang diunduh akan berisi 6 Sheet (Tab):</p>
-                                <ul class="list-disc list-inside mt-1 ml-1 space-y-1 text-xs text-blue-600">
-                                    <li><b>Sheet 1:</b> Master Akun (COA)</li>
-                                    <li><b>Sheet 2:</b> Jurnal Umum (Detail Transaksi)</li>
-                                    <li><b>Sheet 3:</b> Buku Besar (Mutasi per Akun)</li>
-                                    <li><b>Sheet 4:</b> Laba Rugi (Kinerja Bisnis)</li>
-                                    <li><b>Sheet 5:</b> Neraca (Posisi Harta & Modal)</li>
-                                    <li><b>Sheet 6:</b> Rekapitulasi Periode</li>
-                                    <li><b>Sheet 7:</b> Jurnal Penutup (Tutup Buku)</li>
-                                </ul>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                <!-- IMPORT -->
-                <div class="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden h-fit">
-                    <div class="bg-gradient-to-r from-orange-500 to-red-600 p-8 text-center text-white">
-                        <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4 backdrop-blur-sm">
-                            <i class="fas fa-file-import text-3xl"></i>
-                        </div>
-                        <h1 class="text-2xl font-bold">Import Data Transaksi</h1>
-                        <p class="text-orange-100 mt-2">Upload data Jurnal Umum dari Excel.</p>
-                    </div>
-                    <div class="p-8">
-                        <form method="POST" enctype="multipart/form-data">
-                            <label class="block text-sm font-bold text-slate-700 mb-2">Upload File Excel (CSV)</label>
-                            <div class="mb-4">
-                                <input type="file" name="file_excel" accept=".csv" class="block w-full text-sm text-slate-500 file:mr-4 file:py-3 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100 cursor-pointer border border-slate-300 rounded-xl bg-slate-50 p-1" required>
-                            </div>
-                            <button type="submit" name="upload_excel" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg shadow-blue-600/30 transition-all flex items-center justify-center gap-2">
-                                <i class="fas fa-upload"></i> Upload & Proses Data
-                            </button>
-                            <div class="mt-6 p-4 bg-orange-50 rounded-xl border border-orange-100 text-[10px] text-orange-800 italic">
-                                *Baris dengan Tanggal, Keterangan, Akun, dan Nominal yang sama akan otomatis ditolak jika sudah ada di database.
-                            </div>
-                        </form>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Export & Import Data</h1>
+                        <p class="text-xs text-gray-500 mt-1 font-medium">Kelola pergerakan data sistem (Unduh & Unggah CSV)</p>
                     </div>
                 </div>
             </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-1 gap-8">
+                
+                <!-- EXPORT SECTION (Left) -->
+                <div class="bg-white rounded-[1.5rem] shadow-[0_4px_24px_rgba(0,0,0,0.02)] border border-gray-100 overflow-hidden h-fit">
+                    <div class="p-8">
+                        <div class="flex items-start gap-4 mb-8">
+                            <div class="w-10 h-10 rounded-full border border-gray-200 text-gray-500 flex items-center justify-center shadow-sm shrink-0">
+                                <i class="fas fa-download"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-[15px] font-bold text-gray-900">Download files</h2>
+                                <p class="text-[11px] text-gray-500 mt-0.5">Pilih periode dan export data keuangan ke Excel</p>
+                            </div>
+                        </div>
+
+                        <form method="POST">
+                            <label class="block text-[11px] font-bold text-gray-700 mb-2 uppercase tracking-wide">Pilih Periode Laporan</label>
+                            <div class="flex flex-col sm:flex-row gap-3 mb-6">
+                                <div class="relative flex-1">
+                                    <select name="bulan" class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-xs font-bold text-gray-700 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all appearance-none cursor-pointer shadow-sm">
+                                        <option value="0">Semua Bulan (Tahunan)</option>
+                                        <?php 
+                                        for($m=1; $m<=12; $m++) {
+                                            $selected = (date('n') == $m) ? "selected" : "";
+                                            echo "<option value='$m' $selected>".getBulanIndonesia(str_pad($m, 2, '0', STR_PAD_LEFT))."</option>";
+                                        }
+                                        ?>
+                                    </select>
+                                    <i class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-[10px] text-gray-400 pointer-events-none"></i>
+                                </div>
+                                <div class="relative w-full sm:w-32">
+                                    <select name="tahun" class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-xs font-bold text-gray-700 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all appearance-none cursor-pointer shadow-sm">
+                                        <?php 
+                                        $cur = date('Y');
+                                        for($y=$cur; $y>=$cur-3; $y--) echo "<option value='$y'>$y</option>";
+                                        ?>
+                                    </select>
+                                    <i class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-[10px] text-gray-400 pointer-events-none"></i>
+                                </div>
+                            </div>
+                            
+                            <!-- Premium Information Box -->
+                            <div class="p-5 rounded-[1.25rem] border border-dashed border-gray-200 bg-gray-50/50 mb-8">
+                                <h3 class="text-xs font-bold text-gray-800 flex items-center gap-2 mb-3">
+                                    <i class="fas fa-layer-group text-blue-500"></i> Isi File Excel (6 Sheet)
+                                </h3>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-4">
+                                    <div class="flex items-center gap-2 text-[11px] font-medium text-gray-500"><i class="fas fa-check-circle text-emerald-500 text-[10px]"></i> Master Akun (COA)</div>
+                                    <div class="flex items-center gap-2 text-[11px] font-medium text-gray-500"><i class="fas fa-check-circle text-emerald-500 text-[10px]"></i> Jurnal Umum</div>
+                                    <div class="flex items-center gap-2 text-[11px] font-medium text-gray-500"><i class="fas fa-check-circle text-emerald-500 text-[10px]"></i> Buku Besar</div>
+                                    <div class="flex items-center gap-2 text-[11px] font-medium text-gray-500"><i class="fas fa-check-circle text-emerald-500 text-[10px]"></i> Laba Rugi & Neraca</div>
+                                    <div class="flex items-center gap-2 text-[11px] font-medium text-gray-500"><i class="fas fa-check-circle text-emerald-500 text-[10px]"></i> Rekap Tahunan</div>
+                                    <div class="flex items-center gap-2 text-[11px] font-medium text-gray-500"><i class="fas fa-check-circle text-emerald-500 text-[10px]"></i> Jurnal Penutup</div>
+                                </div>
+                            </div>
+
+                            <button type="submit" name="download_excel" class="w-full bg-gray-900 hover:bg-gray-800 text-white font-bold py-3.5 px-6 rounded-xl text-xs transition-all flex items-center justify-center gap-2 shadow-lg shadow-gray-900/20">
+                                <i class="fas fa-file-excel"></i> Export Laporan
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- IMPORT SECTION (Right - EXACT UI MATCH) -->
+                <div class="bg-white rounded-[1.5rem] shadow-[0_4px_24px_rgba(0,0,0,0.02)] border border-gray-100 overflow-hidden h-fit relative">
+                    <div class="p-8 pb-6">
+                        <div class="flex items-start gap-4 mb-6 relative">
+                            <div class="w-10 h-10 rounded-full border border-gray-200 text-gray-500 flex items-center justify-center shadow-sm shrink-0">
+                                <i class="fas fa-cog"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-[15px] font-bold text-gray-900">Upload files</h2>
+                                <p class="text-[11px] text-gray-500 mt-0.5">Select and upload the files of your choice</p>
+                            </div>
+                            <i class="fas fa-times absolute right-0 top-1 text-gray-400 cursor-pointer hover:text-gray-600 transition-colors"></i>
+                        </div>
+
+                        <form method="POST" id="form-import" enctype="multipart/form-data" onsubmit="handleUploadSubmit(event)">
+                            
+                            <!-- Dropzone -->
+                            <div class="border-[1.5px] border-dashed border-gray-300 rounded-[1.25rem] p-10 text-center relative hover:bg-gray-50/50 transition-colors group mb-4" id="dropzone">
+                                <input type="file" name="file_excel" id="file_excel" accept=".csv" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" required onchange="handleFileSelect(this)">
+                                
+                                <div class="w-10 h-10 rounded-full text-gray-600 flex items-center justify-center mx-auto mb-3 group-hover:-translate-y-1 transition-transform">
+                                    <i class="fas fa-cloud-upload-alt text-[22px]"></i>
+                                </div>
+                                
+                                <h3 class="font-bold text-gray-900 text-[13px] mb-1">Choose a file or drag & drop it here.</h3>
+                                <p class="text-[11px] text-gray-400 mb-6 font-medium">CSV format, up to 10 MB.</p>
+                                
+                                <button type="button" class="bg-gray-50 border border-gray-200 text-gray-800 font-bold py-2 px-5 rounded-[0.5rem] text-[11px] transition-colors pointer-events-none">
+                                    Browse File
+                                </button>
+                            </div>
+
+                            <!-- File Preview Area -->
+                            <div id="file-preview" class="hidden mb-6 border border-gray-200 rounded-xl p-3.5 flex justify-between items-center bg-white shadow-sm">
+                                <div class="flex items-center gap-3 overflow-hidden">
+                                    <div class="w-8 h-8 rounded-lg bg-red-50 border border-red-100 text-red-600 flex items-center justify-center shrink-0">
+                                        <i class="fas fa-file-csv text-[15px]"></i>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <p id="file-name" class="font-bold text-[11px] text-gray-800 truncate leading-tight">data.csv</p>
+                                        <div class="flex items-center gap-1.5 mt-0.5">
+                                            <span id="file-size" class="text-[9px] text-gray-500 font-medium">0 KB of 120 KB</span>
+                                            <span class="w-1 h-1 rounded-full bg-gray-300"></span>
+                                            <span class="text-[9px] font-bold text-emerald-500 flex items-center gap-1"><i class="fas fa-check-circle"></i> Completed</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="button" onclick="clearFile()" class="w-8 h-8 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 flex items-center justify-center transition-colors shrink-0">
+                                    <i class="fas fa-trash-alt text-[11px]"></i>
+                                </button>
+                            </div>
+
+                            <!-- OR Divider -->
+                            <div class="flex items-center gap-4 mb-6">
+                                <div class="h-px bg-gray-200 flex-1"></div>
+                                <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">OR</span>
+                                <div class="h-px bg-gray-200 flex-1"></div>
+                            </div>
+                            
+                            <!-- Import from URL Link -->
+                            <div class="mb-8">
+                                <label class="block text-[10px] font-bold text-gray-700 mb-2">Import from URL Link</label>
+                                <div class="flex border border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-500 transition-all bg-white shadow-sm">
+                                    <div class="px-3 py-2.5 bg-gray-50 border-r border-gray-200 text-gray-500 text-xs font-medium flex items-center">
+                                        http://
+                                    </div>
+                                    <input type="text" placeholder="Paste file URL" class="w-full px-3 py-2.5 text-xs text-gray-700 outline-none disabled:bg-gray-50 disabled:cursor-not-allowed" disabled title="Feature coming soon">
+                                    <div class="px-3 py-2.5 text-gray-400 flex items-center">
+                                        <i class="far fa-question-circle text-[11px]"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Submit Action -->
+                            <button type="submit" name="upload_excel" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-6 rounded-xl text-xs transition-all flex items-center justify-center shadow-lg shadow-blue-600/20">
+                                Upload Now
+                            </button>
+                            
+                        </form>
+                    </div>
+                </div>
+
+            </div>
         </div>
     </div>
+
+    <!-- Progress Modal (Image 2 Match) -->
+    <div id="upload-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-gray-900/10 backdrop-blur-[1px] hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-3xl shadow-2xl border border-gray-100 w-full max-w-[340px] p-6 pb-5 transform scale-95 transition-transform duration-300 relative" id="upload-modal-content">
+            <button type="button" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="flex items-start gap-4 mb-4">
+                <div class="w-10 h-10 rounded-full bg-blue-50 border border-blue-100 text-blue-600 flex items-center justify-center shrink-0">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                </div>
+                <div class="pt-0.5">
+                    <h3 class="font-bold text-gray-900 text-[15px] leading-tight mb-1">Uploading "<span id="uploading-filename" class="text-blue-600 font-semibold truncate max-w-[120px] inline-block align-bottom">file.csv</span>"</h3>
+                    <p class="text-[12px] text-gray-500 font-medium">Please wait while we upload your file.</p>
+                </div>
+            </div>
+            
+            <div class="w-full bg-gray-100 rounded-full h-2 mb-2 overflow-hidden mt-2">
+                <div id="progress-bar" class="bg-blue-600 h-2 rounded-full transition-all duration-300 ease-out w-0"></div>
+            </div>
+            <p id="progress-text" class="text-[11px] font-medium text-gray-600 mb-6">0% uploaded...</p>
+            
+            <div class="flex items-center gap-5 text-[13px] font-bold">
+                <button type="button" class="text-gray-400 hover:text-gray-600 transition-colors">Cancel</button>
+                <button type="button" class="text-gray-900 transition-colors">Upload More</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function handleFileSelect(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                document.getElementById('file-name').innerText = file.name;
+                document.getElementById('uploading-filename').innerText = file.name;
+                
+                let size = file.size / 1024;
+                let sizeStr = size > 1024 ? (size/1024).toFixed(1) + ' MB' : Math.round(size) + ' KB';
+                document.getElementById('file-size').innerText = sizeStr;
+                
+                document.getElementById('file-preview').classList.remove('hidden');
+                document.getElementById('dropzone').classList.add('border-solid', 'border-blue-300', 'bg-blue-50/20');
+                document.getElementById('dropzone').classList.remove('border-dashed', 'border-gray-300');
+            }
+        }
+
+        function clearFile() {
+            document.getElementById('file_excel').value = '';
+            document.getElementById('file-preview').classList.add('hidden');
+            document.getElementById('dropzone').classList.remove('border-solid', 'border-blue-300', 'bg-blue-50/20');
+            document.getElementById('dropzone').classList.add('border-dashed', 'border-gray-300');
+        }
+
+        function handleUploadSubmit(e) {
+            e.preventDefault();
+            const fileInput = document.getElementById('file_excel');
+            if(!fileInput.files.length) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Pilih File',
+                    text: 'Silakan pilih file CSV terlebih dahulu.',
+                    confirmButtonColor: '#2563EB'
+                });
+                return;
+            }
+            
+            // Show Modal
+            const modal = document.getElementById('upload-modal');
+            modal.classList.remove('hidden');
+            
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                document.getElementById('upload-modal-content').classList.remove('scale-95');
+            }, 10);
+            
+            let progress = 0;
+            const bar = document.getElementById('progress-bar');
+            const text = document.getElementById('progress-text');
+            
+            // Simulate Upload Progress Animation
+            const interval = setInterval(() => {
+                progress += Math.random() * 15;
+                if(progress > 95) {
+                    progress = 95;
+                    clearInterval(interval);
+                    // Actual form submit when animation reaches near 100%
+                    setTimeout(() => {
+                        document.getElementById('form-import').submit();
+                    }, 200);
+                }
+                bar.style.width = progress + '%';
+                text.innerText = Math.floor(progress) + '% uploaded...';
+            }, 150);
+        }
+    </script>
+
 </body>
 </html>

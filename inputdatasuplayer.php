@@ -178,35 +178,37 @@ if (isset($_POST['action']) && $_POST['action'] === 'tambah_pembelian') {
     $id_sup = (int)$_POST['id_suplier'];
     $id_brg = (int)$_POST['id_barang'];
     
-    // Validasi Tipe (Harus Stok)
-    $check_q = $koneksi->query("SELECT tipe_pengadaan FROM gudang WHERE id_barang = $id_brg");
-    $check_data = $check_q->fetch_assoc();
-    if ($check_data['tipe_pengadaan'] !== 'Stok') {
+    // Validasi Tipe (Harus Stok) - FIXED: Gunakan Prepared Statement
+    $check_stmt = $koneksi->prepare("SELECT tipe_pengadaan FROM gudang WHERE id_barang = ?");
+    $check_stmt->bind_param("i", $id_brg);
+    $check_stmt->execute();
+    $check_data = $check_stmt->get_result()->fetch_assoc();
+    $check_stmt->close();
+    if (!$check_data || $check_data['tipe_pengadaan'] !== 'Stok') {
         $_SESSION['pesan'] = "Gagal: Barang PO tidak bisa diinput via nota manual.";
         $_SESSION['tipe'] = "error";
         header("Location: inputdatasuplayer.php?tab=hutang&id_suplier=$id_sup");
         exit;
     }
 
-    // Bersihkan format angka (Handle koma desimal dari input tipe number/text)
-    $raw_jumlah = str_replace(',', '.', $_POST['jumlah']);
-    $jumlah = (float)$raw_jumlah;
-
-    $raw_harga = str_replace(',', '.', $_POST['harga_beli']);
-    $harga_beli = (float)$raw_harga;
-    
-    $total = $jumlah * $harga_beli;
-    $catatan = $_POST['catatan'] ?? '';
+    $jumlah    = (float)str_replace(',', '.', $_POST['jumlah']);
+    $harga_beli = (float)str_replace(',', '.', $_POST['harga_beli']);
+    $total     = $jumlah * $harga_beli;
+    $catatan   = trim($_POST['catatan'] ?? '');
 
     $koneksi->begin_transaction();
     try {
         $stmt = $koneksi->prepare("INSERT INTO pembelian_suplier (id_suplier, id_barang, jumlah, harga_beli, total_harga, catatan) VALUES (?, ?, ?, ?, ?, ?)");
+        if (!$stmt) throw new Exception($koneksi->error);
         $stmt->bind_param("iiddds", $id_sup, $id_brg, $jumlah, $harga_beli, $total, $catatan);
         $stmt->execute();
+        $stmt->close();
 
         $stmt_stok = $koneksi->prepare("UPDATE gudang SET stok = stok + ?, harga_beli = ? WHERE id_barang = ?");
+        if (!$stmt_stok) throw new Exception($koneksi->error);
         $stmt_stok->bind_param("ddi", $jumlah, $harga_beli, $id_brg);
         $stmt_stok->execute();
+        $stmt_stok->close();
 
         $koneksi->commit();
         $_SESSION['pesan'] = "Nota pembelian berhasil dicatat!";
@@ -227,15 +229,27 @@ if (isset($_POST['action']) && $_POST['action'] === 'hapus_pembelian') {
 
     $koneksi->begin_transaction();
     try {
-        // Ambil data dulu untuk kurangi stok
-        $q = $koneksi->query("SELECT id_barang, jumlah FROM pembelian_suplier WHERE id_pembelian = $id_pembelian");
-        $data = $q->fetch_assoc();
+        // FIXED: Gunakan Prepared Statement
+        $q = $koneksi->prepare("SELECT id_barang, jumlah FROM pembelian_suplier WHERE id_pembelian = ?");
+        if (!$q) throw new Exception($koneksi->error);
+        $q->bind_param("i", $id_pembelian);
+        $q->execute();
+        $data = $q->get_result()->fetch_assoc();
+        $q->close();
         
         if ($data) {
             $id_brg = $data['id_barang'];
-            $qty = $data['jumlah'];
-            $koneksi->query("UPDATE gudang SET stok = GREATEST(0, stok - $qty) WHERE id_barang = $id_brg");
-            $koneksi->query("DELETE FROM pembelian_suplier WHERE id_pembelian = $id_pembelian");
+            $qty    = $data['jumlah'];
+
+            $s1 = $koneksi->prepare("UPDATE gudang SET stok = GREATEST(0, stok - ?) WHERE id_barang = ?");
+            $s1->bind_param("di", $qty, $id_brg);
+            $s1->execute();
+            $s1->close();
+
+            $s2 = $koneksi->prepare("DELETE FROM pembelian_suplier WHERE id_pembelian = ?");
+            $s2->bind_param("i", $id_pembelian);
+            $s2->execute();
+            $s2->close();
         }
 
         $koneksi->commit();
@@ -244,6 +258,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'hapus_pembelian') {
     } catch (Exception $e) {
         $koneksi->rollback();
         $_SESSION['pesan'] = "Gagal hapus: " . $e->getMessage();
+        $_SESSION['tipe'] = "error";
     }
     header("Location: inputdatasuplayer.php?tab=hutang&id_suplier=$id_sup");
     exit;
@@ -380,146 +395,182 @@ if ($active_tab === 'hutang' && isset($_GET['id_suplier'])) {
     <link rel="icon" href="logo_scs_jpg.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Suplier & Gudang</title>
+    <meta name="description" content="Manajemen Data Suplier, Mapping Barang, dan Hutang Suplier - SCS Banjarnegara">
+    <title>Manajemen Suplier & Gudang - SCS</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        body { background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); font-family: ui-sans-serif, system-ui, sans-serif; }
-        .fade-in { animation: fadeIn 0.5s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
-        ::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
-        .form-changed { border-left: 4px solid #f59e0b; background-color: #fffbeb; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-        .btn-pulse { animation: pulse 2s infinite; }
-        .select-changed { border-color: #f59e0b !important; background-color: #fffbeb !important; }
+        body { background-color: #F8F9FB; font-family: 'Poppins', sans-serif; color: #1E293B; }
+        .fade-in { animation: fadeIn 0.35s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        /* Card system */
+        .glass-card { background:#fff; border-radius:1rem; box-shadow:0 1px 3px rgba(0,0,0,.04); border:1px solid #E8ECF0; }
+        /* Tab nav */
+        .tab-nav-item { display:flex; align-items:center; padding:.6rem 1.25rem; border-radius:.6rem; font-size:.8125rem; font-weight:600; transition:all .2s; cursor:pointer; text-decoration:none; }
+        .tab-nav-item.active { background:#fff; color:#0f172a; box-shadow:0 1px 4px rgba(0,0,0,.08); }
+        .tab-nav-item:not(.active) { color:#64748b; }
+        .tab-nav-item:not(.active):hover { background:rgba(255,255,255,.6); color:#334155; }
+        /* Badge */
+        .badge { padding:.25rem .65rem; border-radius:2rem; font-weight:700; font-size:.65rem; letter-spacing:.03em; display:inline-flex; align-items:center; gap:.3rem; }
+        .badge-pending { background:#FFFBEB; color:#D97706; }
+        .badge-success { background:#ECFDF5; color:#059669; }
+        .badge-danger  { background:#FEF2F2; color:#DC2626; }
+        .badge-info    { background:#EFF6FF; color:#2563EB; }
+        /* Table */
+        .data-table { width:100%; border-collapse:separate; border-spacing:0; }
+        .data-table thead th { background:#F8F9FB; padding:.65rem 1rem; font-size:.7rem; font-weight:700; color:#64748B; text-align:left; text-transform:uppercase; letter-spacing:.05em; border-bottom:1px solid #E8ECF0; white-space:nowrap; }
+        .data-table tbody td { padding:.9rem 1rem; font-size:.875rem; border-bottom:1px solid #F1F5F9; vertical-align:middle; }
+        .data-table tbody tr:last-child td { border-bottom:none; }
+        .data-table tbody tr:hover { background:#F8FAF8; }
+        /* Mapping highlight */
+        .form-changed { background:#FFFBEB; }
+        .select-changed { border-color:#F59E0B !important; background:#FFFBEB !important; }
+        /* KPI Card */
+        .kpi-card { padding:1.25rem 1.5rem; cursor:pointer; transition:background .15s; }
+        .kpi-card:hover { background:#F8FAF8; }
+        /* Stok warning indicator */
+        .stok-empty { background:#FEF2F2; color:#DC2626; padding:.2rem .55rem; border-radius:.35rem; font-weight:700; font-size:.7rem; }
+        .stok-low { color:#D97706; font-weight:700; }
+        /* Btn */
+        .btn-primary { display:inline-flex; align-items:center; gap:.4rem; background:#16A34A; color:#fff; padding:.55rem 1.1rem; border-radius:.5rem; font-size:.8rem; font-weight:600; transition:all .15s; border:none; cursor:pointer; }
+        .btn-primary:hover { background:#15803D; transform:translateY(-1px); }
+        .btn-secondary { display:inline-flex; align-items:center; gap:.4rem; background:#fff; color:#475569; border:1px solid #E2E8F0; padding:.5rem 1rem; border-radius:.5rem; font-size:.8rem; font-weight:600; transition:all .15s; cursor:pointer; text-decoration:none; }
+        .btn-secondary:hover { border-color:#94A3B8; color:#1e293b; }
+        .btn-danger { display:inline-flex; align-items:center; gap:.4rem; background:#FEF2F2; color:#DC2626; border:1px solid #FECACA; padding:.4rem .8rem; border-radius:.45rem; font-size:.75rem; font-weight:600; transition:all .15s; cursor:pointer; }
+        .btn-danger:hover { background:#DC2626; color:#fff; }
+        .btn-pay { background:#EFF6FF; color:#2563EB; border:1px solid #BFDBFE; padding:.3rem .75rem; border-radius:.4rem; font-size:.7rem; font-weight:700; cursor:pointer; transition:all .15s; }
+        .btn-pay:hover { background:#2563EB; color:#fff; }
+        /* Input field */
+        .field-input { width:100%; padding:.7rem .9rem; border:1px solid #D1D5DB; border-radius:.6rem; font-size:.875rem; font-family:inherit; transition:border-color .15s, box-shadow .15s; outline:none; }
+        .field-input:focus { border-color:#16A34A; box-shadow:0 0 0 3px rgba(22,163,74,.1); }
+        /* Alert */
+        .alert { display:flex; align-items:center; gap:.75rem; padding:.9rem 1.1rem; border-radius:.75rem; font-size:.875rem; font-weight:500; margin-bottom:1.25rem; }
+        .alert-success { background:#ECFDF5; color:#065F46; border:1px solid #A7F3D0; }
+        .alert-error   { background:#FEF2F2; color:#991B1B; border:1px solid #FECACA; }
+        .alert-warning { background:#FFFBEB; color:#92400E; border:1px solid #FDE68A; }
     </style>
 </head>
-<body class="flex min-h-screen text-gray-800">
+<body class="min-h-screen">
 
     <?php if (file_exists("sidebar.php")) include "sidebar.php"; ?>
 
-    <main class="flex-1 p-4 md:p-8 <?php echo file_exists("sidebar.php") ? 'md:ml-64' : ''; ?> fade-in">
-        
-        <div class="mb-8 flex justify-between items-end border-b pb-4 border-gray-200">
-            <div>
-                <h1 class="text-3xl font-bold text-blue-900">Data Suplier & Stok</h1>
-                <p class="text-gray-600 mt-1">Monitoring stok gudang berdasarkan suplier penyedia</p>
+    <main class="flex-1 p-4 md:p-8 md:ml-64 fade-in transition-all duration-300">
+
+        <!-- Page Header Card -->
+        <div class="glass-card mb-6 overflow-hidden">
+            <div class="px-6 py-5 border-b border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+                <div>
+                    <h1 class="text-xl font-bold text-slate-900">Manajemen Suplier & Gudang</h1>
+                    <p class="text-sm text-slate-400 mt-0.5">Monitoring stok, mapping, dan hutang ke suplier penyedia</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-semibold text-slate-500 bg-slate-50 border border-slate-200 px-2.5 py-1 rounded-full">
+                        <i class="fas fa-box mr-1"></i><?php echo $semua_barang_count; ?> Item
+                    </span>
+                    <span class="text-xs font-medium text-slate-400 bg-slate-50 border border-slate-200 px-2.5 py-1 rounded-full"><?php echo date('d M Y'); ?></span>
+                </div>
             </div>
-            <div class="text-sm text-right hidden md:block">
-                <div class="text-gray-500">Total Barang Terdata</div>
-                <div class="font-bold text-xl text-blue-600"><?php echo $semua_barang_count; ?> Item</div>
+            <div class="px-5 py-3 bg-slate-50/50 flex flex-wrap gap-1.5">
+
+                <a href="?tab=rekap" class="tab-nav-item <?php echo $active_tab == 'rekap' ? 'active' : ''; ?>">
+                    <i class="fas fa-clipboard-list mr-1.5 text-xs"></i> Data Suplier
+                </a>
+                <a href="?tab=mapping" class="tab-nav-item <?php echo $active_tab == 'mapping' ? 'active' : ''; ?>">
+                    <i class="fas fa-link mr-1.5 text-xs"></i> Mapping Suplier
+                </a>
+                <a href="?tab=hutang" class="tab-nav-item <?php echo $active_tab == 'hutang' ? 'active' : ''; ?>">
+                    <i class="fas fa-hand-holding-usd mr-1.5 text-xs"></i> Manajemen Hutang
+                </a>
             </div>
         </div>
 
-        <div class="flex space-x-2 mb-6 bg-blue-100/50 p-1 rounded-lg w-fit">
-            <a href="?tab=rekap" class="flex items-center px-6 py-2.5 rounded-md text-sm font-bold transition-all duration-200 <?php echo $active_tab == 'rekap' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-blue-500 hover:bg-white/50'; ?>">
-                <i class="fas fa-clipboard-list mr-2"></i> Data Suplier (View)
-            </a>
-            <a href="?tab=mapping" class="flex items-center px-6 py-2.5 rounded-md text-sm font-bold transition-all duration-200 <?php echo $active_tab == 'mapping' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-blue-500 hover:bg-white/50'; ?>">
-                <i class="fas fa-link mr-2"></i> Atur / Mapping Suplier
-            </a>
-            <a href="?tab=hutang" class="flex items-center px-6 py-2.5 rounded-md text-sm font-bold transition-all duration-200 <?php echo $active_tab == 'hutang' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-blue-500 hover:bg-white/50'; ?>">
-                <i class="fas fa-hand-holding-usd mr-2"></i> Manajemen Hutang
-            </a>
+        <?php if(isset($_SESSION['pesan'])):
+            $tipe = $_SESSION['tipe'] ?? 'info';
+            $alertClass = $tipe=='success' ? 'alert-success' : ($tipe=='warning' ? 'alert-warning' : 'alert-error');
+            $alertIcon  = $tipe=='success' ? 'fa-check-circle' : ($tipe=='warning' ? 'fa-exclamation-triangle' : 'fa-exclamation-circle');
+        ?>
+        <div class="alert <?php echo $alertClass; ?>">
+            <i class="fas <?php echo $alertIcon; ?> text-lg flex-shrink-0"></i>
+            <span><?php echo htmlspecialchars($_SESSION['pesan']); ?></span>
         </div>
-
-        <?php if(isset($_SESSION['pesan'])): ?>
-        <div class="flex items-center p-4 mb-6 rounded-lg shadow-sm <?php echo $_SESSION['tipe'] == 'success' ? 'bg-green-50 text-green-800 border border-green-200' : ($_SESSION['tipe'] == 'warning' ? 'bg-yellow-50 text-yellow-800 border border-yellow-200' : 'bg-red-50 text-red-800 border border-red-200'); ?>">
-            <i class="<?php echo $_SESSION['tipe'] == 'success' ? 'fas fa-check-circle' : ($_SESSION['tipe'] == 'warning' ? 'fas fa-exclamation-triangle' : 'fas fa-exclamation-circle'); ?> text-xl mr-3"></i>
-            <span class="font-medium"><?php echo $_SESSION['pesan']; ?></span>
-            <?php unset($_SESSION['pesan']); unset($_SESSION['tipe']); ?>
-        </div>
-        <?php endif; ?>
+        <?php unset($_SESSION['pesan']); unset($_SESSION['tipe']); endif; ?>
 
         <?php if($active_tab == 'rekap'): ?>
         <div class="space-y-8">
             <?php if(empty($data_grouped)): ?>
-                <div class="bg-white p-12 rounded-2xl shadow-sm text-center border border-gray-100">
-                    <div class="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-folder-open text-3xl text-blue-400"></i>
+                <div class="glass-card p-10 text-center">
+                    <div class="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-store-slash text-2xl text-slate-400"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-800">Belum ada barang terhubung</h3>
-                    <p class="text-gray-500 mt-2 max-w-md mx-auto">Data stok gudang belum ada yang dihubungkan ke nama suplier.</p>
-                    <a href="?tab=mapping" class="inline-flex items-center mt-6 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition shadow-lg shadow-blue-200">
-                        Hubungkan Barang Sekarang <i class="fas fa-arrow-right ml-2"></i>
+                    <h3 class="text-base font-bold text-slate-700">Belum ada barang terhubung</h3>
+                    <p class="text-slate-400 text-sm mt-1 mb-5">Hubungkan barang gudang dengan suplier penyedia.</p>
+                    <a href="?tab=mapping" class="btn-primary">
+                        <i class="fas fa-link"></i> Mapping Sekarang
                     </a>
                 </div>
             <?php else: ?>
                 
-                <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
-                <?php foreach($data_grouped as $nama_suplier => $data): ?>
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow duration-300 flex flex-col h-full">
-                        <div class="p-5 bg-gradient-to-r from-slate-50 to-white border-b flex justify-between items-start">
-                            <div>
-                                <h2 class="text-lg font-bold text-gray-800 flex items-center">
-                                    <span class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-sm mr-3">
-                                        <i class="fas fa-store"></i>
-                                    </span>
-                                    <?php echo htmlspecialchars($nama_suplier); ?>
-                                </h2>
-                                <div class="mt-1 ml-11 flex items-center text-sm text-gray-500">
-                                    <i class="fas fa-phone-alt text-xs mr-2"></i> 
-                                    <?php echo htmlspecialchars($data['info']['hp'] ?? '-'); ?>
+                <div class="grid grid-cols-1 xl:grid-cols-2 gap-5">
+                <?php foreach($data_grouped as $nama_suplier => $data):
+                    $hasStokItem = false;
+                    foreach($data['barang'] as $ck) { if($ck['tipe_pengadaan']==='Stok'){ $hasStokItem=true; break; } }
+                ?>
+                    <div class="glass-card overflow-hidden flex flex-col hover:shadow-md transition-shadow duration-200">
+                        <!-- Supplier card header -->
+                        <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-start gap-3">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <div class="w-9 h-9 rounded-xl bg-slate-100 text-slate-500 flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-store text-sm"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <div class="font-bold text-slate-800 truncate"><?php echo htmlspecialchars($nama_suplier); ?></div>
+                                    <div class="text-xs text-slate-400 mt-0.5"><i class="fas fa-phone-alt mr-1"></i><?php echo htmlspecialchars($data['info']['hp'] ?? '-'); ?></div>
                                 </div>
                             </div>
-                            
-                            <div class="flex flex-col items-end gap-2">
-                                <span class="bg-blue-50 text-blue-700 py-1 px-3 rounded-full text-xs font-bold border border-blue-100">
-                                    <?php echo count($data['barang']); ?> Produk
-                                </span>
-                                 <?php 
-                                    $hasStokItem = false;
-                                    foreach($data['barang'] as $check) {
-                                        if($check['tipe_pengadaan'] === 'Stok') { $hasStokItem = true; break; }
-                                    }
-                                    if($hasStokItem): 
-                                 ?>
-                                 <button type="button" onclick="showModalPembelian(<?php echo $data['info']['id']; ?>, '<?php echo addslashes($nama_suplier); ?>')" class="text-xs bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white px-3 py-1.5 rounded-lg font-bold border border-emerald-100 transition-all flex items-center gap-1">
-                                    <i class="fas fa-plus-circle"></i> Input Nota / Stok
+                            <div class="flex items-center gap-2 flex-shrink-0">
+                                <span class="badge badge-info"><?php echo count($data['barang']); ?> Produk</span>
+                                <?php if($hasStokItem): ?>
+                                <button type="button" onclick="showModalPembelian(<?php echo $data['info']['id']; ?>, '<?php echo addslashes($nama_suplier); ?>')" class="btn-primary" style="padding:.35rem .75rem;font-size:.72rem;">
+                                    <i class="fas fa-plus"></i> Nota
                                 </button>
                                 <?php endif; ?>
-                                <form action="" method="POST" onsubmit="return confirm('Yakin ingin menghapus suplier <?php echo htmlspecialchars($nama_suplier); ?>? \n\nBarang dari suplier ini tidak akan terhapus, namun statusnya akan kembali menjadi Belum Ada Suplier.');">
-                                    <input type="hidden" name="action" value="hapus_suplier">
-                                    <input type="hidden" name="id_suplier" value="<?php echo $data['info']['id']; ?>">
-                                    <button type="submit" class="text-xs text-red-400 hover:text-red-600 transition-colors flex items-center gap-1">
-                                        <i class="fas fa-trash-alt"></i> Hapus
-                                    </button>
-                                </form>
+                                <button type="button"
+                                    onclick="confirmHapusSuplier(<?php echo $data['info']['id']; ?>, '<?php echo addslashes($nama_suplier); ?>')"
+                                    class="btn-danger" style="padding:.35rem .65rem;font-size:.72rem;">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
                             </div>
-                            
                         </div>
-                        <div class="overflow-x-auto flex-1">
-                            <table class="w-full text-left">
-                                <thead class="bg-gray-50 text-gray-500 text-xs uppercase font-semibold">
-                                    <tr>
-                                        <th class="px-6 py-3 border-b">Produk</th>
-                                        <th class="px-6 py-3 border-b text-center">Stok</th>
-                                        <th class="px-6 py-3 border-b text-right">Harga Beli</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-50 text-sm">
+                        <!-- Product table -->
+                        <div class="overflow-x-auto overflow-y-auto flex-1" style="max-height:260px">
+                            <table class="data-table">
+                                <thead><tr>
+                                    <th>Produk</th>
+                                    <th class="text-center">Stok</th>
+                                    <th class="text-right">Harga Beli</th>
+                                </tr></thead>
+                                <tbody>
                                     <?php foreach($data['barang'] as $brg): ?>
-                                    <tr class="hover:bg-blue-50/30 transition-colors">
-                                        <td class="px-6 py-3 font-medium text-gray-700">
-                                            <?php echo htmlspecialchars($brg['nama_barang_gudang']); ?>
-                                        </td>
-                                        <td class="px-6 py-3 text-center">
-                                            <?php if ($brg['tipe_pengadaan'] === 'PO'): ?>
-                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">PO</span>
-                                            <?php elseif($brg['stok'] <= 0): ?>
-                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">Habis</span>
-                                            <?php elseif($brg['stok'] < 10): ?>
-                                                <span class="text-orange-600 font-bold"><?php echo $brg['stok']; ?> <?php echo htmlspecialchars($brg['satuan']); ?></span>
+                                    <tr>
+                                        <td class="font-medium text-slate-700"><?php echo htmlspecialchars($brg['nama_barang_gudang']); ?></td>
+                                        <td class="text-center">
+                                            <?php if($brg['tipe_pengadaan']==='PO'): ?>
+                                                <span class="badge badge-info">PO</span>
+                                            <?php elseif($brg['stok']<=0): ?>
+                                                <span class="stok-empty">Habis</span>
+                                            <?php elseif($brg['stok']<10): ?>
+                                                <span class="stok-low"><?php echo $brg['stok']; ?> <?php echo htmlspecialchars($brg['satuan']); ?></span>
                                             <?php else: ?>
-                                                <span class="text-gray-700"><?php echo $brg['stok']; ?> <?php echo htmlspecialchars($brg['satuan']); ?></span>
+                                                <span class="text-slate-600"><?php echo $brg['stok']; ?> <?php echo htmlspecialchars($brg['satuan']); ?></span>
                                             <?php endif; ?>
                                         </td>
-                                        <td class="px-6 py-3 text-right text-gray-600 font-mono">
-                                            Rp<?php echo number_format($brg['harga'], 0, ',', '.'); ?>
-                                        </td>
+                                        <td class="text-right text-slate-500 font-mono text-xs">Rp<?php echo number_format($brg['harga_beli'],0,',','.'); ?></td>
                                     </tr>
                                     <?php endforeach; ?>
                                 </tbody>
@@ -551,160 +602,159 @@ if ($active_tab === 'hutang' && isset($_GET['id_suplier'])) {
                     <form action="" method="POST" class="space-y-4" id="formTambahSuplier">
                         <input type="hidden" name="action" value="tambah_suplier_baru">
                         <div>
-                            <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Nama Suplier *</label>
-                            <input type="text" name="nama_suplier" placeholder="Contoh: Toko Beras Makmur" required 
-                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition text-sm">
+                            <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5">Nama Suplier *</label>
+                            <input type="text" name="nama_suplier" placeholder="Contoh: Toko Beras Makmur" required class="field-input">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold uppercase text-gray-500 mb-1">No. HP / WhatsApp</label>
-                            <input type="text" name="nomer_hp" placeholder="08xxxx" 
-                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition text-sm">
+                            <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5">No. HP / WhatsApp</label>
+                            <input type="text" name="nomer_hp" placeholder="08xxxx" class="field-input">
                         </div>
-                        <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-bold shadow-lg shadow-green-200 transition transform hover:-translate-y-0.5">
-                            <i class="fas fa-save mr-2"></i> Simpan Suplier
+                        <button type="submit" class="btn-primary w-full justify-center py-3">
+                            <i class="fas fa-save"></i> Simpan Suplier
                         </button>
                     </form>
                 </div>
             </div>
 
-            <div class="w-full lg:w-2/3 flex flex-col bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <div class="p-5 border-b bg-gray-50">
-                    <div class="flex justify-between items-center mb-4">
+            <div class="w-full lg:w-2/3 glass-card flex flex-col overflow-hidden">
+                <div class="p-5 border-b border-slate-100">
+                    <div class="flex justify-between items-center mb-3">
                         <div>
-                            <h3 class="font-bold text-gray-800">Daftar Barang Gudang</h3>
-                            <p class="text-sm text-gray-500">Hubungkan barang gudang dengan suplier</p>
+                            <h3 class="font-bold text-slate-800">Daftar Barang Gudang</h3>
+                            <p class="text-xs text-slate-400">Hubungkan barang gudang dengan suplier</p>
                         </div>
-                         <div class="flex gap-3 text-xs">
-                            <div class="flex items-center"><span class="w-3 h-3 rounded-full bg-red-100 border border-red-300 mr-1"></span> Belum Ada</div>
-                            <div class="flex items-center"><span class="w-3 h-3 rounded-full bg-white border border-gray-300 mr-1"></span> Sudah Ada</div>
-                            <div class="flex items-center"><span class="w-3 h-3 rounded-full bg-yellow-100 border border-yellow-300 mr-1"></span> Perubahan</div>
+                        <div class="flex gap-2 text-[10px] font-semibold">
+                            <span class="flex items-center gap-1 text-red-500"><span class="w-2.5 h-2.5 rounded-full bg-red-100 border border-red-300 inline-block"></span>Belum</span>
+                            <span class="flex items-center gap-1 text-slate-400"><span class="w-2.5 h-2.5 rounded-full bg-white border border-slate-300 inline-block"></span>Sudah</span>
+                            <span class="flex items-center gap-1 text-amber-500"><span class="w-2.5 h-2.5 rounded-full bg-amber-100 border border-amber-300 inline-block"></span>Berubah</span>
                         </div>
                     </div>
-
-                    <div class="flex flex-col md:flex-row gap-3">
+                    <div class="flex gap-2">
                         <div class="relative flex-1">
-                            <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-                                <i class="fas fa-search text-gray-400"></i>
-                            </span>
-                            <input type="text" id="searchBarangInput" placeholder="Cari nama barang..."
-                                class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm transition shadow-sm">
+                            <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                            <input type="text" id="searchBarangInput" placeholder="Cari nama barang..." class="field-input pl-9 py-2">
                         </div>
-                        <button id="btnSimpanSemua" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition flex items-center gap-2">
+                        <button id="btnSimpanSemua" class="btn-secondary">
                             <i class="fas fa-save"></i> Simpan Semua
                         </button>
                     </div>
                 </div>
-                
-                <div class="flex-1 overflow-y-auto" style="max-height: 70vh;">
-                    <table class="w-full text-left border-collapse" id="tabelMapping">
-                        <thead class="bg-white sticky top-0 z-10 shadow-sm text-xs uppercase text-gray-500 font-bold">
+                <div class="flex-1 overflow-y-auto" style="max-height:70vh">
+                    <table class="data-table" id="tabelMapping">
+                        <thead class="sticky top-0 z-10">
                             <tr>
-                                <th class="p-4 w-1/2 bg-gray-50">Nama Barang (Stok)</th>
-                                <th class="p-4 w-1/2 bg-gray-50">Pilih Suplier</th>
+                                <th class="w-1/2">Nama Barang</th>
+                                <th class="w-1/2">Pilih Suplier</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-100" id="tbodyMapping">
+                        <tbody id="tbodyMapping">
                             <?php 
                             if ($semua_barang_result && $semua_barang_result->num_rows > 0):
                                 $semua_barang_result->data_seek(0);
                                 while($b = $semua_barang_result->fetch_assoc()): 
                             ?>
-                            <tr class="group hover:bg-blue-50/50 transition barang-row <?php echo is_null($b['id_suplier']) ? 'bg-red-50/30' : ''; ?>" data-id="<?php echo $b['id_barang']; ?>">
-                                <td class="p-4 align-middle">
-                                    <div class="font-semibold text-gray-800 nama-barang"><?php echo htmlspecialchars($b['nama']); ?></div>
-                                    <div class="flex items-center gap-2 mt-0.5">
+                            <tr class="barang-row <?php echo is_null($b['id_suplier']) ? 'bg-red-50/40' : ''; ?>" data-id="<?php echo $b['id_barang']; ?>">
+                                <td>
+                                    <div class="font-semibold text-slate-800 nama-barang"><?php echo htmlspecialchars($b['nama']); ?></div>
+                                    <div class="mt-0.5">
                                         <?php if ($b['tipe_pengadaan'] === 'PO'): ?>
-                                            <span class="text-[10px] font-black bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded uppercase">PO</span>
+                                            <span class="badge badge-info" style="font-size:.6rem">PO</span>
                                         <?php else: ?>
-                                            <div class="text-xs text-gray-400">
-                                                Stok: <span class="text-gray-600 font-medium"><?php echo $b['stok']; ?> <?php echo htmlspecialchars($b['satuan']); ?></span>
-                                            </div>
+                                            <span class="text-xs text-slate-400">Stok: <b class="text-slate-600"><?php echo $b['stok']; ?> <?php echo htmlspecialchars($b['satuan']); ?></b></span>
                                         <?php endif; ?>
                                     </div>
                                 </td>
-                                <td class="p-4 align-middle">
+                                <td>
                                     <div class="relative">
-                                        <i class="fas fa-store absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"></i>
-                                        <select name="id_suplier" 
-                                            class="w-full pl-9 pr-8 py-2 text-sm border rounded-lg appearance-none cursor-pointer focus:ring-2 focus:ring-blue-500 focus:outline-none transition supplier-select
-                                            <?php echo is_null($b['id_suplier']) ? 'border-red-300 bg-white text-red-500 font-medium' : 'border-gray-300 bg-gray-50 text-gray-700'; ?>"
+                                        <i class="fas fa-store absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
+                                        <select name="id_suplier"
+                                            class="field-input pl-9 py-2 cursor-pointer appearance-none supplier-select <?php echo is_null($b['id_suplier']) ? 'border-red-300 text-red-500' : ''; ?>"
                                             data-original-value="<?php echo $b['id_suplier'] ?? '0'; ?>"
                                             data-barang-id="<?php echo $b['id_barang']; ?>">
-                                            <option value="0" class="text-gray-400">-- Pilih Suplier --</option>
+                                            <option value="0">-- Pilih Suplier --</option>
                                             <?php foreach($list_suplier as $s): ?>
                                                 <option value="<?php echo $s['id_suplier']; ?>" <?php echo ($b['id_suplier'] == $s['id_suplier']) ? 'selected' : ''; ?>>
                                                     <?php echo htmlspecialchars($s['nama_suplier']); ?>
                                                 </option>
                                             <?php endforeach; ?>
                                         </select>
-                                        <i class="fas fa-chevron-down absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-gray-400 pointer-events-none"></i>
+                                        <i class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400 pointer-events-none"></i>
                                     </div>
                                 </td>
                             </tr>
                             <?php endwhile; else: ?>
-                            <tr>
-                                <td colspan="2" class="p-8 text-center text-gray-500">
-                                    <i class="fas fa-box-open text-3xl mb-2 text-gray-300"></i>
-                                    <p>Tidak ada data barang di gudang.</p>
-                                </td>
-                            </tr>
+                            <tr><td colspan="2" class="text-center py-10 text-slate-400">
+                                <i class="fas fa-box-open text-3xl mb-2 block text-slate-300"></i>Tidak ada data barang.
+                            </td></tr>
                             <?php endif; ?>
                         </tbody>
                     </table>
-                    <div id="noResults" class="hidden p-8 text-center text-gray-500">
-                        <i class="fas fa-search text-3xl mb-2 text-gray-300"></i>
-                        <p>Barang tidak ditemukan.</p>
+                    <div id="noResults" class="hidden p-8 text-center text-slate-400">
+                        <i class="fas fa-search text-3xl mb-2 block text-slate-300"></i>Barang tidak ditemukan.
                     </div>
                 </div>
             </div>
         </div>
         <?php endif; ?>
 
-        <?php if($active_tab == 'hutang'): ?>
-        <div class="flex flex-col gap-8">
-            <!-- REKAP HUTANG GLOBAL -->
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                <div class="p-6 border-b flex justify-between items-center bg-slate-50/50">
-                    <div>
-                        <h3 class="text-xl font-bold text-gray-800">Rekapitulasi Hutang ke Suplier</h3>
-                        <p class="text-sm text-gray-500">Daftar saldo hutang yang belum dibayarkan ke masing-masing suplier</p>
+        <?php if($active_tab == 'hutang'):
+            // Hitung KPI summary dari data
+            $kpi_hutang   = array_sum(array_column($data_hutang, 'total_hutang'));
+            $kpi_terbayar = array_sum(array_column($data_hutang, 'total_terbayar'));
+            $kpi_pending  = array_sum(array_column($data_hutang, 'count_pending'));
+        ?>
+        <div class="flex flex-col gap-6">
+            <!-- KPI Summary -->
+            <div class="glass-card overflow-hidden">
+                <div class="grid grid-cols-3 divide-x divide-slate-100">
+                    <div class="kpi-card">
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Total Hutang</p>
+                        <p class="text-xl font-black text-red-600">Rp<?php echo number_format($kpi_hutang,0,',','.'); ?></p>
+                    </div>
+                    <div class="kpi-card">
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Total Terbayar</p>
+                        <p class="text-xl font-black text-emerald-600">Rp<?php echo number_format($kpi_terbayar,0,',','.'); ?></p>
+                    </div>
+                    <div class="kpi-card">
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Transaksi Pending</p>
+                        <p class="text-xl font-black text-amber-600 mt-2"><?php echo $kpi_pending; ?> <span class="pr-2 text-xl font-medium text-slate-400"> Transaksi</span></p>
                     </div>
                 </div>
+            </div>
+
+            <!-- Rekap Hutang Table -->
+            <div class="glass-card overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-100">
+                    <h3 class="font-bold text-slate-800">Rekapitulasi Hutang ke Suplier</h3>
+                    <p class="text-xs text-slate-400">Klik Detail untuk melihat rincian per suplier</p>
+                </div>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left">
-                        <thead class="bg-gray-50 text-[10px] font-black uppercase tracking-widest text-gray-400">
-                            <tr>
-                                <th class="px-8 py-4">Nama Suplier</th>
-                                <th class="px-8 py-4 text-center">Pesanan Pending</th>
-                                <th class="px-8 py-4 text-right text-red-500">Total Hutang</th>
-                                <th class="px-8 py-4 text-right text-emerald-500">Total Terbayar</th>
-                                <th class="px-8 py-4 text-center">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-100 text-sm">
+                    <table class="data-table">
+                        <thead><tr>
+                            <th>Nama Suplier</th>
+                            <th class="text-center">Pending</th>
+                            <th class="text-right">Total Hutang</th>
+                            <th class="text-right">Terbayar</th>
+                            <th class="text-center">Aksi</th>
+                        </tr></thead>
+                        <tbody>
                             <?php foreach($data_hutang as $h): ?>
-                            <tr class="hover:bg-slate-50/50 transition-colors <?php echo (isset($_GET['id_suplier']) && $_GET['id_suplier'] == $h['id_suplier']) ? 'bg-blue-50/50' : ''; ?>">
-                                <td class="px-8 py-5">
-                                    <div class="font-bold text-gray-800"><?php echo htmlspecialchars($h['nama_suplier']); ?></div>
-                                    <div class="text-[10px] text-gray-400"><?php echo htmlspecialchars($h['nomer_hp'] ?? '-'); ?></div>
+                            <tr class="<?php echo (isset($_GET['id_suplier']) && $_GET['id_suplier'] == $h['id_suplier']) ? 'bg-blue-50/50' : ''; ?>">
+                                <td>
+                                    <div class="font-bold text-slate-800"><?php echo htmlspecialchars($h['nama_suplier']); ?></div>
+                                    <div class="text-xs text-slate-400"><?php echo htmlspecialchars($h['nomer_hp'] ?? '-'); ?></div>
                                 </td>
-                                <td class="px-8 py-5 text-center">
-                                    <?php if($h['count_pending'] > 0): ?>
-                                        <span class="bg-amber-100 text-amber-700 px-3 py-1 rounded-full font-bold text-[10px]">
-                                            <?php echo $h['count_pending']; ?> TRANSAKSI
-                                        </span>
+                                <td class="text-center">
+                                    <?php if($h['count_pending']>0): ?>
+                                        <span class="badge badge-pending"><?php echo $h['count_pending']; ?> transaksi</span>
                                     <?php else: ?>
-                                        <span class="text-gray-300">-</span>
+                                        <span class="text-slate-300 text-xs">-</span>
                                     <?php endif; ?>
                                 </td>
-                                <td class="px-8 py-5 text-right font-black text-red-600">
-                                    Rp<?php echo number_format($h['total_hutang'], 0, ',', '.'); ?>
-                                </td>
-                                <td class="px-8 py-5 text-right font-bold text-emerald-600">
-                                    Rp<?php echo number_format($h['total_terbayar'], 0, ',', '.'); ?>
-                                </td>
-                                <td class="px-8 py-5 text-center">
-                                    <a href="?tab=hutang&id_suplier=<?php echo $h['id_suplier']; ?>" class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-xs font-bold text-gray-600 hover:border-blue-500 hover:text-blue-600 transition shadow-sm">
+                                <td class="text-right font-black text-red-600">Rp<?php echo number_format($h['total_hutang'],0,',','.'); ?></td>
+                                <td class="text-right font-bold text-emerald-600">Rp<?php echo number_format($h['total_terbayar'],0,',','.'); ?></td>
+                                <td class="text-center">
+                                    <a href="?tab=hutang&id_suplier=<?php echo $h['id_suplier']; ?>" class="btn-secondary" style="font-size:.72rem;padding:.35rem .75rem">
                                         <i class="fas fa-search-dollar"></i> Detail
                                     </a>
                                 </td>
@@ -918,9 +968,32 @@ if ($active_tab === 'hutang' && isset($_GET['id_suplier'])) {
         </div>
     </div>
 
+    <!-- Hidden form for SweetAlert2 hapus suplier -->
+    <form id="formHapusSuplier" action="" method="POST" style="display:none">
+        <input type="hidden" name="action" value="hapus_suplier">
+        <input type="hidden" name="id_suplier" id="hapusSuplicerId">
+    </form>
+
     <script>
-        // Data Barang untuk Modal (Diparsing dari PHP $data_grouped)
         const suplierData = <?php echo json_encode($data_grouped); ?>;
+
+        function confirmHapusSuplier(id, nama) {
+            Swal.fire({
+                title: 'Hapus Suplier?',
+                html: `Yakin menghapus <b>${nama}</b>?<br><span style="font-size:.8rem;color:#64748b">Barang tidak terhapus, koneksi ke suplier ini akan direset.</span>`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#DC2626',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: 'Ya, Hapus',
+                cancelButtonText: 'Batal'
+            }).then(r => {
+                if (r.isConfirmed) {
+                    document.getElementById('hapusSuplicerId').value = id;
+                    document.getElementById('formHapusSuplier').submit();
+                }
+            });
+        }
 
         function showModalPembelian(idSup, namaSup) {
             document.getElementById('modalSupId').value = idSup;

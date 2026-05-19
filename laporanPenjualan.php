@@ -496,8 +496,7 @@ else if (isset($_GET['action']) && $_GET['action'] === 'search_realtime' && isse
 // === BAGIAN TAMPILAN ADMIN (HTML) ===
 // =========================================================================
 
-// FLUSH BUFFER AGAR HTML BISA TAMPIL
-ob_end_flush();
+// FLUSH BUFFER DIBUKA SETELAH LOGIKA REDIRECT
 
 // LOGIKA REDIRECT (UPDATE STATUS OLEH ADMIN)
 if (isset($_GET['action']) && ($_GET['action'] == 'update_bayar' || $_GET['action'] == 'update_status' || $_GET['action'] == 'assign_driver')) {
@@ -531,14 +530,20 @@ if (isset($_GET['action']) && ($_GET['action'] == 'update_bayar' || $_GET['actio
 
         // Jika lunas, otomatis set status_pengiriman jadi 'Done'
         if ($status === 'Lunas') {
+            $akun = isset($_GET['akun']) ? $_GET['akun'] : '1111'; // Default Kas
             $stmt = $koneksi->prepare("UPDATE pesanan SET status_pembayaran = ?, status_pengiriman = 'Done', id_akuntan = ?, nama_penandatangan = ?, path_ttd = ? WHERE id_pesanan = ?");
             $stmt->bind_param("sissi", $status, $id_user, $nama_user, $path_ttd, $id);
+            $stmt->execute();
+            $stmt->close();
+            
+            // Generate Jurnal Akuntansi otomatis
+            triggerJurnalPenjualan($koneksi, $id, $akun);
         } else {
             $stmt = $koneksi->prepare("UPDATE pesanan SET status_pembayaran = ?, id_akuntan = ?, nama_penandatangan = ?, path_ttd = ? WHERE id_pesanan = ?");
             $stmt->bind_param("sissi", $status, $id_user, $nama_user, $path_ttd, $id);
+            $stmt->execute();
+            $stmt->close();
         }
-        $stmt->execute();
-        $stmt->close();
     } else {
         $stmt = $koneksi->prepare("UPDATE pesanan SET status_pengiriman = ? WHERE id_pesanan = ?");
         $stmt->bind_param("si", $status, $id);
@@ -549,6 +554,9 @@ if (isset($_GET['action']) && ($_GET['action'] == 'update_bayar' || $_GET['actio
     header("Location: laporanPenjualan.php?feedback=Update Sukses&type=success");
     exit();
 }
+
+// FLUSH BUFFER AGAR HTML BISA TAMPIL
+ob_end_flush();
 
 // --- AMBIL DAFTAR AKUN COA UNTUK DROPDOWN (KAS & PIUTANG) ---
 $list_kas = [];
@@ -661,254 +669,308 @@ if (!empty($base_query_string)) $base_query_string .= '&';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Monitor & Eksekusi Pesanan - PT. SURYA CERAH SEMESTA</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        body { font-family: 'Outfit', sans-serif; background-color: #F8FAFC; color: #1E293B; }
-        .glass-card { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(12px); border-radius: 1.5rem; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); border: 1px solid rgba(255,255,255,0.5); }
-        .invoice-card { background: white; border-radius: 1.25rem; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03); border: 1px solid #e2e8f0; transition: all 0.3s ease; }
-        .invoice-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05); }
-        .badge { padding: 0.25rem 0.75rem; border-radius: 9999px; font-weight: 600; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.025em; }
-        .badge-pending { background-color: #EFF6FF; color: #2563EB; } 
-        .badge-done { background-color: #ECFDF5; color: #059669; } 
-        .badge-belum-bayar { background-color: #FFFBEB; color: #D97706; } 
-        .badge-lunas { background-color: #ECFDF5; color: #059669; } 
-        .badge-batal { background-color: #FEF2F2; color: #DC2626; } 
-        .action-btn { font-size: 0.75rem; font-weight: 700; padding: 0.6rem 1rem; border-radius: 0.75rem; transition: all 0.2s; }
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(15, 23, 42, 0.8); backdrop-filter: blur(4px); display: flex; justify-content: center; align-items: center; z-index: 1000; }
-        main { margin-left: 0; transition: all 0.3s ease; }
-        @media (min-width: 1025px) { main { margin-left: 16rem; } }
+        body { font-family: 'Poppins', sans-serif; background-color: #F8F9FB; color: #1E293B; }
+        .glass-card { background: #fff; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.04); border: 1px solid #E8ECF0; }
+        .badge { padding: 0.3rem 0.75rem; border-radius: 2rem; font-weight: 600; font-size: 0.65rem; letter-spacing: 0.02em; display: inline-flex; align-items: center; gap: 0.3rem; }
+        .badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+        .badge-pending { background-color: #EFF6FF; color: #2563EB; }
+        .badge-pending::before { background-color: #2563EB; }
+        .badge-done { background-color: #ECFDF5; color: #059669; }
+        .badge-done::before { background-color: #059669; }
+        .badge-belum-bayar { background-color: #FFFBEB; color: #D97706; }
+        .badge-belum-bayar::before { background-color: #D97706; }
+        .badge-lunas { background-color: #ECFDF5; color: #059669; }
+        .badge-lunas::before { background-color: #059669; }
+        .badge-batal { background-color: #FEF2F2; color: #DC2626; }
+        .badge-batal::before { background-color: #DC2626; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(15, 23, 42, 0.6); backdrop-filter: blur(6px); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+        .fade-in { animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
         #searchLoading { display: none; }
+        .stat-card { background: #fff; border: 1px solid #E8ECF0; border-radius: 1rem; padding: 1.5rem; cursor: pointer; transition: border-color 0.2s, background-color 0.2s; }
+        .stat-card:hover { border-color: #16A34A; }
+        .stat-card.active { background: #16A34A; border-color: #16A34A; }
+        .stat-card.active * { color: #fff !important; }
+        .stat-card.active .stat-icon { background: rgba(255,255,255,0.2) !important; color: #fff !important; }
+        .order-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+        .order-table thead th { background: #F8F9FB; padding: 0.75rem 1rem; font-size: 0.75rem; font-weight: 600; color: #64748B; text-align: left; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid #E8ECF0; white-space: nowrap; }
+        .order-table tbody tr { transition: background-color 0.15s; }
+        .order-table tbody tr:hover { background-color: #F8FAF8; }
+        .order-table tbody td { padding: 1rem; font-size: 0.875rem; border-bottom: 1px solid #F1F5F9; vertical-align: middle; }
+        .order-table tbody tr:last-child td { border-bottom: none; }
+        .btn-action { font-size: 0.7rem; font-weight: 600; padding: 0.4rem 0.7rem; border-radius: 0.5rem; transition: all 0.15s; display: inline-flex; align-items: center; gap: 0.3rem; text-decoration: none; }
     </style>
 </head>
-<body class="flex bg-gray-100 min-h-screen">
+<body class="min-h-screen">
     
     <?php include 'sidebar.php'; ?>
     
-    <main class="flex-1 min-h-screen p-6 md:p-10 transition-all duration-300">
+    <main class="flex-1 min-h-screen p-4 md:p-8 md:ml-64 transition-all duration-300">
         
-        <!-- Area Header -->
-        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-10 gap-4">
-            <div>
-                <h1 class="text-3xl font-black text-slate-900 uppercase tracking-tight">Monitor & Eksekusi Pesanan</h1>
-                <p class="text-slate-500 font-medium">Pemantauan Pesanan Masuk & Proses Eksekusi</p>
-            </div>
-        </div>
-
-        <?php if ($show_laporan_harian): ?>
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
-            <div class="glass-card p-6 border-l-4 border-emerald-500">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600">
-                        <i class="fas fa-check-circle text-lg"></i>
+        <!-- Consolidated Header Card -->
+        <div class="glass-card mb-6 fade-in overflow-hidden">
+            <!-- Title Bar -->
+            <div class="px-6 py-5 border-b border-slate-100">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+                    <div class="flex items-center gap-3">
+                        <h1 class="text-xl font-bold text-slate-900">Monitor Pesanan</h1>
+                        <span class="text-xs font-medium text-slate-400 bg-slate-50 border border-slate-200 px-2.5 py-1 rounded-full">
+                            <?php echo date('d M Y'); ?>
+                        </span>
+                        <span class="badge badge-done">Active</span>
                     </div>
-                    <div>
-                        <h3 class="font-bold text-slate-800">Sudah Memesan</h3>
-                        <p class="text-xs text-slate-500">Dapur yang telah melakukan PO hari ini</p>
-                    </div>
+                    <?php if ($show_laporan_harian): ?>
+                    <span class="text-xs text-slate-400 font-medium">
+                        <i class="fas fa-utensils mr-1"></i> <?php echo $count_sudah ?? 0; ?> / <?php echo count($laporan_harian ?? []); ?> dapur sudah PO
+                    </span>
+                    <?php endif; ?>
                 </div>
-                <div class="flex flex-wrap gap-2">
-                    <?php 
-                    $count_sudah = 0; 
-                    foreach ($laporan_harian as $l) {
-                        if($l['status']=='Sudah') { 
-                            echo '<span class="inline-flex items-center px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-100"><i class="fas fa-utensils mr-2 opacity-50"></i>'.$l['nama'].'</span>'; 
-                            $count_sudah++; 
+            </div>
+
+            <?php if ($show_laporan_harian): ?>
+            <!-- Dapur Status Tabs -->
+            <div class="px-6 py-3 border-b border-slate-100 bg-slate-50/50 flex flex-wrap items-center gap-4 text-xs">
+                <span class="font-semibold text-emerald-600 flex items-center gap-1.5 cursor-default">
+                    <i class="fas fa-check-circle"></i> SUDAH MEMESAN
+                </span>
+                <span class="text-slate-300">|</span>
+                <span class="font-semibold text-amber-500 flex items-center gap-1.5 cursor-default">
+                    <i class="fas fa-clock"></i> BELUM MEMESAN
+                </span>
+            </div>
+            <?php endif; ?>
+
+            <!-- Stats Row -->
+            <div class="grid grid-cols-2 md:grid-cols-4 divide-x divide-slate-100">
+                <div onclick="setFilter('total')" class="px-6 py-5 cursor-pointer hover:bg-slate-50 transition-colors">
+                    <p class="text-2xl font-bold text-slate-800 mb-1"><?php echo $total_pesanan_count; ?></p>
+                    <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Total PO</p>
+                </div>
+                <div onclick="setFilter('lunas')" class="px-6 py-5 cursor-pointer hover:bg-emerald-50/50 transition-colors">
+                    <p class="text-2xl font-bold text-emerald-600 mb-1"><?php echo $lunas_count; ?></p>
+                    <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Lunas</p>
+                </div>
+                <div onclick="setFilter('belum_bayar')" class="px-6 py-5 cursor-pointer hover:bg-amber-50/50 transition-colors">
+                    <p class="text-2xl font-bold text-amber-600 mb-1"><?php echo $belum_bayar_count; ?></p>
+                    <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Belum Bayar</p>
+                </div>
+                <div onclick="setFilter('selesai')" class="px-6 py-5 cursor-pointer hover:bg-slate-50 transition-colors">
+                    <p class="text-2xl font-bold text-slate-600 mb-1"><?php echo $selesai_count; ?></p>
+                    <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Selesai</p>
+                </div>
+            </div>
+
+            <?php if ($show_laporan_harian): ?>
+            <!-- Dapur Detail Row -->
+            <div class="px-6 py-4 border-t border-slate-100 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Sudah PO Hari Ini</p>
+                    <div class="flex flex-wrap gap-1.5">
+                        <?php 
+                        $count_sudah = 0; 
+                        foreach ($laporan_harian as $l) {
+                            if($l['status']=='Sudah') { 
+                                echo '<span class="inline-flex items-center px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-700 text-[11px] font-semibold border border-emerald-100">'.$l['nama'].'</span>'; 
+                                $count_sudah++; 
+                            } 
                         } 
-                    } 
-                    if($count_sudah==0) echo '<p class="text-slate-400 text-sm italic">Belum ada pesanan masuk hari ini</p>';
-                    ?>
-                </div>
-            </div>
-
-            <div class="glass-card p-6 border-l-4 border-amber-400">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center text-amber-600">
-                        <i class="fas fa-clock text-lg"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-slate-800">Belum Memesan</h3>
-                        <p class="text-xs text-slate-500">Dapur yang belum melakukan PO hari ini</p>
+                        if($count_sudah==0) echo '<span class="text-slate-400 text-xs italic">Belum ada</span>';
+                        ?>
                     </div>
                 </div>
-                <div class="flex flex-wrap gap-2">
-                    <?php 
-                    $count_belum = 0; 
-                    foreach ($laporan_harian as $l) {
-                        if($l['status']=='Belum') { 
-                            echo '<span class="inline-flex items-center px-3 py-1.5 rounded-xl bg-slate-50 text-slate-600 text-xs font-bold border border-slate-200">'.$l['nama'].'</span>'; 
-                            $count_belum++; 
+                <div>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Belum PO Hari Ini</p>
+                    <div class="flex flex-wrap gap-1.5">
+                        <?php 
+                        $count_belum = 0; 
+                        foreach ($laporan_harian as $l) {
+                            if($l['status']=='Belum') { 
+                                echo '<span class="inline-flex items-center px-2.5 py-1 rounded-md bg-slate-50 text-slate-600 text-[11px] font-semibold border border-slate-200">'.$l['nama'].'</span>'; 
+                                $count_belum++; 
+                            } 
                         } 
-                    } 
-                    if($count_belum==0) echo '<p class="text-emerald-600 text-sm font-bold"><i class="fas fa-star mr-2"></i>Semua dapur sudah memesan!</p>';
-                    ?>
-                </div>
-            </div>
-        </div>
-        <?php endif; ?>
-
-        <!-- Kontrol & Statistik -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-            <div onclick="setFilter('total')" class="glass-card p-6 cursor-pointer group hover:bg-blue-600 transition-all duration-300">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="w-12 h-12 bg-blue-50 group-hover:bg-blue-500 rounded-2xl flex items-center justify-center text-blue-600 group-hover:text-white transition-colors">
-                        <i class="fas fa-shopping-basket text-xl"></i>
+                        if($count_belum==0) echo '<span class="text-emerald-600 text-xs font-semibold"><i class="fas fa-star mr-1"></i>Semua sudah PO!</span>';
+                        ?>
                     </div>
-                    <span class="text-[10px] font-black uppercase tracking-widest text-slate-400 group-hover:text-blue-200 transition-colors">Total PO</span>
                 </div>
-                <h3 class="text-3xl font-black text-slate-900 group-hover:text-white transition-colors"><?php echo $total_pesanan_count; ?></h3>
             </div>
-
-            <div onclick="setFilter('lunas')" class="glass-card p-6 cursor-pointer group hover:bg-emerald-600 transition-all duration-300">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="w-12 h-12 bg-emerald-50 group-hover:bg-emerald-500 rounded-2xl flex items-center justify-center text-emerald-600 group-hover:text-white transition-colors">
-                        <i class="fas fa-check-double text-xl"></i>
-                    </div>
-                    <span class="text-[10px] font-black uppercase tracking-widest text-slate-400 group-hover:text-emerald-200 transition-colors">Lunas</span>
-                </div>
-                <h3 class="text-3xl font-black text-slate-900 group-hover:text-white transition-colors"><?php echo $lunas_count; ?></h3>
-            </div>
-
-            <div onclick="setFilter('belum_bayar')" class="glass-card p-6 cursor-pointer group hover:bg-amber-500 transition-all duration-300">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="w-12 h-12 bg-amber-50 group-hover:bg-amber-400 rounded-2xl flex items-center justify-center text-amber-600 group-hover:text-white transition-colors">
-                        <i class="fas fa-receipt text-xl"></i>
-                    </div>
-                    <span class="text-[10px] font-black uppercase tracking-widest text-slate-400 group-hover:text-amber-100 transition-colors">Belum Bayar</span>
-                </div>
-                <h3 class="text-3xl font-black text-slate-900 group-hover:text-white transition-colors"><?php echo $belum_bayar_count; ?></h3>
-            </div>
-
-            <div onclick="setFilter('selesai')" class="glass-card p-6 cursor-pointer group hover:bg-slate-800 transition-all duration-300">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="w-12 h-12 bg-slate-50 group-hover:bg-slate-700 rounded-2xl flex items-center justify-center text-slate-600 group-hover:text-white transition-colors">
-                        <i class="fas fa-box-open text-xl"></i>
-                    </div>
-                    <span class="text-[10px] font-black uppercase tracking-widest text-slate-400 group-hover:text-slate-400 transition-colors">Selesai</span>
-                </div>
-                <h3 class="text-3xl font-black text-slate-900 group-hover:text-white transition-colors"><?php echo $selesai_count; ?></h3>
-            </div>
-        </div>
-
-        <!-- Filter & Search -->
-        <div class="glass-card p-6 mb-8 flex flex-wrap items-center gap-4">
-            <div class="relative flex-grow max-w-md">
-                <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                <input type="text" id="searchInput" value="<?php echo htmlspecialchars($search); ?>" 
-                       placeholder="Cari ID, Nama Pemesan, Nama Driver..." 
-                       class="w-full pl-12 pr-4 py-3 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500 font-medium transition outline-none">
-            </div>
-            
-            <input type="date" id="dateFilter" value="<?php echo htmlspecialchars($filter_tanggal); ?>" 
-                   class="bg-slate-50 border-none rounded-xl px-4 py-3 font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 outline-none">
-            
-            <button onclick="applyFilters()" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-blue-100 transition-all active:scale-95">
-                <i class="fas fa-filter mr-2"></i> Filter
-            </button>
-
-            <a href="invoice_manual.php" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-blue-200 transition-all active:scale-95 flex items-center gap-2">
-                <i class="fas fa-plus"></i> Buat Invoice Manual
-            </a>
-            <a href="laporanPenjualan.php" class="text-slate-400 hover:text-blue-600 font-bold px-4 py-3 transition">
-                <i class="fas fa-sync-alt"></i> Reset
-            </a>
-        </div>
-        
-        <div id="dataContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <?php if (empty($riwayat_pembelian)): ?>
-                <div class="col-span-2 bg-white p-8 rounded-xl text-center text-gray-500 shadow">
-                    <i class="fas fa-inbox text-4xl mb-4 text-gray-300"></i>
-                    <p>Tidak ada data ditemukan.</p>
-                </div>
-            <?php else: ?>
-                <?php foreach ($riwayat_pembelian as $pesanan): ?>
-                    <div class="bg-white rounded-xl invoice-card overflow-hidden flex flex-col hover:shadow-lg transition-shadow duration-300"> 
-                        <div class="p-6 flex-grow"> 
-                            <div class="flex justify-between items-start mb-4"> 
-                                <div>
-                                    <span class="text-sm text-gray-500"><?php echo $pesanan['tanggal']; ?></span>
-                                    <h3 class="text-lg font-bold text-gray-800">Pesanan #<?php echo $pesanan['id']; ?></h3>
-                                </div>
-                                <div class="flex flex-col items-end gap-1 text-xs"> 
-                                    <span class="badge <?php echo $pesanan['status_pembayaran']=='Lunas'?'badge-lunas':'badge-belum-bayar'; ?>">
-                                        <?php echo $pesanan['status_pembayaran']; ?>
-                                    </span>
-                                    <span class="badge <?php echo $pesanan['status_pengiriman']=='Done'?'badge-done':'badge-pending'; ?>">
-                                        <?php echo $pesanan['status_pengiriman']; ?>
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="border-t pt-4">
-                                <div class="flex justify-between mb-2">
-                                    <span class="text-sm text-gray-500">Total</span>
-                                    <span class="font-bold text-xl text-green-600">Rp<?php echo number_format($pesanan['total_harga'],0,',','.'); ?></span>
-                                </div>
-                                <p class="text-xs text-gray-500">
-                                    <b>Dapur:</b> <?php echo $pesanan['nama_dapur']; ?><br>
-                                    <b>Pemesan:</b> <?php echo $pesanan['nama_pemesan']; ?><br>
-                                    <b>Driver:</b> <?php echo $pesanan['nama_driver'] !== '-' ? $pesanan['nama_driver'] . ' (' . $pesanan['nopol_driver'] . ')' : '<span class="text-amber-600 font-bold">Belum Ditugaskan</span>'; ?>
-                                </p>
-                            </div>
-                        </div>
-                        <div class="bg-gray-50 p-4 flex flex-wrap gap-2 justify-end">
-                             <a href="cetak_invoice.php?id=<?php echo $pesanan['id']; ?>" target="_blank" class="action-btn bg-blue-600 text-white hover:bg-blue-700 transition">
-                                 <i class="fas fa-file-invoice"></i> Invoice
-                             </a>
-
-                             <?php if ($pesanan['status_pembayaran'] !== 'Batal'): ?>
-                             <button onclick="bukaModalTugaskan('<?php echo $pesanan['id']; ?>', '<?php echo addslashes($pesanan['nama_driver']); ?>', '<?php echo addslashes($pesanan['nopol_driver']); ?>', '<?php echo addslashes($pesanan['no_hp_driver']); ?>')" 
-                                     class="action-btn bg-slate-800 text-white hover:bg-slate-900 transition">
-                                 <i class="fas fa-user-plus"></i> Tugaskan
-                             </button>
-                             <a href="cetak_pengantar.php?id=<?php echo $pesanan['id']; ?>" target="_blank" class="action-btn bg-blue-100 text-blue-700 hover:bg-blue-600 hover:text-white transition">
-                                 <i class="fas fa-truck-ramp-box"></i> Pengantar
-                             </a>
-                             <?php endif; ?>
-                             
-                             <?php if ($pesanan['status_pembayaran'] === 'Belum Bayar'): ?>
-                                 <a href="?action=update_bayar&id=<?php echo $pesanan['id']; ?>&status=Lunas" 
-                                    class="action-btn bg-green-600 text-white hover:bg-green-700 transition"
-                                    onclick="return confirm('Tandai pesanan ini sebagai Lunas?')">
-                                     <i class="fas fa-check"></i> Lunas
-                                 </a>
-                                 
-                                 <a href="?action=update_bayar&id=<?php echo $pesanan['id']; ?>&status=Batal" 
-                                    class="action-btn bg-red-600 text-white hover:bg-red-700 transition" 
-                                    onclick="return confirm('Yakin ingin membatalkan pesanan ini?')">
-                                     <i class="fas fa-times"></i> Batal
-                                 </a>
-                             <?php endif; ?>
-                             
-                             <?php if ($pesanan['status_pembayaran'] === 'Lunas' && $pesanan['status_pengiriman'] === 'Pending'): ?>
-                                 <a href="?action=update_status&id=<?php echo $pesanan['id']; ?>&status=Ongoing" 
-                                    class="action-btn bg-yellow-500 text-white hover:bg-yellow-600 transition" 
-                                    onclick="return confirm('Kirim pesanan ini?')">
-                                     <i class="fas fa-truck"></i> Kirim
-                                 </a>
-                             <?php endif; ?>
-                             
-                             <?php if ($pesanan['status_pengiriman'] === 'Ongoing'): ?>
-                                 <a href="?action=update_status&id=<?php echo $pesanan['id']; ?>&status=Done" 
-                                    class="action-btn bg-teal-600 text-white hover:bg-teal-700 transition" 
-                                    onclick="return confirm('Tandai pesanan sebagai selesai?')">
-                                     <i class="fas fa-check-double"></i> Selesai
-                                 </a>
-                             <?php endif; ?>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
             <?php endif; ?>
         </div>
 
-        <div id="noDataMessage" class="hidden col-span-2 bg-white p-8 rounded-xl text-center text-gray-500 shadow">
-            <i class="fas fa-search text-4xl mb-4 text-gray-300"></i>
-            <p class="text-lg mb-2">Tidak ada data ditemukan</p>
-            <p class="text-sm text-gray-400">Coba kata kunci pencarian yang berbeda</p>
+        <!-- Filter & Search -->
+        <div class="glass-card p-5 mb-6 flex flex-wrap items-center gap-3">
+            <div class="relative flex-grow max-w-sm">
+                <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                <input type="text" id="searchInput" value="<?php echo htmlspecialchars($search); ?>" 
+                       placeholder="Cari ID, Nama, Driver..." 
+                       class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm font-medium transition outline-none">
+            </div>
+            
+            <input type="date" id="dateFilter" value="<?php echo htmlspecialchars($filter_tanggal); ?>" 
+                   class="bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2.5 font-medium text-sm text-slate-700 focus:ring-2 focus:ring-green-500 outline-none">
+            
+            <button onclick="applyFilters()" class="bg-slate-800 hover:bg-slate-900 text-white px-5 py-2.5 rounded-lg font-semibold text-sm transition-colors">
+                <i class="fas fa-filter mr-1.5"></i> Filter
+            </button>
+        </div>
+        
+        <!-- Recent Orders Table -->
+        <div class="glass-card overflow-hidden mb-6 fade-in">
+            <div class="flex flex-col md:flex-row items-start md:items-center justify-between px-6 py-5 border-b border-slate-100">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-800">Daftar Pesanan</h2>
+                    <p class="text-xs text-slate-400 mt-0.5">Data pesanan masuk dari semua outlet</p>
+                </div>
+                <div class="flex items-center gap-2 mt-3 md:mt-0">
+                    <a href="invoice_manual.php" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg font-semibold text-xs transition-colors flex items-center gap-1.5">
+                        <i class="fas fa-plus"></i> Buat Invoice
+                    </a>
+                    <a href="laporanPenjualan.php" class="text-slate-400 hover:text-slate-600 px-3 py-2 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5 border border-slate-200 hover:border-slate-300 bg-white">
+                        <i class="fas fa-sync-alt"></i> Reset
+                    </a>
+                </div>
+            </div>
+            
+            <div id="dataContainer">
+            <?php if (empty($riwayat_pembelian)): ?>
+                <div class="p-12 text-center">
+                    <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-inbox text-2xl text-slate-300"></i>
+                    </div>
+                    <p class="text-slate-500 font-medium">Tidak ada data ditemukan.</p>
+                    <p class="text-xs text-slate-400 mt-1">Coba ubah filter atau kata kunci pencarian</p>
+                </div>
+            <?php else: ?>
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 p-5">
+                    <?php foreach ($riwayat_pembelian as $pesanan): 
+                        // Determine border color based on status
+                        $border_color = 'border-l-slate-300';
+                        $status_label = $pesanan['status_pengiriman'];
+                        if ($pesanan['status_pembayaran'] === 'Batal') {
+                            $border_color = 'border-l-red-400';
+                        } elseif ($pesanan['status_pengiriman'] === 'Done') {
+                            $border_color = 'border-l-emerald-500';
+                        } elseif ($pesanan['status_pengiriman'] === 'Ongoing') {
+                            $border_color = 'border-l-emerald-400';
+                        } elseif ($pesanan['status_pembayaran'] === 'Lunas') {
+                            $border_color = 'border-l-blue-400';
+                        } elseif ($pesanan['status_pembayaran'] === 'Belum Bayar') {
+                            $border_color = 'border-l-amber-400';
+                        }
+                    ?>
+                    <div class="bg-white border border-slate-200 rounded-xl border-l-4 <?php echo $border_color; ?> flex flex-col">
+                        <!-- Card Header -->
+                        <div class="px-4 pt-4 pb-3">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center gap-2">
+                                    <span class="badge <?php echo $pesanan['status_pengiriman']=='Done'?'badge-done':($pesanan['status_pengiriman']=='Ongoing'?'badge-pending':'badge-pending'); ?>">
+                                        <?php echo $pesanan['status_pengiriman']; ?>
+                                    </span>
+                                    <span class="badge <?php echo $pesanan['status_pembayaran']=='Lunas'?'badge-lunas':($pesanan['status_pembayaran']=='Batal'?'badge-batal':'badge-belum-bayar'); ?>">
+                                        <?php echo $pesanan['status_pembayaran']; ?>
+                                    </span>
+                                </div>
+                                <span class="text-[11px] text-slate-400 font-medium"><?php echo $pesanan['tanggal']; ?></span>
+                            </div>
+                            
+                            <!-- Order ID & Route -->
+                            <h3 class="text-base font-bold text-slate-800 mb-1">PO-<?php echo str_pad($pesanan['id'], 6, '0', STR_PAD_LEFT); ?></h3>
+                            <p class="text-sm text-slate-600 font-medium">
+                                <?php echo htmlspecialchars($pesanan['nama_dapur']); ?> 
+                                <span class="text-slate-300 mx-1">→</span> 
+                                <?php echo htmlspecialchars($pesanan['nama_pemesan']); ?>
+                            </p>
+                        </div>
+
+                        <!-- Card Details -->
+                        <div class="px-4 pb-3 flex-grow">
+                            <div class="grid grid-cols-2 gap-x-4 gap-y-2 mb-3">
+                                <div>
+                                    <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Total</p>
+                                    <p class="text-sm font-bold text-slate-800">Rp<?php echo number_format($pesanan['total_harga'],0,',','.'); ?></p>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Driver</p>
+                                    <p class="text-sm font-medium <?php echo $pesanan['nama_driver'] !== '-' ? 'text-slate-700' : 'text-amber-500'; ?>">
+                                        <?php echo $pesanan['nama_driver'] !== '-' ? htmlspecialchars($pesanan['nama_driver']) : 'Belum ada'; ?>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Location Tags -->
+                            <div class="flex flex-wrap gap-1.5">
+                                <span class="inline-flex items-center gap-1 text-[11px] font-medium text-slate-500 bg-slate-50 border border-slate-100 px-2 py-1 rounded-md">
+                                    <i class="fas fa-store text-emerald-500 text-[9px]"></i>
+                                    <?php echo htmlspecialchars($pesanan['nama_dapur']); ?>
+                                </span>
+                                <?php if ($pesanan['nama_driver'] !== '-'): ?>
+                                <span class="inline-flex items-center gap-1 text-[11px] font-medium text-slate-500 bg-slate-50 border border-slate-100 px-2 py-1 rounded-md">
+                                    <i class="fas fa-truck text-blue-500 text-[9px]"></i>
+                                    <?php echo htmlspecialchars($pesanan['nopol_driver']); ?>
+                                </span>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+
+                        <!-- Card Actions -->
+                        <div class="px-4 py-3 border-t border-slate-100 flex items-center justify-between gap-2">
+                            <div class="flex items-center gap-1.5">
+                                <a href="cetak_invoice.php?id=<?php echo $pesanan['id']; ?>" class="btn-detail-modal btn-action bg-blue-600 text-white hover:bg-blue-700">
+                                    <i class="fas fa-file-invoice"></i> Invoice
+                                </a>
+                                <?php if ($pesanan['status_pembayaran'] !== 'Batal'): ?>
+                                <a href="cetak_pengantar.php?id=<?php echo $pesanan['id']; ?>" class="btn-detail-modal btn-action bg-slate-100 text-slate-600 hover:bg-slate-200">
+                                    <i class="fas fa-truck-ramp-box"></i>
+                                </a>
+                                <?php endif; ?>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <?php if ($pesanan['status_pembayaran'] === 'Belum Bayar'): ?>
+                                    <button onclick="bukaModalBayar('<?php echo $pesanan['id']; ?>', '<?php echo addslashes($pesanan['nama_pemesan']); ?>', <?php echo $pesanan['total_harga']; ?>)" 
+                                        class="btn-action bg-emerald-600 text-white hover:bg-emerald-700">
+                                        <i class="fas fa-check"></i> Lunas
+                                    </button>
+                                    <a href="?action=update_bayar&id=<?php echo $pesanan['id']; ?>&status=Batal" 
+                                        class="btn-action bg-red-50 text-red-600 hover:bg-red-100" 
+                                        onclick="return confirm('Yakin ingin membatalkan pesanan ini?')">
+                                        <i class="fas fa-times"></i>
+                                    </a>
+                                <?php endif; ?>
+                                <?php if ($pesanan['status_pembayaran'] === 'Lunas' && $pesanan['status_pengiriman'] === 'Pending'): ?>
+                                    <a href="?action=update_status&id=<?php echo $pesanan['id']; ?>&status=Ongoing" 
+                                        class="btn-action bg-amber-500 text-white hover:bg-amber-600" 
+                                        onclick="return confirm('Kirim pesanan ini?')">
+                                        <i class="fas fa-truck"></i> Kirim
+                                    </a>
+                                <?php endif; ?>
+                                <?php if ($pesanan['status_pengiriman'] === 'Ongoing'): ?>
+                                    <a href="?action=update_status&id=<?php echo $pesanan['id']; ?>&status=Done" 
+                                        class="btn-action bg-teal-600 text-white hover:bg-teal-700" 
+                                        onclick="return confirm('Tandai pesanan sebagai selesai?')">
+                                        <i class="fas fa-check-double"></i> Selesai
+                                    </a>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+            </div>
         </div>
 
-        <div id="loadingIndicator" class="hidden col-span-2 bg-white p-8 rounded-xl text-center text-gray-500 shadow">
-            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p>Memuat data...</p>
+        <div id="noDataMessage" class="hidden glass-card p-12 text-center mb-6">
+            <i class="fas fa-search text-3xl mb-3 text-slate-300"></i>
+            <p class="text-slate-500 font-medium">Tidak ada data ditemukan</p>
+            <p class="text-xs text-slate-400 mt-1">Coba kata kunci pencarian yang berbeda</p>
+        </div>
+
+        <div id="loadingIndicator" class="hidden glass-card p-12 text-center mb-6">
+            <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-emerald-600 mx-auto mb-3"></div>
+            <p class="text-slate-500 text-sm">Memuat data...</p>
         </div>
     </main>
     

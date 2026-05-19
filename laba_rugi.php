@@ -138,7 +138,7 @@ if ($laba_bersih > 0) {
             </form>
         </div>
 
-        <div class="p-6 lg:p-8 max-w-[1600px] mx-auto min-h-screen">
+        <div class="p-6 lg:p-8 max-w-[1600px] mx-auto min-h-screen font-mono">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <!-- Card 1: Pendapatan -->
                 <div class="bg-white rounded-3xl p-6 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-slate-100 transition-transform hover:-translate-y-1">
@@ -149,7 +149,7 @@ if ($laba_bersih > 0) {
                         <span class="text-[13px] font-bold">Total Pendapatan</span>
                     </div>
                     <div class="flex items-center gap-3 mb-2">
-                        <h3 class="text-[28px] font-black text-slate-800 tracking-tight"><?= formatRupiah($total_pendapatan) ?></h3>
+                        <h3 class="text-[28px] font-black text-slate-800 tracking-tight font-mono"><?= formatRupiah($total_pendapatan) ?></h3>
                     </div>
                     <p class="text-[11px] font-bold text-emerald-600 mt-3">+ Total kotor periode ini</p>
                 </div>
@@ -163,7 +163,7 @@ if ($laba_bersih > 0) {
                         <span class="text-[13px] font-bold">Harga Pokok Penjualan</span>
                     </div>
                     <div class="flex items-center gap-3 mb-2">
-                        <h3 class="text-[28px] font-black text-slate-800 tracking-tight"><?= formatRupiah($total_hpp) ?></h3>
+                        <h3 class="text-2xl xl:text-3xl font-black text-slate-800 tracking-tight font-mono"><?= formatRupiah($total_hpp) ?></h3>
                     </div>
                     <p class="text-[11px] font-bold text-rose-600 mt-3">- Pengurang pendapatan</p>
                 </div>
@@ -177,7 +177,7 @@ if ($laba_bersih > 0) {
                         <span class="text-[13px] font-bold">Laba Kotor</span>
                     </div>
                     <div class="flex items-center gap-3 mb-2">
-                        <h3 class="text-[28px] font-black text-slate-800 tracking-tight"><?= formatRupiah($laba_kotor) ?></h3>
+                        <h3 class="text-2xl xl:text-3xl font-black text-slate-800 tracking-tight font-mono"><?= formatRupiah($laba_kotor) ?></h3>
                     </div>
                     <p class="text-[11px] font-bold text-emerald-600 mt-3">+ Pendapatan dikurangi HPP</p>
                 </div>
@@ -191,7 +191,7 @@ if ($laba_bersih > 0) {
                         <span class="text-[13px] font-bold">Total Beban Ops</span>
                     </div>
                     <div class="flex items-center gap-3 mb-2">
-                        <h3 class="text-[28px] font-black text-slate-800 tracking-tight"><?= formatRupiah($total_beban_ops) ?></h3>
+                        <h3 class="text-2xl xl:text-3xl font-black text-slate-800 tracking-tight font-mono"><?= formatRupiah($total_beban_ops) ?></h3>
                     </div>
                     <p class="text-[11px] font-bold text-emerald-600 mt-3">+ Biaya operasional berjalan</p>
                 </div>

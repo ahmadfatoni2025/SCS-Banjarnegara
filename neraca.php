@@ -149,7 +149,7 @@ $selisih = abs($total_aset - $total_pasiva);
                     </div>
                     <div class="text-right">
                         <p class="text-[10px] font-bold <?= $is_balance ? 'text-emerald-500' : 'text-red-500' ?> uppercase tracking-widest mb-1">Total Aktiva / Pasiva</p>
-                        <p class="text-2xl font-black <?= $is_balance ? 'text-emerald-700' : 'text-red-700' ?>"><?= formatRupiah(max($total_aset, $total_pasiva)) ?></p>
+                        <p class="text-2xl font-black <?= $is_balance ? 'text-emerald-700' : 'text-red-700' ?> font-mono"><?= formatRupiah(max($total_aset, $total_pasiva)) ?></p>
                     </div>
                 </div>
             </div>
@@ -165,7 +165,7 @@ $selisih = abs($total_aset - $total_pasiva);
                         <span class="text-[13px] font-bold">Total Aset (Aktiva)</span>
                     </div>
                     <div class="flex items-center gap-3 mb-2">
-                        <h3 class="text-[28px] font-black text-slate-800 tracking-tight"><?= formatRupiah($total_aset) ?></h3>
+                        <h3 class="text-[28px] font-black text-slate-800 tracking-tight font-mono"><?= formatRupiah($total_aset) ?></h3>
                     </div>
                     <p class="text-[11px] font-bold text-blue-600 mt-3">+ Aset lancar dan tidak lancar</p>
                 </div>
@@ -179,7 +179,7 @@ $selisih = abs($total_aset - $total_pasiva);
                         <span class="text-[13px] font-bold">Total Kewajiban</span>
                     </div>
                     <div class="flex items-center gap-3 mb-2">
-                        <h3 class="text-[28px] font-black text-slate-800 tracking-tight"><?= formatRupiah($total_kewajiban) ?></h3>
+                        <h3 class="text-[28px] font-black text-slate-800 tracking-tight font-mono"><?= formatRupiah($total_kewajiban) ?></h3>
                     </div>
                     <p class="text-[11px] font-bold text-purple-600 mt-3">+ Hutang jangka pendek dan panjang</p>
                 </div>
@@ -193,7 +193,7 @@ $selisih = abs($total_aset - $total_pasiva);
                         <span class="text-[13px] font-bold">Total Modal</span>
                     </div>
                     <div class="flex items-center gap-3 mb-2">
-                        <h3 class="text-[28px] font-black text-slate-800 tracking-tight"><?= formatRupiah($total_modal) ?></h3>
+                        <h3 class="text-[28px] font-black text-slate-800 tracking-tight font-mono"><?= formatRupiah($total_modal) ?></h3>
                     </div>
                     <p class="text-[11px] font-bold text-emerald-600 mt-3">+ Investasi pemilik dan laba ditahan</p>
                 </div>

@@ -181,77 +181,100 @@ if (empty($insights)) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Analisa Bisnis - PT. SURYA CERAH SEMESTA</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #F1F5F9; }
-        .paper-card { background: white; border-radius: 16px; box-shadow: 0 2px 15px rgba(0,0,0,0.03); border: 1px solid #e2e8f0; }
-        .metric-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px -4px rgba(0,0,0,0.1); transition: all 0.3s; }
+        body { font-family: 'Poppins', sans-serif; background-color: #F3F4F6; }
+        .paper-card { background: white; border-radius: 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border: 1px solid #e2e8f0; }
+        .metric-card { transition: all 0.3s ease; }
+        .metric-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px -4px rgba(0,0,0,0.1); }
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="text-slate-800">
+<body class="text-slate-800 min-h-screen">
 
     <?php include 'sidebar.php'; ?>
 
-    <div class="md:ml-64 min-h-screen p-6 md:p-8 transition-all duration-300">
+    <div class="md:ml-64 min-h-screen p-4 md:p-8 transition-all duration-300 fade-in">
         
-        <div class="flex flex-col lg:flex-row justify-between items-end gap-6 mb-8">
+        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-8">
             <div>
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-100 text-indigo-700 text-xs font-bold uppercase tracking-wider mb-2">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-100 text-indigo-700 text-[10px] font-bold uppercase tracking-wider mb-2">
                     <i class="fas fa-robot"></i> Analisa Cerdas
                 </div>
-                <h1 class="text-3xl font-extrabold text-slate-900">Analisa Bisnis</h1>
-                <p class="text-slate-500 mt-1">Lihat tren penjualan dan prediksi masa depan.</p>
+                <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Analisa Bisnis</h1>
+                <p class="text-sm text-slate-500 mt-1">Lihat tren penjualan dan prediksi masa depan.</p>
             </div>
             
-            <div class="paper-card p-1.5 flex items-center">
-                <form method="GET" class="flex items-center gap-2">
-                    <div class="flex items-center bg-slate-50 rounded-lg px-3 py-2 border border-slate-200">
-                        <span class="text-xs text-slate-400 mr-2 font-bold">DARI</span>
-                        <input type="date" name="tgl_mulai" value="<?= $tgl_mulai ?>" class="bg-transparent text-sm font-medium text-slate-700 outline-none">
+            <div class="paper-card p-1.5 flex items-center w-full lg:w-auto">
+                <form method="GET" class="flex flex-col sm:flex-row items-center gap-2 w-full">
+                    <div class="flex items-center bg-slate-50 rounded-xl px-3 py-2.5 border border-slate-200 w-full sm:w-auto">
+                        <span class="text-[10px] text-slate-400 mr-2 font-bold uppercase">Dari</span>
+                        <input type="date" name="tgl_mulai" value="<?= $tgl_mulai ?>" class="bg-transparent text-sm font-medium text-slate-700 outline-none w-full">
                     </div>
-                    <span class="text-slate-300"><i class="fas fa-arrow-right text-xs"></i></span>
-                    <div class="flex items-center bg-slate-50 rounded-lg px-3 py-2 border border-slate-200">
-                        <span class="text-xs text-slate-400 mr-2 font-bold">SAMPAI</span>
-                        <input type="date" name="tgl_selesai" value="<?= $tgl_akhir ?>" class="bg-transparent text-sm font-medium text-slate-700 outline-none">
+                    <span class="text-slate-300 hidden sm:block"><i class="fas fa-arrow-right text-xs"></i></span>
+                    <div class="flex items-center bg-slate-50 rounded-xl px-3 py-2.5 border border-slate-200 w-full sm:w-auto">
+                        <span class="text-[10px] text-slate-400 mr-2 font-bold uppercase">Sampai</span>
+                        <input type="date" name="tgl_selesai" value="<?= $tgl_akhir ?>" class="bg-transparent text-sm font-medium text-slate-700 outline-none w-full">
                     </div>
-                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white w-10 h-10 rounded-lg flex items-center justify-center transition shadow-lg shadow-indigo-200">
+                    <button type="submit" class="bg-slate-900 hover:bg-black text-white w-full sm:w-10 h-10 rounded-xl flex items-center justify-center transition-all shadow-sm text-sm font-bold">
                         <i class="fas fa-search"></i>
                     </button>
                 </form>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             
-            <div class="paper-card p-5 border-l-4 border-indigo-500 metric-card">
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-wide">Total Omzet</p>
-                <h3 class="text-2xl font-bold text-slate-800 mt-1">Rp <?= number_format($omzet_now/1000, 0) ?>k</h3>
-                <div class="mt-2 flex items-center gap-1 text-xs font-bold <?= $growth>=0 ? 'text-green-600' : 'text-red-600' ?>">
-                    <i class="fas <?= $growth>=0 ? 'fa-arrow-up' : 'fa-arrow-down' ?>"></i>
-                    <span><?= round(abs($growth), 1) ?>%</span>
-                    <span class="text-slate-400 font-normal ml-1">vs periode lalu</span>
+            <div class="paper-card p-5 metric-card flex items-start gap-4">
+                <div class="w-11 h-11 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-lg shrink-0">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="min-w-0">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Omzet</p>
+                    <h3 class="text-xl font-bold text-slate-800 mt-0.5 whitespace-nowrap">Rp <?= number_format($omzet_now/1000, 0) ?>k</h3>
+                    <div class="mt-1 flex items-center gap-1 text-[10px] font-bold <?= $growth>=0 ? 'text-emerald-600' : 'text-red-500' ?>">
+                        <i class="fas <?= $growth>=0 ? 'fa-arrow-up' : 'fa-arrow-down' ?>"></i>
+                        <span><?= round(abs($growth), 1) ?>%</span>
+                        <span class="text-slate-400 font-normal">vs lalu</span>
+                    </div>
                 </div>
             </div>
 
-            <div class="paper-card p-5 border-l-4 border-blue-500 metric-card">
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-wide">Jumlah Pesanan</p>
-                <h3 class="text-2xl font-bold text-slate-800 mt-1"><?= number_format($trx_now) ?></h3>
-                <p class="text-xs mt-2 text-slate-400">Transaksi berhasil lunas</p>
+            <div class="paper-card p-5 metric-card flex items-start gap-4">
+                <div class="w-11 h-11 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-lg shrink-0">
+                    <i class="fas fa-receipt"></i>
+                </div>
+                <div class="min-w-0">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Jumlah Pesanan</p>
+                    <h3 class="text-xl font-bold text-slate-800 mt-0.5"><?= number_format($trx_now) ?></h3>
+                    <p class="text-[10px] mt-1 text-slate-400">Transaksi lunas</p>
+                </div>
             </div>
 
-            <div class="paper-card p-5 border-l-4 border-orange-500 metric-card">
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-wide">Rata2 Per Orang</p>
-                <h3 class="text-2xl font-bold text-slate-800 mt-1">Rp <?= number_format($aov/1000, 0) ?>k</h3>
-                <p class="text-xs mt-2 text-slate-400">Nilai per struk belanja</p>
+            <div class="paper-card p-5 metric-card flex items-start gap-4">
+                <div class="w-11 h-11 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-lg shrink-0">
+                    <i class="fas fa-user-tag"></i>
+                </div>
+                <div class="min-w-0">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Rata-rata / Orang</p>
+                    <h3 class="text-xl font-bold text-slate-800 mt-0.5 whitespace-nowrap">Rp <?= number_format($aov/1000, 0) ?>k</h3>
+                    <p class="text-[10px] mt-1 text-slate-400">Per struk belanja</p>
+                </div>
             </div>
 
-            <div class="paper-card p-5 border-l-4 border-teal-500 bg-gradient-to-br from-white to-teal-50 metric-card">
-                <p class="text-xs font-bold text-teal-700 uppercase tracking-wide">Prediksi Besok</p>
-                <h3 class="text-2xl font-bold text-slate-800 mt-1">~ Rp <?= number_format($prediksi_besok/1000, 0) ?>k</h3>
-                <p class="text-xs mt-2 text-teal-600 font-medium">Tren: <?= $trend_status ?></p>
+            <div class="paper-card p-5 metric-card flex items-start gap-4 bg-gradient-to-br from-white to-teal-50">
+                <div class="w-11 h-11 rounded-xl bg-teal-100 text-teal-600 flex items-center justify-center text-lg shrink-0">
+                    <i class="fas fa-wand-magic-sparkles"></i>
+                </div>
+                <div class="min-w-0">
+                    <p class="text-[10px] font-bold text-teal-700 uppercase tracking-wider">Prediksi Besok</p>
+                    <h3 class="text-xl font-bold text-slate-800 mt-0.5 whitespace-nowrap">~ Rp <?= number_format($prediksi_besok/1000, 0) ?>k</h3>
+                    <p class="text-[10px] mt-1 text-teal-600 font-semibold"><?= $trend_status ?></p>
+                </div>
             </div>
         </div>
 
@@ -283,7 +306,7 @@ if (empty($insights)) {
             </div>
         </div>
 
-        <div class="paper-card p-6 border-t-4 border-yellow-400">
+        <div class="paper-card p-6">
             <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2">
                 <div class="w-8 h-8 bg-yellow-100 text-yellow-600 rounded-lg flex items-center justify-center">
                     <i class="fas fa-lightbulb"></i>

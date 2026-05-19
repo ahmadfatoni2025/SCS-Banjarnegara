@@ -146,7 +146,7 @@ function getBadgeColor($kat) {
                         <span class="text-[13px] font-bold">Saldo Kas Awal</span>
                     </div>
                     <div class="flex items-center gap-3 mb-2">
-                        <h3 class="text-[24px] font-black text-slate-800 tracking-tight truncate" title="<?= formatRupiah($saldo_awal_kas) ?>"><?= formatRupiah($saldo_awal_kas) ?></h3>
+                        <h3 class="text-2xl xl:text-3xl font-black text-slate-800 tracking-tight truncate font-mono" title="<?= formatRupiah($saldo_awal_kas) ?>"><?= formatRupiah($saldo_awal_kas) ?></h3>
                     </div>
                     <p class="text-[11px] font-bold text-blue-600 mt-3">+ Total sisa kas periode lalu</p>
                 </div>
@@ -160,7 +160,7 @@ function getBadgeColor($kat) {
                         <span class="text-[13px] font-bold">Total Penerimaan</span>
                     </div>
                     <div class="flex items-center gap-3 mb-2">
-                        <h3 class="text-[24px] font-black text-slate-800 tracking-tight truncate" title="<?= formatRupiah($total_masuk) ?>"><?= formatRupiah($total_masuk) ?></h3>
+                        <h3 class="text-2xl xl:text-3xl font-black text-slate-800 tracking-tight truncate font-mono" title="<?= formatRupiah($total_masuk) ?>"><?= formatRupiah($total_masuk) ?></h3>
                     </div>
                     <p class="text-[11px] font-bold text-emerald-600 mt-3">+ Uang masuk periode ini</p>
                 </div>
@@ -174,7 +174,7 @@ function getBadgeColor($kat) {
                         <span class="text-[13px] font-bold">Total Pengeluaran</span>
                     </div>
                     <div class="flex items-center gap-3 mb-2">
-                        <h3 class="text-[24px] font-black text-slate-800 tracking-tight truncate" title="<?= formatRupiah($total_keluar) ?>"><?= formatRupiah($total_keluar) ?></h3>
+                        <h3 class="text-2xl xl:text-3xl font-black text-slate-800 tracking-tight truncate font-mono" title="<?= formatRupiah($total_keluar) ?>"><?= formatRupiah($total_keluar) ?></h3>
                     </div>
                     <p class="text-[11px] font-bold text-rose-600 mt-3">+ Uang keluar periode ini</p>
                 </div>
@@ -188,7 +188,7 @@ function getBadgeColor($kat) {
                         <span class="text-[13px] font-bold">Saldo Kas Akhir</span>
                     </div>
                     <div class="flex items-center gap-3 mb-2">
-                        <h3 class="text-[24px] font-black text-slate-800 tracking-tight truncate" title="<?= formatRupiah($saldo_akhir_kas) ?>"><?= formatRupiah($saldo_akhir_kas) ?></h3>
+                        <h3 class="text-2xl xl:text-3xl font-black text-slate-800 tracking-tight truncate font-mono" title="<?= formatRupiah($saldo_akhir_kas) ?>"><?= formatRupiah($saldo_akhir_kas) ?></h3>
                     </div>
                     <p class="text-[11px] font-bold text-purple-600 mt-3">+ Sisa kas saat ini</p>
                 </div>
@@ -202,12 +202,12 @@ function getBadgeColor($kat) {
                             <i class="fas <?= $arus_kas_bersih >= 0 ? 'fa-arrow-trend-up' : 'fa-arrow-trend-down' ?> text-xl"></i>
                         </div>
                         <div>
-                            <h3 class="text-lg font-black <?= $arus_kas_bersih >= 0 ? 'text-emerald-800' : 'text-rose-800' ?> tracking-tight">Net Arus Kas (Periode Ini)</h3>
+                            <h3 class="text-lg font-black <?= $arus_kas_bersih >= 0 ? 'text-emerald-800' : 'text-rose-800' ?> tracking-tight font-mono">Net Arus Kas (Periode Ini)</h3>
                             <p class="text-[12px] font-bold <?= $arus_kas_bersih >= 0 ? 'text-emerald-600' : 'text-rose-600' ?> opacity-80 mt-1">Selisih antara kas masuk dan keluar bulan ini.</p>
                         </div>
                     </div>
                     <div class="text-right">
-                        <span class="text-3xl font-black <?= $arus_kas_bersih >= 0 ? 'text-emerald-600' : 'text-rose-600' ?>">
+                        <span class="text-3xl font-black <?= $arus_kas_bersih >= 0 ? 'text-emerald-600' : 'text-rose-600' ?> font-mono">
                             <?= $arus_kas_bersih >= 0 ? '+' : '' ?> <?= formatRupiah($arus_kas_bersih) ?>
                         </span>
                     </div>

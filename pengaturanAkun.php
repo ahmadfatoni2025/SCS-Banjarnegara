@@ -107,6 +107,53 @@ if (isset($_POST['action']) && $_POST['action'] == 'hapus_foto') {
     }
 }
 
+// === LOGIKA: UPLOAD FOTO SAMPUL ===
+if (isset($_POST['action']) && $_POST['action'] == 'upload_sampul') {
+    if (isset($_FILES['foto_sampul']) && $_FILES['foto_sampul']['error'] === UPLOAD_ERR_OK) {
+        $file = $_FILES['foto_sampul'];
+        $allowed_types = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+        $max_size = 3 * 1024 * 1024; // 3MB
+        
+        if (!in_array($file['type'], $allowed_types)) {
+            $error_message_foto = "Hanya file JPEG, JPG, PNG, dan GIF yang diizinkan untuk sampul.";
+        } elseif ($file['size'] > $max_size) {
+            $error_message_foto = "Ukuran file sampul maksimal 3MB.";
+        } else {
+            if (!is_dir($upload_dir)) { mkdir($upload_dir, 0755, true); }
+            $file_extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+            $new_filename = 'cover_' . $user_id . '_' . time() . '.' . $file_extension;
+            $upload_path = $upload_dir . $new_filename;
+            
+            if (move_uploaded_file($file['tmp_name'], $upload_path)) {
+                $stmt_old = $koneksi->prepare("SELECT foto_sampul FROM user WHERE id = ?");
+                $stmt_old->bind_param("i", $user_id);
+                $stmt_old->execute();
+                $stmt_old->bind_result($current_sampul);
+                if ($stmt_old->fetch() && $current_sampul && file_exists($upload_dir . $current_sampul)) {
+                    unlink($upload_dir . $current_sampul);
+                }
+                $stmt_old->close();
+                
+                $stmt_update_sampul = $koneksi->prepare("UPDATE user SET foto_sampul = ? WHERE id = ?");
+                if ($stmt_update_sampul) {
+                    $stmt_update_sampul->bind_param("si", $new_filename, $user_id);
+                    if ($stmt_update_sampul->execute()) {
+                        $_SESSION['user']['foto_sampul'] = $new_filename;
+                        $success_message_foto = "Foto sampul berhasil diupload!";
+                    } else {
+                        $error_message_foto = "Gagal menyimpan foto sampul: " . $stmt_update_sampul->error;
+                    }
+                    $stmt_update_sampul->close();
+                }
+            } else {
+                $error_message_foto = "Gagal mengupload file sampul.";
+            }
+        }
+    } else {
+        $error_message_foto = "Silakan pilih file foto sampul yang valid.";
+    }
+}
+
 // === LOGIKA 6: UPLOAD TANDA TANGAN (Hanya Akuntan/Owner/Admin) ===
 if (isset($_POST['action']) && $_POST['action'] == 'upload_ttd') {
     if (isset($_FILES['tanda_tangan']) && $_FILES['tanda_tangan']['error'] === UPLOAD_ERR_OK) {
@@ -352,11 +399,44 @@ if ($user_role === 'admin') {
     }
 }
 
-// Foto Profil
-$current_foto_filename = $_SESSION['user']['foto'] ?? null;
+// Ambil data counter dokumen
+$current_inv = 0; $current_pes = 0; $current_sj = 0;
+$query_counters = mysqli_query($koneksi, "SELECT kunci, nilai FROM pengaturan WHERE kunci IN ('invoice_counter', 'pesanan_counter', 'sj_counter')");
+if($query_counters){
+    while($row = mysqli_fetch_assoc($query_counters)){
+        if($row['kunci'] == 'invoice_counter') $current_inv = (int)$row['nilai'];
+        if($row['kunci'] == 'pesanan_counter') $current_pes = (int)$row['nilai'];
+        if($row['kunci'] == 'sj_counter') $current_sj = (int)$row['nilai'];
+    }
+}
+
+$bulan_romawi = [
+    '01'=>'I', '02'=>'II', '03'=>'III', '04'=>'IV', '05'=>'V', '06'=>'VI',
+    '07'=>'VII', '08'=>'VIII', '09'=>'IX', '10'=>'X', '11'=>'XI', '12'=>'XII'
+];
+$m = date('m');
+$y = date('Y');
+
+$preview_inv = str_pad($current_inv + 1, 3, '0', STR_PAD_LEFT) . "/INV-D1/" . $bulan_romawi[$m] . "/" . $y;
+$preview_pes = ($current_pes + 1) . "/SCS/PO-DP/" . $bulan_romawi[$m] . "/" . $y;
+$preview_sj  = str_pad($current_sj + 1, 3, '0', STR_PAD_LEFT) . "/SJ-SCS/" . $bulan_romawi[$m] . "/" . $y;
+
+// Foto Profil & Sampul
+$stmt_get_user = $koneksi->prepare("SELECT foto, foto_sampul FROM user WHERE id = ?");
+$stmt_get_user->bind_param("i", $user_id);
+$stmt_get_user->execute();
+$stmt_get_user->bind_result($current_foto_filename, $current_sampul_filename);
+$stmt_get_user->fetch();
+$stmt_get_user->close();
+
 $profile_image_src = 'https://media.istockphoto.com/id/824860820/id/foto/kera-barbary.jpg?s=612x612&w=0&k=20&c=8aFvC6ZREgjco5jHClKOjps2T6XbOOSAyTHJ4JbeOHM=';
 if ($current_foto_filename && file_exists($upload_dir . $current_foto_filename)) {
     $profile_image_src = $upload_dir . $current_foto_filename . '?t=' . time();
+}
+
+$cover_image_src = '';
+if ($current_sampul_filename && file_exists($upload_dir . $current_sampul_filename)) {
+    $cover_image_src = $upload_dir . $current_sampul_filename . '?t=' . time();
 }
 ?>
 <!DOCTYPE html>
@@ -365,339 +445,356 @@ if ($current_foto_filename && file_exists($upload_dir . $current_foto_filename))
     <link rel="icon" href="logo_scs_jpg.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pengaturan Akun - MBG Admin</title>
+    <meta name="description" content="Pengaturan profil dan akun pengguna - SCS Banjarnegara">
+    <title>Settings - SCS Banjarnegara</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        /* Styles tetap sama */
-        body { font-family: ui-sans-serif, system-ui, -apple-system, sans-serif; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); height: 100vh; overflow: hidden; }
-        .full-height-container { height: 100vh; display: flex; flex-direction: column; }
-        .content-wrapper { flex: 1; overflow-y: auto; padding: 0; }
-        .fade-in { animation: fadeIn 0.5s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .card { background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); height: fit-content; }
-        .form-input { border: 1px solid #d1d5db; border-radius: 8px; }
-        .grid-container { display: grid; grid-template-columns: 1fr; gap: 1.5rem; height: 100%; padding: 1.5rem; }
-        @media (min-width: 1024px) {
-            .grid-container { grid-template-columns: 1fr 1fr; gap: 2rem; padding: 2rem; }
-            .profile-card { grid-column: 1; }
-            .admin-column { grid-column: 2; grid-row: 1; display: flex; flex-direction: column; gap: 2rem; }
-        }
-        .btn-primary { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; }
-        .btn-success { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; }
-        .btn-warning { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; }
-        .btn-danger { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; }
-        .badge { padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; }
-        .badge-success { background-color: #dcfce7; color: #166534; }
-        .badge-info { background-color: #dbeafe; color: #1e40af; }
-        .alert { padding: 0.75rem 1rem; border-radius: 8px; display: flex; align-items: center; margin-bottom: 1rem; }
-        .alert-error { background-color: #fef2f2; border: 1px solid #fecaca; color: #dc2626; }
-        .alert-success { background-color: #f0fdf4; border: 1px solid #bbf7d0; color: #16a34a; }
-        .profile-image-container { position: relative; display: inline-block; }
-        .profile-image-overlay { position: absolute; bottom: 8px; right: 8px; background: #2563eb; color: white; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-        .hidden-file-input { width: 0.1px; height: 0.1px; opacity: 0; position: absolute; z-index: -1; }
-        .section-divider { height: 1px; background: #e5e7eb; margin: 2rem 0; }
+        body { font-family:'Inter',sans-serif; background:#F8F9FB; color:#1E293B; }
+        .sidebar-space { margin-left:16rem; }
+        @media(max-width:1024px){.sidebar-space{margin-left:0;}}
+        ::-webkit-scrollbar{width:5px;} ::-webkit-scrollbar-track{background:transparent;}
+        ::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:10px;}
+        /* Card */
+        .settings-card{background:#fff;border:1px solid #E8ECF0;border-radius:1rem;box-shadow:0 1px 3px rgba(0,0,0,.04);}
+        /* Section divider row */
+        .set-section{display:grid;grid-template-columns:1fr 2fr;gap:2rem;padding:1.75rem 0;border-top:1px solid #F1F5F9;align-items:start;}
+        @media(max-width:640px){.set-section{grid-template-columns:1fr;gap:.75rem;}}
+        .set-label-title{font-size:.8125rem;font-weight:700;color:#0F172A;margin-bottom:.25rem;}
+        .set-label-hint{font-size:.7rem;color:#94A3B8;line-height:1.5;}
+        /* Input */
+        .fi{width:100%;padding:.65rem .9rem;border:1px solid #E2E8F0;border-radius:.6rem;font-size:.8125rem;font-family:inherit;outline:none;transition:border-color .15s,box-shadow .15s;background:#fff;}
+        .fi:focus{border-color:#3B82F6;box-shadow:0 0 0 3px rgba(59,130,246,.1);}
+        /* Buttons */
+        .btn-save{display:inline-flex;align-items:center;gap:.4rem;background:#0F172A;color:#fff;padding:.55rem 1.25rem;border-radius:.55rem;font-size:.75rem;font-weight:600;border:none;cursor:pointer;transition:background .15s;}
+        .btn-save:hover{background:#1E293B;}
+        .btn-outline{display:inline-flex;align-items:center;gap:.4rem;background:#fff;color:#475569;border:1px solid #E2E8F0;padding:.5rem 1.1rem;border-radius:.55rem;font-size:.75rem;font-weight:600;cursor:pointer;transition:all .15s;}
+        .btn-outline:hover{border-color:#94A3B8;color:#1E293B;}
+        .btn-danger{display:inline-flex;align-items:center;gap:.4rem;background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;padding:.45rem .9rem;border-radius:.5rem;font-size:.72rem;font-weight:600;cursor:pointer;transition:all .15s;}
+        .btn-danger:hover{background:#DC2626;color:#fff;}
+        .btn-blue{display:inline-flex;align-items:center;gap:.4rem;background:#2563EB;color:#fff;padding:.55rem 1.25rem;border-radius:.55rem;font-size:.75rem;font-weight:600;border:none;cursor:pointer;transition:background .15s;}
+        .btn-blue:hover{background:#1D4ED8;}
+        /* Alert */
+        .alert{display:flex;align-items:center;gap:.75rem;padding:.8rem 1rem;border-radius:.65rem;font-size:.8rem;font-weight:500;}
+        .alert-success{background:#ECFDF5;color:#065F46;border:1px solid #A7F3D0;}
+        .alert-error{background:#FEF2F2;color:#991B1B;border:1px solid #FECACA;}
+        /* Badge */
+        .badge-admin{background:#F5F3FF;color:#7C3AED;padding:.15rem .5rem;border-radius:.3rem;font-size:.65rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;}
+        .badge-auto{background:#ECFDF5;color:#059669;padding:.15rem .5rem;border-radius:.3rem;font-size:.65rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;}
+        /* Counter card */
+        .counter-card{border:1px dashed #E2E8F0;border-radius:.75rem;padding:1rem;background:#FAFAFA;}
+        /* Blob animation */
+        @keyframes blob{0%{transform:translate(0,0) scale(1);}33%{transform:translate(30px,-50px) scale(1.1);}66%{transform:translate(-20px,20px) scale(.9);}100%{transform:translate(0,0) scale(1);}}
+        .animate-blob{animation:blob 7s infinite;} .animation-delay-2000{animation-delay:2s;}
+        input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{opacity:1;}
     </style>
 </head>
-<body class="full-height-container">
+<body>
     <?php include 'sidebar.php'; ?>
-    
-    <div class="content-wrapper ml-0 md:ml-64 fade-in">
-        <div class="grid-container">
-            <div class="card p-8 profile-card">
-                <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
-                    <h2 class="text-2xl font-semibold text-gray-800 flex items-center mb-4 md:mb-0">
-                        <i class="fas fa-user-circle text-blue-600 mr-3"></i>
-                        Profil Saya
-                    </h2>
-                    <span class="badge badge-info capitalize">
-                        <i class="fas fa-user-tag mr-1"></i>
-                        <?php echo htmlspecialchars($user_role); ?>
-                    </span>
-                </div>
 
-                <div class="flex flex-col items-center mb-8">
-                    <div class="profile-image-container">
-                        <img id="profileImage" src="<?php echo htmlspecialchars($profile_image_src); ?>" 
-                             alt="Foto Profil" class="w-32 h-32 rounded-full object-cover border-4 border-blue-200 shadow-lg">
-                        <label for="uploadPhotoInput" class="profile-image-overlay cursor-pointer">
-                            <i class="fas fa-camera text-sm"></i>
-                        </label>
-                        <?php if ($current_foto_filename): ?>
-                        <form method="POST" action="pengaturanAkun.php" class="absolute top-0 left-0">
-                            <input type="hidden" name="action" value="hapus_foto">
-                            <button type="submit" name="hapus_foto_submit" 
-                                    class="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition"
-                                    onclick="return confirm('Hapus foto profil?')" title="Hapus Foto">
-                                <i class="fas fa-times text-xs"></i>
-                            </button>
-                        </form>
-                        <?php endif; ?>
+    <div class="sidebar-space min-h-screen transition-all duration-300">
+        <div class="px-6 md:px-10 py-8">
+        <div class="max-w-4xl mx-auto">
+            
+            <!-- ALERTS -->
+            <?php
+            $alerts = [];
+            if($error_message_profile) $alerts[] = ['type' => 'error', 'msg' => $error_message_profile];
+            if($success_message_profile) $alerts[] = ['type' => 'success', 'msg' => $success_message_profile];
+            if($error_message_password) $alerts[] = ['type' => 'error', 'msg' => $error_message_password];
+            if($success_message_password) $alerts[] = ['type' => 'success', 'msg' => $success_message_password];
+            if($error_message_create) $alerts[] = ['type' => 'error', 'msg' => $error_message_create];
+            if($success_message_create) $alerts[] = ['type' => 'success', 'msg' => $success_message_create];
+            if($error_message_foto) $alerts[] = ['type' => 'error', 'msg' => $error_message_foto];
+            if($success_message_foto) $alerts[] = ['type' => 'success', 'msg' => $success_message_foto];
+            if($error_message_reset) $alerts[] = ['type' => 'error', 'msg' => $error_message_reset];
+            if($success_message_reset) $alerts[] = ['type' => 'success', 'msg' => $success_message_reset];
+            if($error_message_ttd) $alerts[] = ['type' => 'error', 'msg' => $error_message_ttd];
+            if($success_message_ttd) $alerts[] = ['type' => 'success', 'msg' => $success_message_ttd];
+            if(isset($_GET['inv_success'])) $alerts[] = ['type' => 'success', 'msg' => 'Pengaturan nomor dokumen berhasil diperbarui!'];
+            ?>
+            <?php if(!empty($alerts)): ?>
+            <div class="mb-6 space-y-2">
+                <?php foreach($alerts as $alert): ?>
+                    <div class="alert <?php echo $alert['type']=='success' ? 'alert-success' : 'alert-error'; ?>">
+                        <i class="fas <?php echo $alert['type']=='success' ? 'fa-check-circle' : 'fa-exclamation-circle'; ?> flex-shrink-0"></i>
+                        <span><?php echo strip_tags($alert['msg'])==$alert['msg'] ? htmlspecialchars($alert['msg']) : $alert['msg']; ?></span>
                     </div>
-                    <form method="POST" enctype="multipart/form-data" class="mt-4 text-center" id="form-upload-foto">
-                        <input type="hidden" name="action" value="upload_foto">
-                        <input id="uploadPhotoInput" name="foto_profil" type="file" accept="image/*" class="hidden-file-input" onchange="previewAndSubmit(event)">
-                        <label for="uploadPhotoInput" class="btn-primary px-4 py-2 rounded-lg transition flex items-center mx-auto cursor-pointer">
-                            <i class="fas fa-upload mr-2"></i> Upload Foto Baru
-                        </label>
-                        <?php if ($error_message_foto): ?><div class="alert alert-error mt-4"><?php echo htmlspecialchars($error_message_foto); ?></div><?php endif; ?>
-                        <?php if ($success_message_foto): ?><div class="alert alert-success mt-4"><?php echo htmlspecialchars($success_message_foto); ?></div><?php endif; ?>
-                    </form>
-                </div>
-
-                <form action="pengaturanAkun.php" method="POST" class="space-y-6">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Informasi Profil</h3>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap</label>
-                        <input name="nama" value="<?php echo htmlspecialchars($current_name); ?>" type="text" class="w-full px-4 py-3 form-input" required>
-                    </div>
-                    <?php if ($error_message_profile): ?><div class="alert alert-error"><?php echo htmlspecialchars($error_message_profile); ?></div><?php endif; ?>
-                    <?php if ($success_message_profile): ?><div class="alert alert-success"><?php echo htmlspecialchars($success_message_profile); ?></div><?php endif; ?>
-                    <div class="flex justify-end">
-                        <button type="submit" name="update_profile" class="btn-primary font-semibold py-3 px-6 rounded-lg transition">Simpan Perubahan</button>
-                    </div>
-                </form>
-
-                <div class="section-divider"></div>
-
-                <form action="pengaturanAkun.php" method="POST" class="space-y-6">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Keamanan Akun</h3>
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Password Lama</label>
-                            <input name="password_lama" type="password" class="w-full px-4 py-3 form-input" required>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Password Baru</label>
-                            <input name="password_baru" type="password" class="w-full px-4 py-3 form-input" required>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Konfirmasi Password</label>
-                            <input name="konfirmasi_password" type="password" class="w-full px-4 py-3 form-input" required>
-                        </div>
-                    </div>
-                    <?php if ($error_message_password): ?><div class="alert alert-error"><?php echo htmlspecialchars($error_message_password); ?></div><?php endif; ?>
-                    <?php if ($success_message_password): ?><div class="alert alert-success"><?php echo htmlspecialchars($success_message_password); ?></div><?php endif; ?>
-                    <div class="flex justify-end">
-                        <button type="submit" name="update_password" class="btn-warning text-white font-semibold py-3 px-6 rounded-lg transition">Ubah Password</button>
-                    </div>
-                </form>
-
-                <?php if (in_array($user_role, ['akuntan', 'owner', 'admin'])): ?>
-                <div class="section-divider"></div>
-                <form action="pengaturanAkun.php" method="POST" enctype="multipart/form-data" class="space-y-6">
-                    <input type="hidden" name="action" value="upload_ttd">
-                    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-2">
-                        <h3 class="text-lg font-semibold text-gray-800">Tanda Tangan Digital</h3>
-                        <span class="text-[10px] bg-blue-50 text-blue-600 px-2 py-1 rounded-md font-bold">AKUNTANSI</span>
-                    </div>
-                    <p class="text-xs text-gray-500 italic">Tanda tangan ini akan muncul otomatis di setiap Invoice yang Anda konfirmasi. Disarankan menggunakan file PNG transparan.</p>
-                    
-                    <div class="flex items-center space-x-6 bg-gray-50 p-6 rounded-2xl border border-dashed border-gray-300">
-                        <div class="flex-shrink-0 w-32 h-20 bg-white border border-gray-200 rounded-lg overflow-hidden flex items-center justify-center">
-                            <?php 
-                            $ttd_path = isset($_SESSION['user']['tanda_tangan']) ? $ttd_dir . $_SESSION['user']['tanda_tangan'] : null;
-                            if ($ttd_path && file_exists($ttd_path)): ?>
-                                <img src="<?php echo $ttd_path; ?>" class="max-h-full max-w-full object-contain">
-                            <?php else: ?>
-                                <i class="fas fa-signature text-gray-300 text-3xl"></i>
-                            <?php endif; ?>
-                        </div>
-                        <div class="flex-1 space-y-4">
-                            <div>
-                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Ganti File TTD</label>
-                                <input type="file" name="tanda_tangan" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Nama yang Muncul di Invoice</label>
-                                <input type="text" name="nama_ttd" value="<?php echo htmlspecialchars($_SESSION['user']['nama_ttd'] ?? $_SESSION['user']['nama']); ?>" class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm font-semibold">
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <?php if ($error_message_ttd): ?><div class="alert alert-error"><?php echo htmlspecialchars($error_message_ttd); ?></div><?php endif; ?>
-                    <?php if ($success_message_ttd): ?><div class="alert alert-success"><?php echo htmlspecialchars($success_message_ttd); ?></div><?php endif; ?>
-                    
-                    <div class="flex justify-end">
-                        <button type="submit" class="bg-slate-800 text-white font-semibold py-3 px-6 rounded-lg hover:bg-slate-900 transition flex items-center gap-2">
-                            <i class="fas fa-upload text-sm"></i> Simpan Tanda Tangan
-                        </button>
-                    </div>
-                </form>
-
-                <!-- PENGATURAN NOMOR INVOICE & PESANAN -->
-                <div class="section-divider"></div>
-                <form action="pengaturanAkun.php" method="POST" class="space-y-6">
-                    <input type="hidden" name="action" value="update_invoice_counter">
-                    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-2">
-                        <h3 class="text-lg font-semibold text-gray-800">Pengaturan Nomor Dokumen</h3>
-                        <span class="text-[10px] bg-emerald-50 text-emerald-600 px-2 py-1 rounded-md font-bold">AUTO-INCREMENT</span>
-                    </div>
-                    <p class="text-xs text-gray-500 italic">Nomor ini akan otomatis naik +1 setiap ada pesanan baru. Set ke nomor terakhir yang sudah dipakai secara manual.</p>
-                    
-                    <?php
-                        $bulan_romawi_p = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
-                        $q_inv = $koneksi->query("SELECT nilai FROM pengaturan WHERE kunci = 'invoice_counter'");
-                        $current_inv = $q_inv ? (int)$q_inv->fetch_assoc()['nilai'] : 0;
-                        $q_pes = $koneksi->query("SELECT nilai FROM pengaturan WHERE kunci = 'pesanan_counter'");
-                        $current_pes = $q_pes ? (int)$q_pes->fetch_assoc()['nilai'] : 0;
-                        $q_sj = $koneksi->query("SELECT nilai FROM pengaturan WHERE kunci = 'sj_counter'");
-                        $current_sj = $q_sj ? (int)$q_sj->fetch_assoc()['nilai'] : 0;
-                        
-                        $preview_inv = str_pad($current_inv + 1, 3, '0', STR_PAD_LEFT) . "/INV-D1/" . $bulan_romawi_p[(int)date('m')] . "/" . date('Y');
-                        $preview_pes = ($current_pes + 1) . "/SCS/PO-DP/" . $bulan_romawi_p[(int)date('m')] . "/" . date('Y');
-                        $preview_sj = str_pad($current_sj + 1, 3, '0', STR_PAD_LEFT) . "/SJ-SCS/" . $bulan_romawi_p[(int)date('m')] . "/" . date('Y');
-                    ?>
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="bg-gray-50 p-4 rounded-xl border border-dashed border-gray-300">
-                            <label class="block text-[10px] font-bold text-gray-400 uppercase mb-2">Invoice Terakhir</label>
-                            <input type="number" name="invoice_counter" value="<?= $current_inv ?>" min="0" 
-                                class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-md font-bold text-center mb-2">
-                            <p class="text-[9px] text-gray-500 truncate">Next: <span class="text-blue-600"><?= $preview_inv ?></span></p>
-                        </div>
-                        <div class="bg-gray-50 p-4 rounded-xl border border-dashed border-gray-300">
-                            <label class="block text-[10px] font-bold text-gray-400 uppercase mb-2">PO Terakhir</label>
-                            <input type="number" name="pesanan_counter" value="<?= $current_pes ?>" min="0" 
-                                class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-md font-bold text-center mb-2">
-                            <p class="text-[9px] text-gray-500 truncate">Next: <span class="text-blue-600"><?= $preview_pes ?></span></p>
-                        </div>
-                        <div class="bg-gray-50 p-4 rounded-xl border border-dashed border-gray-300">
-                            <label class="block text-[10px] font-bold text-gray-400 uppercase mb-2">Surat Jalan Terakhir</label>
-                            <input type="number" name="sj_counter" value="<?= $current_sj ?>" min="0" 
-                                class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-md font-bold text-center mb-2">
-                            <p class="text-[9px] text-gray-500 truncate">Next: <span class="text-blue-600"><?= $preview_sj ?></span></p>
-                        </div>
-                    </div>
-
-                    <?php if (isset($_GET['inv_success'])): ?>
-                        <div class="alert alert-success">Pengaturan nomor dokumen berhasil diperbarui!</div>
-                    <?php endif; ?>
-                    
-                    <div class="flex justify-end">
-                        <button type="submit" class="bg-emerald-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-emerald-700 transition flex items-center gap-2">
-                            <i class="fas fa-save text-sm"></i> Simpan Pengaturan Dokumen
-                        </button>
-                    </div>
-                </form>
-                <?php endif; ?>
-            </div>
-
-            <?php if ($user_role === 'admin'): ?>
-            <div class="admin-column">
-                
-                <div class="card p-8">
-                    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-                        <h2 class="text-2xl font-semibold text-gray-800 flex items-center mb-4 md:mb-0">
-                            <i class="fas fa-user-plus text-blue-600 mr-3"></i> Buat Akun Baru
-                        </h2>
-                        <span class="badge badge-success"><i class="fas fa-shield-alt mr-1"></i> Admin</span>
-                    </div>
-                    <?php if ($error_message_create): ?><div class="alert alert-error mb-6"><?php echo htmlspecialchars($error_message_create); ?></div><?php endif; ?>
-                    <?php if ($success_message_create): ?><div class="alert alert-success mb-6"><?php echo htmlspecialchars($success_message_create); ?></div><?php endif; ?>
-
-                    <form method="POST" action="pengaturanAkun.php" class="space-y-6">
-                        <input type="hidden" name="create_account" value="1"> <div class="space-y-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Nama Akun Baru</label>
-                                <input type="text" name="nama_baru" class="w-full px-4 py-3 form-input" required>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Role Akun</label>
-                                <select name="role_baru" class="w-full px-4 py-3 form-input" required>
-                                    <option value="" disabled selected>Pilih Role</option>
-                                    <option value="dapur">Dapur</option>
-                                    <option value="driver">Driver</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
-                                <input type="password" name="password_baru_create" class="w-full px-4 py-3 form-input" required>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Konfirmasi Password</label>
-                                <input type="password" name="konfirmasi_password_create" class="w-full px-4 py-3 form-input" required>
-                            </div>
-                        </div>
-                        <div class="flex justify-end">
-                            <button type="submit" class="btn-success font-semibold py-3 px-8 rounded-lg transition">Buat Akun Baru</button>
-                        </div>
-                    </form>
-                </div>
-
-                <div class="card p-8">
-                    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-                        <h2 class="text-2xl font-semibold text-gray-800 flex items-center mb-4 md:mb-0">
-                            <i class="fas fa-users-cog text-orange-500 mr-3"></i> Ganti Sandi User
-                        </h2>
-                        <span class="badge badge-success"><i class="fas fa-shield-alt mr-1"></i> Admin</span>
-                    </div>
-
-                    <?php if ($error_message_reset): ?><div class="alert alert-error mb-6"><?php echo htmlspecialchars($error_message_reset); ?></div><?php endif; ?>
-                    <?php if ($success_message_reset): ?><div class="alert alert-success mb-6"><?php echo $success_message_reset; ?></div><?php endif; ?>
-
-                    <form method="POST" action="pengaturanAkun.php" class="space-y-6">
-                        <input type="hidden" name="reset_other_password" value="true">
-
-                        <div class="space-y-4">
-                            <div>
-                                <label for="target_user_id" class="block text-sm font-medium text-gray-700 mb-2">Pilih Akun</label>
-                                <select id="target_user_id" name="target_user_id" class="w-full px-4 py-3 form-input" required>
-                                    <option value="" disabled selected>Pilih User...</option>
-                                    <?php foreach ($list_akun_lain as $akun): ?>
-                                        <option value="<?php echo $akun['id']; ?>">
-                                            <?php echo htmlspecialchars($akun['nama']); ?> (<?php echo ucfirst($akun['role']); ?>)
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Password Baru</label>
-                                <input type="password" name="new_pass_reset" class="w-full px-4 py-3 form-input" required>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Konfirmasi Password</label>
-                                <input type="password" name="confirm_pass_reset" class="w-full px-4 py-3 form-input" required>
-                            </div>
-                        </div>
-                        <div class="flex justify-end">
-                            <button type="submit" class="btn-warning text-white font-semibold py-3 px-8 rounded-lg transition">Ganti Sandi</button>
-                        </div>
-                    </form>
-                </div>
-
+                <?php endforeach; ?>
             </div>
             <?php endif; ?>
-        </div>
-    </div>
 
-<script>
-    function previewAndSubmit(event) {
-        const file = event.target.files[0];
-        if(file) {
-            if(file.size > 2*1024*1024) { alert('Ukuran file maksimal 2MB!'); return; }
-            document.getElementById('form-upload-foto').submit();
+            <!-- SETTINGS CARD: PROFIL -->
+            <div class="settings-card mb-5">
+                <!-- Card header with avatar -->
+                <div class="px-7 py-5 border-b border-slate-100 flex items-center gap-5">
+                    <div class="w-14 h-14 rounded-2xl overflow-hidden border border-slate-100 shrink-0 relative group/av">
+                        <img id="profileImage" src="<?php echo htmlspecialchars($profile_image_src); ?>" alt="Foto Profil" class="w-full h-full object-cover">
+                        <label for="uploadPhotoInput" class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover/av:opacity-100 transition-opacity cursor-pointer">
+                            <i class="fas fa-camera text-white text-sm"></i>
+                        </label>
+                    </div>
+                    <div>
+                        <div class="font-bold text-slate-900"><?php echo htmlspecialchars($current_name); ?></div>
+                        <div class="text-xs text-slate-400 mt-0.5 capitalize flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block"></span><?php echo htmlspecialchars($user_role); ?> · Aktif
+                        </div>
+                    </div>
+                    <!-- Hidden cover upload (preserved) -->
+                    <form method="POST" enctype="multipart/form-data" id="form-upload-sampul" class="ml-auto">
+                        <input type="hidden" name="action" value="upload_sampul">
+                        <input id="uploadSampulInput" name="foto_sampul" type="file" accept="image/*" class="hidden" onchange="previewAndSubmitSampul(event)">
+                        <label for="uploadSampulInput" class="btn-outline cursor-pointer" style="font-size:.7rem">
+                            <i class="fas fa-image text-slate-400"></i> <?php echo $cover_image_src ? 'Ganti Sampul' : 'Sampul'; ?>
+                        </label>
+                    </form>
+                    <?php if ($cover_image_src): ?>
+                    <form method="POST" action="pengaturanAkun.php">
+                        <input type="hidden" name="action" value="hapus_sampul">
+                        <button type="submit" name="hapus_sampul_submit" onclick="return confirm('Hapus foto sampul?')" class="btn-danger"><i class="fas fa-trash-alt"></i></button>
+                    </form>
+                    <?php endif; ?>
+                </div>
+
+                <div class="px-7 pb-6">
+                    <!-- FORM 1: Nama -->
+                    <form action="pengaturanAkun.php" method="POST" id="form-profile">
+                        <div class="set-section">
+                            <div>
+                                <div class="set-label-title">Nama Lengkap</div>
+                                <div class="set-label-hint">Nama tampilan untuk seluruh sistem.</div>
+                            </div>
+                            <div class="flex gap-2">
+                                <input name="nama" value="<?php echo htmlspecialchars($current_name); ?>" type="text" class="fi flex-1" required>
+                                <button type="submit" name="update_profile" class="btn-save shrink-0">Simpan</button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- FORM 2: Foto Profil -->
+                    <div class="set-section">
+                        <div>
+                            <div class="set-label-title">Foto Profil</div>
+                            <div class="set-label-hint">Terlihat oleh pengguna lain di sistem.</div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="w-14 h-14 rounded-xl overflow-hidden border border-slate-100 shrink-0">
+                                <img src="<?php echo htmlspecialchars($profile_image_src); ?>" class="w-full h-full object-cover">
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <form method="POST" enctype="multipart/form-data" id="form-upload-foto">
+                                    <input type="hidden" name="action" value="upload_foto">
+                                    <input id="uploadPhotoInput" name="foto_profil" type="file" accept="image/*" class="hidden" onchange="previewAndSubmit(event)">
+                                    <label for="uploadPhotoInput" class="btn-outline cursor-pointer" style="font-size:.72rem">
+                                        <i class="fas fa-cloud-upload-alt text-slate-400"></i> Unggah foto baru
+                                    </label>
+                                </form>
+                                <?php if ($current_foto_filename): ?>
+                                <form method="POST" action="pengaturanAkun.php">
+                                    <input type="hidden" name="action" value="hapus_foto">
+                                    <button type="submit" name="hapus_foto_submit" onclick="return confirm('Hapus foto profil?')" class="btn-danger" style="font-size:.7rem">
+                                        <i class="fas fa-trash-alt"></i> Hapus foto
+                                    </button>
+                                </form>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FORM 3: Password -->
+                    <form action="pengaturanAkun.php" method="POST">
+                        <div class="set-section">
+                            <div>
+                                <div class="set-label-title">Keamanan & Kata Sandi</div>
+                                <div class="set-label-hint">Perbarui kredensial login Anda.</div>
+                            </div>
+                            <div class="space-y-2.5">
+                                <input name="password_lama" type="password" placeholder="Kata Sandi Saat Ini" class="fi" required>
+                                <div class="grid grid-cols-2 gap-2.5">
+                                    <input name="password_baru" type="password" placeholder="Kata Sandi Baru" class="fi" required>
+                                    <input name="konfirmasi_password" type="password" placeholder="Konfirmasi" class="fi" required>
+                                </div>
+                                <div class="flex justify-end">
+                                    <button type="submit" name="update_password" class="btn-save">Perbarui Kata Sandi</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <?php if (in_array($user_role, ['akuntan', 'owner', 'admin'])): ?>
+            <!-- SETTINGS CARD: DOKUMEN -->
+            <div class="settings-card mb-5">
+                <div class="px-7 py-4 border-b border-slate-100">
+                    <div class="font-bold text-slate-900 text-sm">Dokumen & Tanda Tangan</div>
+                    <div class="text-xs text-slate-400 mt-0.5">Pengaturan untuk invoice dan dokumen resmi.</div>
+                </div>
+                <div class="px-7 pb-6">
+                    <!-- FORM 4: TTD -->
+                    <form action="pengaturanAkun.php" method="POST" enctype="multipart/form-data">
+                        <input type="hidden" name="action" value="upload_ttd">
+                        <div class="set-section">
+                            <div>
+                                <div class="set-label-title flex items-center gap-2">Tanda Tangan <span class="badge-admin" style="background:#EFF6FF;color:#2563EB">Invoice</span></div>
+                                <div class="set-label-hint">Diterapkan otomatis pada dokumen resmi.</div>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="flex gap-4 items-center">
+                                    <div class="w-28 h-16 bg-slate-50 border border-slate-200 rounded-xl overflow-hidden flex items-center justify-center shrink-0">
+                                        <?php $ttd_path = isset($_SESSION['user']['tanda_tangan']) ? $ttd_dir . $_SESSION['user']['tanda_tangan'] : null;
+                                        if ($ttd_path && file_exists($ttd_path)): ?>
+                                            <img src="<?php echo $ttd_path; ?>" class="max-h-full max-w-full object-contain">
+                                        <?php else: ?>
+                                            <i class="fas fa-signature text-slate-300 text-xl"></i>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="flex-1 space-y-2">
+                                        <input type="file" name="tanda_tangan" class="block w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-slate-600 hover:file:bg-slate-200 cursor-pointer border border-slate-200 rounded-lg p-1 bg-white">
+                                        <input type="text" name="nama_ttd" value="<?php echo htmlspecialchars($_SESSION['user']['nama_ttd'] ?? $_SESSION['user']['nama']); ?>" placeholder="Nama Penanda Tangan" class="fi">
+                                    </div>
+                                </div>
+                                <div class="flex justify-end">
+                                    <button type="submit" class="btn-outline">Simpan Tanda Tangan</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- FORM 5: Counter -->
+                    <form action="pengaturanAkun.php" method="POST">
+                        <input type="hidden" name="action" value="update_invoice_counter">
+                        <div class="set-section">
+                            <div>
+                                <div class="set-label-title flex items-center gap-2">Nomor Dokumen <span class="badge-auto">Auto-Increment</span></div>
+                                <div class="set-label-hint">Set ke nomor terakhir yang sudah dipakai secara manual.</div>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="grid grid-cols-3 gap-3">
+                                    <div class="counter-card">
+                                        <label class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-2">Invoice</label>
+                                        <input type="number" name="invoice_counter" value="<?= $current_inv ?>" min="0" class="fi text-center font-bold text-base mb-1.5">
+                                        <p class="text-[10px] text-slate-400">Next: <span class="text-blue-500"><?= $preview_inv ?></span></p>
+                                    </div>
+                                    <div class="counter-card">
+                                        <label class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-2">PO Dapur</label>
+                                        <input type="number" name="pesanan_counter" value="<?= $current_pes ?>" min="0" class="fi text-center font-bold text-base mb-1.5">
+                                        <p class="text-[10px] text-slate-400">Next: <span class="text-blue-500"><?= $preview_pes ?></span></p>
+                                    </div>
+                                    <div class="counter-card">
+                                        <label class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-2">Surat Jalan</label>
+                                        <input type="number" name="sj_counter" value="<?= $current_sj ?>" min="0" class="fi text-center font-bold text-base mb-1.5">
+                                        <p class="text-[10px] text-slate-400">Next: <span class="text-blue-500"><?= $preview_sj ?></span></p>
+                                    </div>
+                                </div>
+                                <div class="flex justify-end">
+                                    <button type="submit" class="btn-outline">Simpan Penghitung</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <?php endif; ?>
+
+            <?php if ($user_role === 'admin'): ?>
+            <!-- SETTINGS CARD: MANAJEMEN AKUN -->
+            <div class="settings-card mb-5">
+                <div class="px-7 py-4 border-b border-slate-100">
+                    <div class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                        Manajemen Pengguna <span class="badge-admin">Admin</span>
+                    </div>
+                    <div class="text-xs text-slate-400 mt-0.5">Buat dan kelola akun pengguna sistem.</div>
+                </div>
+                <div class="px-7 pb-6">
+                    <!-- FORM 6: Buat Akun Baru -->
+                    <form method="POST" action="pengaturanAkun.php">
+                        <input type="hidden" name="create_account" value="1">
+                        <div class="set-section">
+                            <div>
+                                <div class="set-label-title">Buat Pengguna Baru</div>
+                                <div class="set-label-hint">Tambahkan akun Dapur atau Driver baru ke sistem.</div>
+                            </div>
+                            <div class="space-y-2.5">
+                                <div class="grid grid-cols-2 gap-2.5">
+                                    <input type="text" name="nama_baru" placeholder="Nama Lengkap" class="fi" required>
+                                    <div class="relative">
+                                        <select name="role_baru" class="fi appearance-none cursor-pointer" required>
+                                            <option value="" disabled selected>Pilih Peran</option>
+                                            <option value="dapur">Dapur</option>
+                                            <option value="driver">Driver</option>
+                                        </select>
+                                        <i class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-[9px] text-slate-400 pointer-events-none"></i>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2.5">
+                                    <input type="password" name="password_baru_create" placeholder="Kata Sandi" class="fi" required>
+                                    <input type="password" name="konfirmasi_password_create" placeholder="Konfirmasi" class="fi" required>
+                                </div>
+                                <div class="flex justify-end">
+                                    <button type="submit" class="btn-blue">Buat Akun</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- FORM 7: Reset Password -->
+                    <form method="POST" action="pengaturanAkun.php">
+                        <input type="hidden" name="reset_other_password" value="true">
+                        <div class="set-section">
+                            <div>
+                                <div class="set-label-title">Setel Ulang Kata Sandi</div>
+                                <div class="set-label-hint">Ganti kata sandi untuk akun pengguna yang ada.</div>
+                            </div>
+                            <div class="space-y-2.5">
+                                <div class="relative">
+                                    <select name="target_user_id" class="fi appearance-none cursor-pointer" required>
+                                        <option value="" disabled selected>Pilih Pengguna...</option>
+                                        <?php foreach ($list_akun_lain as $akun): ?>
+                                            <option value="<?php echo $akun['id']; ?>">
+                                                <?php echo htmlspecialchars($akun['nama']); ?> (<?php echo ucfirst($akun['role']); ?>)
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                    <i class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-[9px] text-slate-400 pointer-events-none"></i>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2.5">
+                                    <input type="password" name="new_pass_reset" placeholder="Kata Sandi Baru" class="fi" required>
+                                    <input type="password" name="confirm_pass_reset" placeholder="Konfirmasi" class="fi" required>
+                                </div>
+                                <div class="flex justify-end">
+                                    <button type="submit" class="btn-danger" style="font-size:.75rem;padding:.5rem 1.1rem">
+                                        <i class="fas fa-key"></i> Paksa Atur Ulang
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <?php endif; ?>
+
+        </div><!-- /max-w-4xl -->
+        </div><!-- /px-6 py-8 -->
+    </div><!-- /sidebar-space -->
+
+    <script>
+        function previewAndSubmit(event) {
+            const file = event.target.files[0];
+            if(file) {
+                if(file.size > 2*1024*1024) { alert('Ukuran file maksimal 2MB!'); return; }
+                document.getElementById('form-upload-foto').submit();
+            }
         }
-    }
 
-    // JS Loading Spinner
-    document.addEventListener('DOMContentLoaded', function() {
-        const forms = document.querySelectorAll('form');
-        forms.forEach(form => {
-            form.addEventListener('submit', function(e) {
-                // Jangan spinner untuk upload/hapus foto
-                if (this.id === 'form-upload-foto' || this.querySelector('button[name="hapus_foto_submit"]')) return;
-                
-                const submitBtn = this.querySelector('button[type="submit"]');
-                if (submitBtn) {
-                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Memproses...';
-                    submitBtn.disabled = true; // Button disabled = valuenya tidak terkirim
-                    // Solusi: Kita sudah pakai input type="hidden" di form, jadi aman.
-                    setTimeout(() => { submitBtn.disabled = false; submitBtn.innerHTML = 'Simpan'; }, 8000);
-                }
-            });
-        });
-    });
-</script>
+        function previewAndSubmitSampul(event) {
+            const file = event.target.files[0];
+            if(file) {
+                if(file.size > 3*1024*1024) { alert('Ukuran file maksimal 3MB!'); return; }
+                document.getElementById('form-upload-sampul').submit();
+            }
+        }
+    </script>
 </body>
 </html>

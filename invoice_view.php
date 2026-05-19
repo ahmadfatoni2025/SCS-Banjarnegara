@@ -61,7 +61,8 @@ $batch_info = $formatIndo($minDelivery) . " - " . $formatIndo($maxDelivery);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="logo_scs_jpg.png">`n    <title>Invoice #<?php echo $id_pesanan; ?> - SCS Banjarnegara</title>
+    <link rel="icon" href="logo_scs_jpg.png">
+    <title>Invoice #<?php echo $id_pesanan; ?> - SCS Banjarnegara</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -90,7 +91,7 @@ $batch_info = $formatIndo($minDelivery) . " - " . $formatIndo($maxDelivery);
     
     <div class="max-w-4xl mx-auto">
         <div class="no-print mb-8 flex flex-col items-center text-center">
-            <div class="h-20 w-20 success-accent rounded-full flex items-center justify-center text-white text-4xl shadow-lg mb-4 animate-bounce">
+            <div class="h-20 w-20 success-accent rounded-full flex items-center justify-center text-white text-4xl shadow-lg">
                 <i class="fas fa-check"></i>
             </div>
             <h1 class="text-3xl font-extrabold text-slate-900 mb-2">Pesanan Berhasil!</h1>
@@ -198,9 +199,9 @@ $batch_info = $formatIndo($minDelivery) . " - " . $formatIndo($maxDelivery);
                             <li>Pembayaran dapat dilakukan melalui kasir atau transfer bank SCS.</li>
                         </ul>
                     </div>
-                    <div class="flex-1 w-full md:max-w-xs bg-slate-900 text-white p-8 rounded-3xl shadow-xl transform md:rotate-2 hover:rotate-0 transition-transform">
+                    <div class="flex-1 w-full md:max-w-xs text-slate-950 pl-14">
                         <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Total Akhir</p>
-                        <h4 class="text-3xl font-black mb-1">Rp <?php echo number_format($pesanan['total_harga'], 0, ',', '.'); ?></h4>
+                        <h4 class="text-4xl font-black mb-1">Rp <?php echo number_format($pesanan['total_harga'], 0, ',', '.'); ?></h4>
                         <p class="text-[10px] text-slate-500 italic">* Termasuk pajak & biaya operasional</p>
                     </div>
                 </div>

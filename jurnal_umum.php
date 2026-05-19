@@ -846,19 +846,6 @@ function highlightText($text, $search) {
                 </div>
             </div>
         </div>
-        
-        <!-- Tab Navigation -->
-        <div class="flex items-center gap-8 border-b border-slate-200 mb-8 overflow-x-auto" style="scrollbar-width: none;">
-            <a href="jurnal_umum.php" class="pb-4 border-b-2 border-[#0f9d58] text-[#0f9d58] font-bold text-[13px] uppercase tracking-wider whitespace-nowrap flex items-center gap-2">
-                SEMUA TRANSAKSI <span class="bg-[#0f9d58] text-white py-0.5 px-2 rounded-full text-[10px]"><?= $total_groups ?></span>
-            </a>
-            <a href="#" onclick="document.getElementById('filter_tipe').value='pemasukan'; document.getElementById('filterForm').submit(); return false;" class="pb-4 border-b-2 border-transparent text-slate-500 hover:text-slate-800 font-bold text-[13px] uppercase tracking-wider whitespace-nowrap transition-colors">
-                PEMASUKAN
-            </a>
-            <a href="#" onclick="document.getElementById('filter_tipe').value='pengeluaran'; document.getElementById('filterForm').submit(); return false;" class="pb-4 border-b-2 border-transparent text-slate-500 hover:text-slate-800 font-bold text-[13px] uppercase tracking-wider whitespace-nowrap transition-colors">
-                PENGELUARAN
-            </a>
-        </div>
 
         <div id="formInput" class="modal-overlay hidden">
             <div class="soft-card p-8 bg-white w-full max-w-4xl max-h-[90vh] overflow-y-auto relative" style="z-index: 50;">
@@ -1168,8 +1155,8 @@ function highlightText($text, $search) {
                         </div>
                         
                         <!-- Table -->
-                        <div class="w-full">
-                            <table class="w-full text-left border-collapse">
+                        <div class="w-full overflow-x-auto custom-scrollbar">
+                            <table class="w-full text-left border-collapse min-w-[550px] md:min-w-0">
                                 <thead>
                                     <tr class="border-b border-slate-100 bg-slate-50/50">
                                         <th class="py-3 px-3 text-[10px] font-bold text-slate-800 uppercase tracking-wider">AKUN</th>
@@ -1202,14 +1189,13 @@ function highlightText($text, $search) {
                     </div>
                 <?php endforeach; ?>
             <?php else: ?>
-        
-            <?php endif; ?>
-        </div>
-                    <div class="p-6 lg:p-8 items-center justify-center text-center bg-white border border-slate-200 rounded-2xl ">
+                <div class="p-6 lg:p-8 items-center justify-center text-center bg-white border border-slate-200 rounded-2xl ">
                     <i class="fas fa-folder-open text-5xl text-slate-300 mb-4"></i>
                     <h4 class="text-xl font-bold text-slate-700 mb-2">Belum Ada Transaksi</h4>
                     <p class="text-slate-500 mb-6">Coba ubah filter atau tambahkan transaksi baru.</p>
                 </div>
+            <?php endif; ?>
+        </div>
         </div>
     </div>
 

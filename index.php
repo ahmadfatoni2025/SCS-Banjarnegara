@@ -270,63 +270,79 @@ $nama_user = $_SESSION['user']['nama'] ?? 'Admin';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inventaris Gudang - MBG Admin</title>
-        <link rel="icon" href="logo_scs_jpg.png">
+    <link rel="icon" href="logo_scs_jpg.png">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        body { font-family: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif; background-color: #f3f4f6; }
+        body { font-family: 'Poppins', sans-serif; background-color: #F3F4F6; }
         .modal-overlay { position: fixed; inset: 0; background-color: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 50; backdrop-filter: blur(2px); }
-        .modal-content { max-height: 90vh; display: flex; flex-direction: column; } 
-        .btn { padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 600; display: inline-flex; align-items: center; cursor: pointer; transition: all 0.2s; }
-        .btn-primary { background-color: #2563EB; color: white; }
-        .btn-primary:hover { background-color: #1D4ED8; }
+        .modal-content { max-height: 90vh; display: flex; flex-direction: column; }
+        .card { background: white; border-radius: 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border: 1px solid #e2e8f0; }
+        .btn { padding: 0.5rem 1rem; border-radius: 0.75rem; font-weight: 600; display: inline-flex; align-items: center; cursor: pointer; transition: all 0.2s; }
+        .btn-primary { background-color: #1e293b; color: white; }
+        .btn-primary:hover { background-color: #0f172a; }
         .btn-success { background-color: #10B981; color: white; }
         .btn-success:hover { background-color: #059669; }
-        .compact-table th { padding: 0.75rem 1rem; font-size: 0.75rem; font-weight: 700; color: #6b7280; background-color: #f9fafb; border-bottom: 1px solid #e5e7eb; }
-        .compact-table td { padding: 0.75rem 1rem; vertical-align: middle; border-bottom: 1px solid #f3f4f6; }
+        .compact-table th { padding: 0.75rem 1rem; font-size: 0.65rem; font-weight: 700; color: #94a3b8; background-color: rgba(248,250,252,0.8); border-bottom: 1px solid #e2e8f0; text-transform: uppercase; letter-spacing: 0.05em; }
+        .compact-table td { padding: 0.75rem 1rem; vertical-align: middle; border-bottom: 1px solid #f1f5f9; }
         .sticky-header thead th { position: sticky; top: 0; z-index: 10; }
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="bg-gray-100 flex flex-col md:flex-row min-h-screen">
+<body class="min-h-screen">
 
     <?php include 'sidebar.php'; ?>
 
-    <main class="flex-1 p-4 md:p-6 md:ml-64 pb-20">
-        <div class="container mx-auto max-w-7xl">
-            <div class="sticky top-0 z-20 bg-gray-100 pt-2 pb-4 shadow-sm mb-4">
+    <main class="flex-1 p-4 md:p-6 md:ml-64 pb-20 transition-all duration-300">
+        <div class="container mx-auto max-w-7xl fade-in">
+            <div class="sticky top-0 z-20 bg-[#F3F4F6] pt-2 pb-4 mb-4">
                 <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
                     <div>
-                        <h1 class="text-2xl font-bold text-gray-800 tracking-tight">Gudang Bahan Baku</h1>
-                        <p class="text-gray-500 text-sm mt-1">Kelola stok dan aset dapur MBG.</p>
+                        <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Gudang Bahan Baku</h1>
+                        <p class="text-slate-500 text-sm mt-1">Kelola stok dan aset dapur MBG.</p>
                     </div>
-                    <div class="flex gap-3">
-                        <a href="export_csv.php" class="btn bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 shadow-sm text-sm"><i class="fas fa-file-excel mr-2 text-green-600"></i> Export</a>
+                    <div class="flex gap-2">
+                        <a href="export_csv.php" class="btn bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 shadow-sm text-sm"><i class="fas fa-file-excel mr-2 text-emerald-600"></i> Export</a>
                         <a href="https://scsbanjarnegara.com/index.php?action=tambah" 
    id="add-material-btn" 
-   class="btn btn-primary shadow-md text-sm"
+   class="btn btn-primary shadow-sm text-sm"
    onclick="event.stopImmediatePropagation(); return true;">
    <i class="fas fa-plus mr-2"></i> Tambah Barang
 </a>
                     </div>
                 </header>
 
-                <?php if ($pesan_sukses): ?> <div class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 mb-4 rounded-r text-sm"><i class="fas fa-check-circle mr-2"></i> <?php echo $pesan_sukses; ?></div> <?php endif; ?>
-                <?php if ($pesan_error): ?> <div class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded-r text-sm"><i class="fas fa-exclamation-circle mr-2"></i> <?php echo $pesan_error; ?></div> <?php endif; ?>
+                <?php if ($pesan_sukses): ?> <div class="bg-emerald-50 border-l-4 border-emerald-500 text-emerald-700 p-4 mb-4 rounded-r text-sm font-medium"><i class="fas fa-check-circle mr-2"></i> <?php echo $pesan_sukses; ?></div> <?php endif; ?>
+                <?php if ($pesan_error): ?> <div class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded-r text-sm font-medium"><i class="fas fa-exclamation-circle mr-2"></i> <?php echo $pesan_error; ?></div> <?php endif; ?>
 
-                <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-5">
-                     <div class="bg-white p-3 rounded-lg shadow-sm border border-gray-100"><p class="text-xs text-gray-500 font-semibold">Produk</p><p class="text-lg font-bold text-gray-800"><?php echo $total_produk; ?></p></div>
-                     <div class="bg-white p-3 rounded-lg shadow-sm border border-gray-100"><p class="text-xs text-gray-500 font-semibold">Total Stok</p><p class="text-lg font-bold text-teal-600"><?php echo number_format($total_stok, 0, ',', '.'); ?></p></div>
-                     <div class="bg-white p-3 rounded-lg shadow-sm border border-gray-100 md:col-span-2"><p class="text-xs text-gray-500 font-semibold">Nilai Aset</p><p class="text-lg font-bold text-blue-600">Rp <?php echo number_format($total_nilai, 0, ',', '.'); ?></p></div>
-                     <div class="bg-white p-3 rounded-lg shadow-sm border border-gray-100"><p class="text-xs text-gray-500 font-semibold">Est. Margin</p><p class="text-lg font-bold text-purple-600">Rp <?php echo number_format($total_margin, 0, ',', '.'); ?></p></div>
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-5">
+                     <div class="card p-4 flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center shrink-0"><i class="fas fa-cube"></i></div>
+                        <div><p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Produk</p><p class="text-lg font-bold text-slate-800"><?php echo $total_produk; ?></p></div>
+                     </div>
+                     <div class="card p-4 flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-lg bg-teal-100 text-teal-600 flex items-center justify-center shrink-0"><i class="fas fa-boxes-stacked"></i></div>
+                        <div><p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Total Stok</p><p class="text-lg font-bold text-teal-600"><?php echo number_format($total_stok, 0, ',', '.'); ?></p></div>
+                     </div>
+                     <div class="card p-4 flex items-center gap-3 col-span-2 sm:col-span-1 lg:col-span-2">
+                        <div class="w-10 h-10 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0"><i class="fas fa-coins"></i></div>
+                        <div class="min-w-0"><p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Nilai Aset</p><p class="text-lg font-bold text-indigo-600 truncate">Rp <?php echo number_format($total_nilai, 0, ',', '.'); ?></p></div>
+                     </div>
+                     <div class="card p-4 flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center shrink-0"><i class="fas fa-arrow-trend-up"></i></div>
+                        <div class="min-w-0"><p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Est. Margin</p><p class="text-lg font-bold text-purple-600 truncate">Rp <?php echo number_format($total_margin, 0, ',', '.'); ?></p></div>
+                     </div>
                 </div>
 
-                <form method="GET" action="index.php" class="flex flex-col md:flex-row gap-3">
+                <form method="GET" action="index.php" class="flex flex-col sm:flex-row gap-3">
                     <div class="relative flex-1">
-                        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                        <input type="text" name="search" id="search-input" value="<?php echo htmlspecialchars($_GET['search'] ?? ''); ?>" placeholder="Cari barang, kategori, atau keterangan..." class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm">
+                        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
+                        <input type="text" name="search" id="search-input" value="<?php echo htmlspecialchars($_GET['search'] ?? ''); ?>" placeholder="Cari barang, kategori, atau keterangan..." class="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 text-sm outline-none transition-all">
                     </div>
-                    <div class="flex w-full md:w-auto gap-1">
-                        <select name="filter_suplier" onchange="this.form.submit()" class="flex-1 md:w-48 p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm bg-white cursor-pointer">
+                    <div class="flex w-full sm:w-auto gap-1">
+                        <select name="filter_suplier" onchange="this.form.submit()" class="flex-1 sm:w-48 p-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 text-sm cursor-pointer outline-none transition-all">
                             <option value="">Semua Suplier</option>
                             <option value="null" <?php echo (isset($_GET['filter_suplier']) && $_GET['filter_suplier'] === 'null') ? 'selected' : ''; ?>>Tanpa Suplier</option>
                             <?php foreach ($list_suplier as $sup): ?>
@@ -339,9 +355,9 @@ $nama_user = $_SESSION['user']['nama'] ?? 'Admin';
                 </form>
                 </div>
 
-            <section class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <section class="card overflow-hidden">
                 <div class="overflow-x-auto" style="max-height: 65vh;">
-                    <table class="min-w-full divide-y divide-gray-200 compact-table sticky-header">
+                    <table class="min-w-full divide-y divide-gray-100 compact-table sticky-header">
                         <thead>
                             <tr>
                                 <th class="uppercase tracking-wider text-left w-1/4">Nama Barang</th>
@@ -422,7 +438,7 @@ $nama_user = $_SESSION['user']['nama'] ?? 'Admin';
     </main>
 
     <div id="product-modal" class="modal-overlay <?php echo $show_modal ? 'flex' : 'hidden'; ?>">
-        <div class="modal-content bg-white rounded-xl shadow-2xl max-w-2xl w-full mx-4 overflow-hidden border border-gray-100 flex flex-col">
+        <div class="modal-content bg-white rounded-2xl shadow-2xl max-w-2xl w-full mx-4 overflow-hidden border border-slate-100 flex flex-col">
             <div class="bg-gray-50 px-6 py-4 border-b border-gray-200 flex justify-between items-center flex-none">
                 <div>
                     <h2 id="modal-title" class="text-lg font-bold text-gray-800"><?php echo ($data_edit) ? 'Edit Data Barang' : 'Tambah Barang Baru'; ?></h2>

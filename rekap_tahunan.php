@@ -124,87 +124,104 @@ while($r = mysqli_fetch_assoc($q)) {
 
     <?php include 'sidebar.php'; ?>
 
-    <div class="md:ml-64 min-h-screen p-6 md:p-8 transition-all duration-300 relative overflow-hidden">
+    <div class="lg:ml-64 min-h-screen p-4 sm:p-6 lg:p-8 transition-all duration-300 relative overflow-hidden">
         
         <div class="absolute top-0 left-0 w-96 h-96 bg-yellow-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
         <div class="absolute top-0 right-0 w-96 h-96 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
 
-        <div class="relative z-10 mb-8 flex justify-between items-end">
+        <div class="relative z-10 mb-6 lg:mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
             <div>
-                <h1 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">Arsip Rekap Tahunan</h1>
-                <p class="text-slate-500 mt-1">Monitoring kinerja keuangan per periode tahun buku</p>
+                <h1 class="text-2xl lg:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">Arsip Rekap Tahunan</h1>
+                <p class="text-sm lg:text-base text-slate-500 mt-1">Monitoring kinerja keuangan per periode tahun buku</p>
             </div>
         </div>
 
-        <div class="relative z-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="relative z-10 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-y-28 lg:gap-y-24 gap-x-4 sm:gap-x-6 pt-24 lg:pt-16 pb-12">
             
             <?php foreach($data_rekap as $data): ?>
-            <div class="glass-card p-6 border-t-4 <?= ($data['status']=='Berlangsung') ? 'border-yellow-400' : 'border-green-500' ?> transition hover:-translate-y-1 hover:shadow-xl flex flex-col h-full justify-between relative group">
+            <div onclick="window.open('laba_rugi.php?tgl_mulai=<?= $data['tahun'] ?>-01-01&tgl_selesai=<?= $data['tahun'] ?>-12-31', '_blank')" class="relative w-[280px] h-[280px] mx-auto group drop-shadow-2xl transition-all duration-300 lg:hover:-translate-y-2 cursor-pointer">
                 
-                <div class="absolute top-3 right-3 z-20 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <form method="POST" onsubmit="return confirm('Hapus Card Tahun <?= $data['tahun'] ?>? (Data transaksi AMAN)')">
-                        <input type="hidden" name="id_hapus" value="<?= $data['id'] ?>">
-                        <input type="hidden" name="tahun_hapus" value="<?= $data['tahun'] ?>">
-                        <button type="submit" name="hapus_tahun" class="text-slate-300 hover:text-red-500 transition-colors p-1">
-                            <i class="fas fa-times-circle text-xl"></i>
-                        </button>
-                    </form>
-                </div>
+                <!-- Back Folder Tab -->
+                <div class="absolute top-0 left-0 w-[45%] h-10 bg-[#4281cd] rounded-tl-2xl" style="clip-path: polygon(0 0, 85% 0, 100% 100%, 0% 100%);"></div>
+                
+                <!-- Back Folder Main -->
+                <div class="absolute top-[39px] left-0 w-full h-[calc(100%-39px)] bg-[#4281cd] rounded-tr-2xl rounded-b-2xl"></div>
 
-                <div>
-                    <div class="flex justify-between items-start mb-4">
-                        <div>
-                            <h2 class="text-4xl font-bold text-slate-700"><?= $data['tahun'] ?></h2>
-                            <span class="text-[10px] px-2 py-1 rounded-full font-bold uppercase tracking-wider <?= ($data['status']=='Berlangsung') ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700' ?>">
-                                <?= $data['status'] ?>
-                            </span>
+                <!-- Paper -->
+                <div class="absolute top-[25px] left-4 right-4 h-[220px] bg-gradient-to-b from-[#ffffff] to-[#f1f5f9] rounded-t-xl shadow-[0_-2px_10px_rgba(0,0,0,0.05)] transition-transform duration-500 ease-out -translate-y-[75px] lg:translate-y-0 lg:group-hover:-translate-y-[75px] flex flex-col p-4 z-10 border border-gray-200">
+                    
+                    <div class="w-full text-[11px] font-sans">
+                        <div class="flex justify-between items-center text-slate-500 mb-2">
+                            <span class="font-medium">Pendapatan</span>
+                            <span class="font-bold text-[#059669]">+ <?= formatRupiah($data['pendapatan']) ?></span>
                         </div>
-                        <div class="w-12 h-12 rounded-full <?= ($data['status']=='Berlangsung') ? 'bg-yellow-50' : 'bg-green-50' ?> flex items-center justify-center text-xl shadow-inner mr-6">
-                            <i class="fas <?= ($data['status']=='Berlangsung') ? 'fa-hourglass-half text-yellow-500' : 'fa-check-circle text-green-500' ?>"></i>
+                        <div class="flex justify-between items-center text-slate-500 mb-3">
+                            <span class="font-medium">Beban</span>
+                            <span class="font-bold text-[#dc2626]">- <?= formatRupiah($data['beban']) ?></span>
                         </div>
-                    </div>
-
-                    <div class="space-y-3 mb-6 bg-white/50 p-4 rounded-xl">
-                        <div class="flex justify-between text-sm items-center">
-                            <span class="text-slate-500 font-medium">Pendapatan</span>
-                            <span class="font-bold text-green-600">+ <?= formatRupiah($data['pendapatan']) ?></span>
-                        </div>
-                        <div class="flex justify-between text-sm items-center">
-                            <span class="text-slate-500 font-medium">Beban</span>
-                            <span class="font-bold text-red-600">- <?= formatRupiah($data['beban']) ?></span>
-                        </div>
-                        <div class="h-px bg-slate-300 my-2 border-dashed border-t"></div>
+                        
+                        <div class="w-full border-b border-dotted border-slate-300 mb-3"></div>
+                        
                         <div class="flex justify-between items-center">
-                            <span class="font-bold text-slate-700 text-sm uppercase">Laba Bersih</span>
-                            <span class="font-bold text-lg <?= ($data['laba_bersih']>=0)?'text-green-600':'text-red-600' ?>">
+                            <span class="font-bold text-slate-800 tracking-wide text-[10px]">LABA BERSIH</span>
+                            <span class="font-bold text-[13px] <?= ($data['laba_bersih']>=0)?'text-[#059669]':'text-[#dc2626]' ?>">
                                 <?= formatRupiah($data['laba_bersih']) ?>
                             </span>
                         </div>
                     </div>
+
+                    <div class="mt-4 space-y-2 relative z-50 pointer-events-auto">
+                        <a href="laba_rugi.php?tgl_mulai=<?= $data['tahun'] ?>-01-01&tgl_selesai=<?= $data['tahun'] ?>-12-31" target="_blank" onclick="event.stopPropagation();"
+                           class="block w-full py-1.5 rounded-lg bg-white border border-gray-200 text-center text-[10px] text-blue-600 hover:bg-blue-50 hover:border-blue-300 font-bold transition shadow-sm pointer-events-auto">
+                            <i class="fas fa-external-link-alt mr-1"></i> Detail Laporan
+                        </a>
+                        <?php if ($data['status'] == 'Berlangsung'): ?>
+                            <form method="POST" onsubmit="return confirm('ARSIPKAN TAHUN <?= $data['tahun'] ?>?\n\n- Data angka akan dikunci.\n- Status berubah jadi Selesai.')" onclick="event.stopPropagation();">
+                                <input type="hidden" name="tahun" value="<?= $data['tahun'] ?>">
+                                <button type="submit" name="selesaikan_tahun" class="w-full py-1.5 rounded-lg bg-orange-50 text-orange-600 border border-orange-200 hover:bg-orange-100 text-[10px] font-bold transition shadow-sm pointer-events-auto">
+                                    <i class="fas fa-archive mr-1"></i> Arsipkan Tahun
+                                </button>
+                            </form>
+                        <?php else: ?>
+                            <div class="text-center mt-1 bg-gray-50 py-1.5 rounded-lg border border-gray-100 shadow-inner" onclick="event.stopPropagation();">
+                                <p class="text-[9px] text-gray-500 font-medium">
+                                    <i class="fas fa-lock text-gray-400 mr-1"></i> <?= date('d M Y', strtotime($data['tgl_tutup'])) ?>
+                                </p>
+                            </div>
+                        <?php endif; ?>
+                    </div>
                 </div>
 
-                <div class="space-y-3">
-                    <a href="laba_rugi.php?tgl_mulai=<?= $data['tahun'] ?>-01-01&tgl_selesai=<?= $data['tahun'] ?>-12-31" target="_blank" 
-                       class="w-full py-2 rounded-lg border-2 border-blue-100 hover:border-blue-500 text-blue-600 hover:text-blue-700 font-bold transition flex justify-center items-center gap-2 bg-white">
-                        <i class="fas fa-external-link-alt"></i> Lihat Detail Laporan
-                    </a>
-
-                    <?php if ($data['status'] == 'Berlangsung'): ?>
-                        <form method="POST" onsubmit="return confirm('ARSIPKAN TAHUN <?= $data['tahun'] ?>?\n\n- Data angka akan dikunci.\n- Status berubah jadi Selesai.')">
-                            <input type="hidden" name="tahun" value="<?= $data['tahun'] ?>">
-                            <button type="submit" name="selesaikan_tahun" class="w-full py-3 rounded-lg bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white font-bold shadow-md hover:shadow-lg transition flex justify-center items-center gap-2">
-                                <i class="fas fa-archive"></i> Arsipkan Tahun Ini
-                            </button>
-                        </form>
-                    <?php else: ?>
-                        <div class="text-center">
-                            <p class="text-[10px] text-slate-400 italic">
-                                <i class="fas fa-lock mr-1"></i> Diarsipkan pada: <?= date('d M Y', strtotime($data['tgl_tutup'])) ?>
+                <!-- Front Folder -->
+                <div class="absolute top-[50px] left-0 w-full h-[calc(100%-50px)] bg-gradient-to-b from-[#60a0ea] to-[#4585d5] rounded-2xl shadow-[0_-4px_15px_rgba(0,0,0,0.15)] p-5 z-20 flex flex-col justify-between border-t border-white/30 pointer-events-none lg:group-hover:pointer-events-auto transition-transform duration-500 ease-out translate-y-[45px] lg:translate-y-0 lg:group-hover:translate-y-[45px]">
+                    
+                    <div class="flex justify-between items-start pointer-events-auto">
+                        <div>
+                            <h2 class="text-white text-3xl font-semibold tracking-tight"><?= $data['tahun'] ?></h2>
+                            <p class="text-blue-100 text-sm mt-1 opacity-90 flex items-center gap-1.5">
+                                <?= $data['status'] ?>
+                                <span class="w-1.5 h-1.5 rounded-full <?= ($data['status']=='Berlangsung') ? 'bg-yellow-300 shadow-[0_0_5px_#fde047]' : 'bg-green-300 shadow-[0_0_5px_#86efac]' ?>"></span>
                             </p>
                         </div>
-                    <?php endif; ?>
-                </div>
+                        
+                        <form method="POST" onsubmit="return confirm('Hapus Card Tahun <?= $data['tahun'] ?>? (Data transaksi AMAN)')" class="relative z-30 pointer-events-auto" onclick="event.stopPropagation();">
+                            <input type="hidden" name="id_hapus" value="<?= $data['id'] ?>">
+                            <input type="hidden" name="tahun_hapus" value="<?= $data['tahun'] ?>">
+                            <button type="submit" name="hapus_tahun" class="w-8 h-8 rounded-full border border-white/40 flex items-center justify-center text-white hover:bg-red-500 hover:border-red-500 bg-white/10 hover:shadow-lg transition-all" title="Hapus Tahun">
+                                <i class="fas fa-trash text-[11px]"></i>
+                            </button>
+                        </form>
+                    </div>
 
+                    <div class="mt-auto relative w-full pt-4 pointer-events-none">
+                        <div class="text-blue-100 text-[11px] opacity-90 font-medium relative z-10">
+                            Laba Bersih<br>
+                            <span class="text-white text-xl font-bold opacity-100 drop-shadow-sm leading-tight inline-block mt-0.5"><?= formatRupiah($data['laba_bersih']) ?></span>
+                        </div>
+                        <i class="fas fa-folder-open text-blue-300/30 text-5xl absolute bottom-[-10px] right-[-10px] pointer-events-none"></i>
+                    </div>
+
+                </div>
             </div>
             <?php endforeach; ?>
 

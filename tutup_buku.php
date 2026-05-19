@@ -244,78 +244,100 @@ $q_months = mysqli_query($koneksi, "SELECT DISTINCT MONTH(tanggal) as b, YEAR(ta
                 </div>
                 
                 <!-- Cards Container -->
-                <div class="space-y-4">
+                <div class="flex flex-col items-center space-y-32 lg:space-y-24 pt-28 lg:pt-16 pb-8">
                     <?php foreach($months as $row): 
+                        $tgl_mulai = date("Y-m-01", strtotime($row['t']."-".$row['b']."-01"));
                         $is_closed = isPeriodClosed($koneksi, $row['b'], $row['t']);
                         $tgl_range_akhir = date("Y-m-t", strtotime($row['t']."-".$row['b']."-01"));
-                        $laba = getNetIncome($koneksi, $tgl_range_akhir, date("Y-m-01", strtotime($row['t']."-".$row['b']."-01")));
+                        $laba = getNetIncome($koneksi, $tgl_range_akhir, $tgl_mulai);
                         $q_log = mysqli_query($koneksi, "SELECT * FROM periode_status WHERE bulan = {$row['b']} AND tahun = {$row['t']}");
                         $log = mysqli_fetch_assoc($q_log);
                         
-                        // Styling Logic based on Image 2
-                        $header_bg = $is_closed ? 'bg-[#10B981]' : 'bg-[#F97316]';
+                        $q_total = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM jurnal_umum WHERE tanggal BETWEEN '$tgl_mulai' AND '$tgl_range_akhir'");
+                        $total_data = mysqli_fetch_assoc($q_total)['total'];
+                        
                         $header_text = $is_closed ? 'TERKUNCI' : 'TERBUKA';
                         $badge_bg = $is_closed ? 'bg-emerald-50 text-emerald-600' : 'bg-orange-50 text-orange-600';
                         $badge_text = $is_closed ? 'Terkunci' : 'Terbuka';
                         $laba_display = ($laba >= 0) ? formatRupiah($laba) : "-".formatRupiah(abs($laba));
                         
                         $desc_text = $is_closed 
-                            ? 'Sistem telah mengunci seluruh transaksi untuk periode ini secara permanen. Saldo telah dipindahkan dengan aman.' 
-                            : 'Periode ini masih terbuka. Pastikan seluruh transaksi telah diinput sebelum mengeksekusi tutup buku.';
+                            ? 'Transaksi bulan ini telah dikunci permanen.' 
+                            : 'Periode terbuka. Pastikan input selesai.';
+                            
+                        $back_color = $is_closed ? 'bg-[#047857]' : 'bg-[#C2410C]';
+                        $front_gradient = $is_closed ? 'from-[#10B981] to-[#059669]' : 'from-[#F97316] to-[#EA580C]';
+                        $status_dot = $is_closed ? 'bg-green-200 shadow-[0_0_5px_#bbf7d0]' : 'bg-orange-200 shadow-[0_0_5px_#fed7aa]';
+                        $url_jurnal = "jurnal_umum.php?tgl_mulai=".$row['t']."-".str_pad($row['b'],2,'0',STR_PAD_LEFT)."-01&tgl_selesai=".$tgl_range_akhir;
                     ?>
                     
-                    <div class="bg-white rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.04)] border border-gray-100 overflow-hidden group hover:shadow-[0_4px_15px_rgba(0,0,0,0.08)] transition-all relative">
-                        <!-- Clickable area -->
-                        <a href="jurnal_umum.php?tgl_mulai=<?= $row['t'].'-'.str_pad($row['b'],2,'0',STR_PAD_LEFT).'-01' ?>&tgl_selesai=<?= $tgl_range_akhir ?>" class="absolute inset-0 z-10"></a>
+                    <div onclick="window.location.href='<?= $url_jurnal ?>'" class="relative w-[280px] h-[280px] group drop-shadow-2xl transition-all duration-300 lg:hover:-translate-y-2 cursor-pointer">
                         
-                        <!-- Colored Header (Like LOW/MODERATE) -->
-                        <div class="<?= $header_bg ?> py-1.5 flex justify-center items-center">
-                            <span class="text-white text-[10px] font-extrabold tracking-[0.15em] uppercase"><?= $header_text ?></span>
-                        </div>
+                        <!-- Back Folder Tab -->
+                        <div class="absolute top-0 left-0 w-[45%] h-10 <?= $back_color ?> rounded-tl-2xl" style="clip-path: polygon(0 0, 85% 0, 100% 100%, 0% 100%);"></div>
                         
-                        <div class="p-4 relative z-20 pointer-events-none">
-                            <!-- Dashed inner container -->
-                            <div class="border border-dashed border-gray-200 rounded-xl p-3.5 relative bg-gray-50/30">
-                                <h3 class="font-bold text-gray-800 text-[15px] mb-1.5">
-                                    <?= getBulanIndonesia(str_pad($row['b'],2,'0',STR_PAD_LEFT)) ?> <?= $row['t'] ?>
-                                </h3>
-                                <p class="text-[11px] text-gray-400 leading-relaxed mb-4 h-8 line-clamp-2">
-                                    <?= $desc_text ?>
-                                </p>
-                                
-                                <div class="flex justify-between items-center">
-                                    <div class="flex -space-x-1.5">
-                                        <?php if($is_closed): ?>
-                                        <div class="w-6 h-6 rounded-full border-2 border-white bg-blue-100 flex items-center justify-center text-[10px] font-bold text-blue-600 z-10 shadow-sm" title="<?= $log['closed_by'] ?>">
-                                            <?= substr($log['closed_by'], 0, 1) ?>
-                                        </div>
-                                        <img src="https://ui-avatars.com/api/?name=<?= urlencode($log['closed_by']) ?>&background=10B981&color=fff" class="w-6 h-6 rounded-full border-2 border-white shadow-sm z-0">
-                                        <?php else: ?>
-                                        <div class="w-6 h-6 rounded-full border-2 border-white bg-gray-100 flex items-center justify-center text-[10px] text-gray-400 z-10 shadow-sm">
-                                            <i class="fas fa-user-slash text-[8px]"></i>
-                                        </div>
-                                        <div class="w-6 h-6 rounded-full border-2 border-white bg-gray-50 flex items-center justify-center text-[10px] text-gray-300 z-0 shadow-sm">
-                                            <i class="fas fa-question text-[8px]"></i>
-                                        </div>
-                                        <?php endif; ?>
-                                    </div>
-                                    <span class="px-2.5 py-1 <?= $badge_bg ?> text-[10px] rounded-lg font-bold tracking-wide"><?= $badge_text ?></span>
-                                </div>
-                            </div>
+                        <!-- Back Folder Main -->
+                        <div class="absolute top-[39px] left-0 w-full h-[calc(100%-39px)] <?= $back_color ?> rounded-tr-2xl rounded-b-2xl"></div>
+
+                        <!-- Paper -->
+                        <div class="absolute top-[25px] left-4 right-4 h-[220px] bg-gradient-to-b from-[#ffffff] to-[#f1f5f9] rounded-t-xl shadow-[0_-2px_10px_rgba(0,0,0,0.05)] transition-transform duration-500 ease-out -translate-y-[75px] lg:translate-y-0 lg:group-hover:-translate-y-[75px] flex flex-col p-4 z-10 border border-gray-200">
                             
-                            <!-- Bottom Footer -->
-                            <div class="flex justify-between items-center mt-3.5 px-1 text-[11px] text-gray-400 font-bold pointer-events-auto">
-                                <div class="flex items-center gap-3.5">
-                                    <span class="flex items-center gap-1.5" title="Laba/Rugi">
-                                        <i class="far fa-clock text-[13px] text-gray-400"></i> 
-                                        <?= substr(formatRupiah($laba), 0, strpos(formatRupiah($laba), ',')) ?>
-                                    </span>
-                                    <a href="jurnal_umum.php?tgl_mulai=<?= $row['t'].'-'.str_pad($row['b'],2,'0',STR_PAD_LEFT).'-01' ?>&tgl_selesai=<?= $tgl_range_akhir ?>" class="flex items-center gap-1.5 hover:text-[#7C3AED] transition-colors z-30 relative">
-                                        <i class="fas fa-paperclip text-[13px] text-gray-400 hover:text-[#7C3AED]"></i> Jurnal
-                                    </a>
+                            <div class="w-full text-xs font-sans text-gray-600 space-y-2">
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="font-bold text-gray-800">Status</span>
+                                    <span class="px-2 py-0.5 <?= $badge_bg ?> text-[10px] rounded font-bold uppercase tracking-wide"><?= $badge_text ?></span>
                                 </div>
-                                <span class="text-gray-400"><?= date('M, d', strtotime($tgl_range_akhir)) ?></span>
+                                <div class="border-t border-dashed border-gray-200 pt-2 pb-1">
+                                    <div class="flex justify-between items-center mb-1.5">
+                                        <span class="text-[10px] font-medium text-gray-500">Total Transaksi</span>
+                                        <span class="text-[11px] font-bold text-gray-700 bg-gray-100 px-1.5 py-0.5 rounded border border-gray-200 shadow-sm"><i class="fas fa-database text-gray-400 mr-1 text-[9px]"></i><?= number_format($total_data, 0, ',', '.') ?> Baris</span>
+                                    </div>
+                                    <p class="text-[10px] leading-tight text-gray-400">
+                                        <?= $desc_text ?>
+                                    </p>
+                                </div>
                             </div>
+
+                            <div class="mt-4 space-y-2 relative z-50 pointer-events-auto">
+                                <?php if($is_closed && $log): ?>
+                                <div class="flex items-center gap-2 mb-3 bg-gray-50 p-2 rounded-lg border border-gray-100">
+                                    <div class="w-6 h-6 rounded-full border-2 border-white bg-emerald-100 flex items-center justify-center text-[10px] font-bold text-emerald-600 shadow-sm" title="<?= $log['closed_by'] ?>">
+                                        <?= substr($log['closed_by'], 0, 1) ?>
+                                    </div>
+                                    <div class="text-[9px] text-gray-500">
+                                        Ditutup oleh <br><span class="font-bold text-gray-700"><?= $log['closed_by'] ?></span>
+                                    </div>
+                                </div>
+                                <?php endif; ?>
+                                
+                                <a href="<?= $url_jurnal ?>" onclick="event.stopPropagation();"
+                                   class="flex justify-center items-center w-full py-2 rounded-lg bg-white border border-gray-200 text-center text-[10px] text-[#7C3AED] hover:bg-purple-50 hover:border-purple-300 font-bold transition shadow-sm pointer-events-auto">
+                                    <i class="fas fa-list mr-1.5"></i> Lihat Jurnal Bulan Ini
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Front Folder -->
+                        <div class="absolute top-[50px] left-0 w-full h-[calc(100%-50px)] bg-gradient-to-b <?= $front_gradient ?> rounded-2xl shadow-[0_-4px_15px_rgba(0,0,0,0.15)] p-5 z-20 flex flex-col justify-between border-t border-white/30 pointer-events-none lg:group-hover:pointer-events-auto transition-transform duration-500 ease-out translate-y-[45px] lg:translate-y-0 lg:group-hover:translate-y-[45px]">
+                            
+                            <div class="flex justify-between items-start pointer-events-auto">
+                                <div>
+                                    <h2 class="text-white text-3xl font-bold tracking-tight"><?= getBulanIndonesia(str_pad($row['b'],2,'0',STR_PAD_LEFT)) ?></h2>
+                                    <p class="text-white/90 text-sm mt-1 flex items-center gap-1.5">
+                                        Tahun <?= $row['t'] ?>
+                                        <span class="w-1.5 h-1.5 rounded-full <?= $status_dot ?>"></span>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="mt-auto relative w-full pt-4 pointer-events-none">
+                                <div class="text-white/90 text-[11px] font-medium relative z-10">
+                                    Laba Bersih<br>
+                                    <span class="text-white text-xl font-bold drop-shadow-sm leading-tight inline-block mt-0.5"><?= $laba_display ?></span>
+                                </div>
+                                <i class="fas <?= $is_closed ? 'fa-lock' : 'fa-folder-open' ?> text-white/20 text-5xl absolute bottom-[-10px] right-[-10px] pointer-events-none"></i>
+                            </div>
+
                         </div>
                     </div>
                     <?php endforeach; ?>
