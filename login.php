@@ -17,12 +17,14 @@ if ($res_dapur) {
 }
 
 $error_message = '';
+$active_tab = 'dapur'; // Default tab to 'dapur'
 
 // Cek apakah form disubmit
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     // Ambil data dari form
-    $login_type = $_POST['login_type'] ?? 'umum'; 
+    $login_type = $_POST['login_type'] ?? 'dapur'; 
+    $active_tab = $login_type;
     
     // Jika dapur, ambil dari dropdown
     if ($login_type === 'dapur') {
@@ -404,15 +406,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <?php endif; ?>
 
                 <form class="space-y-5" method="POST" action="login.php">
-                    <input type="hidden" name="login_type" id="login_type" value="umum">
+                    <input type="hidden" name="login_type" id="login_type" value="<?php echo htmlspecialchars($active_tab); ?>">
                     
                     <!-- Tabs -->
                     <div class="flex space-x-4">
-                        <button type="button" id="tab-umum" class="flex-1 py-3 px-4 rounded-xl border border-blue-200 bg-white shadow-sm text-blue-600 font-semibold transition-all duration-300 flex items-center justify-center" onclick="switchTab('umum')">
-                            <i class="fas fa-user-shield mr-2"></i>Umum
-                        </button>
-                        <button type="button" id="tab-dapur" class="flex-1 py-3 px-4 rounded-xl border border-gray-200 bg-gray-50 shadow-sm text-gray-500 font-medium hover:text-gray-700 transition-all duration-300 flex items-center justify-center" onclick="switchTab('dapur')">
+                        <button type="button" id="tab-dapur" class="flex-1 py-3 px-4 rounded-xl border <?php echo $active_tab === 'dapur' ? 'border-blue-200 bg-white shadow-sm text-blue-600 font-semibold' : 'border-gray-200 bg-gray-50 shadow-sm text-gray-500 font-medium hover:text-gray-700'; ?> transition-all duration-300 flex items-center justify-center" onclick="switchTab('dapur')">
                             <i class="fas fa-utensils mr-2"></i>Dapur
+                        </button>
+                        <button type="button" id="tab-umum" class="flex-1 py-3 px-4 rounded-xl border <?php echo $active_tab === 'umum' ? 'border-blue-200 bg-white shadow-sm text-blue-600 font-semibold' : 'border-gray-200 bg-gray-50 shadow-sm text-gray-500 font-medium hover:text-gray-700'; ?> transition-all duration-300 flex items-center justify-center" onclick="switchTab('umum')">
+                            <i class="fas fa-user-shield mr-2"></i>Umum
                         </button>
                     </div>
 
@@ -425,7 +427,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                     <div id="form-dynamic-fields" class="transition-opacity duration-500 ease-in-out opacity-100">
                         <!-- Username Input (Hidden for Dapur) -->
-                        <div class="transform transition-all duration-500" id="usernameInputContainer">
+                        <div class="transform transition-all duration-500<?php echo $active_tab === 'dapur' ? ' hidden' : ''; ?>" id="usernameInputContainer">
                             <label for="username" class="block text-sm font-medium text-gray-700 mb-2">
                                 Username / Email <span class="text-red-500">*</span>
                             </label>
@@ -436,12 +438,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         </div>
 
                         <!-- Dapur Select (Shown only for Dapur) -->
-                        <div class="transform transition-all duration-500 hidden" id="dapurSelectContainer">
+                        <div class="transform transition-all duration-500<?php echo $active_tab !== 'dapur' ? ' hidden' : ''; ?>" id="dapurSelectContainer">
                             <label for="dapur_select" class="block text-sm font-medium text-gray-700 mb-2">
                                 Pilih Dapur (Outlet) <span class="text-red-500">*</span>
                             </label>
                             <div class="relative">
-                                <select id="dapur_select" name="username_dapur" 
+                                <select id="dapur_select" name="username_dapur"<?php echo $active_tab === 'dapur' ? ' required' : ''; ?> 
                                         class="input-focus block w-full px-4 py-3 border border-gray-300 bg-gray-50 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 transition duration-300 appearance-none">
                                     <option value="" disabled selected>-- Pilih Nama Dapur --</option>
                                     <?php foreach ($dapur_users as $dapur): ?>
@@ -454,12 +456,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             </div>
                         </div>
 
-                        <div class="transform transition-all duration-500" id="passwordContainer">
+                        <div class="transform transition-all duration-500<?php echo $active_tab === 'dapur' ? ' hidden' : ''; ?>" id="passwordContainer">
                             <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
                                 Password <span class="text-red-500">*</span>
                             </label>
                             <div class="relative">
-                                <input type="password" id="password" name="password" placeholder="Masukkan password" required 
+                                <input type="password" id="password" name="password" placeholder="Masukkan password"<?php echo $active_tab === 'umum' ? ' required' : ''; ?> 
                                        class="input-focus block w-full px-4 py-3 border border-gray-300 bg-gray-50 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 transition duration-300">
                                 
                                 <div class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
@@ -470,7 +472,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             </div>
                         </div>
                         
-                        <div class="flex items-center justify-between mt-2" id="forgotPasswordLink">
+                        <div class="flex items-center justify-between mt-2<?php echo $active_tab === 'dapur' ? ' hidden' : ''; ?>" id="forgotPasswordLink">
                             <div class="flex items-center">
                                 <input id="remember_me" name="remember_me" type="checkbox" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer">
                                 <label for="remember_me" class="ml-2 block text-sm text-gray-600 cursor-pointer">

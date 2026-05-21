@@ -305,7 +305,7 @@ $nama_user = $_SESSION['user']['nama'] ?? 'Admin';
                     </div>
                     <div class="flex gap-2">
                         <a href="export_csv.php" class="btn bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 shadow-sm text-sm"><i class="fas fa-file-excel mr-2 text-emerald-600"></i> Export</a>
-                        <a href="https://scsbanjarnegara.com/index.php?action=tambah" 
+                        <a href="index.php?action=tambah" 
    id="add-material-btn" 
    class="btn btn-primary shadow-sm text-sm"
    onclick="event.stopImmediatePropagation(); return true;">
@@ -456,7 +456,6 @@ $nama_user = $_SESSION['user']['nama'] ?? 'Admin';
                 <?php endif; ?>
 
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
-                    <div class="md:col-span-12"><h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 border-b pb-1">1. Informasi Produk</h3></div>
                     <div class="md:col-span-8"><label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Barang <span class="text-red-500">*</span></label><input type="text" name="nama" required class="w-full border border-gray-300 p-2.5 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Contoh: Beras Premium" value="<?php echo htmlspecialchars($data_edit['nama'] ?? ''); ?>"></div>
                     <div class="md:col-span-4">
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Tipe Pengadaan <span class="text-red-500">*</span></label>
@@ -470,10 +469,9 @@ $nama_user = $_SESSION['user']['nama'] ?? 'Admin';
                     
 
 
-                    <div class="md:col-span-12 mt-2"><h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 border-b pb-1">2. Harga & Stok</h3></div>
                     <div class="md:col-span-4"><label class="block text-sm font-medium text-gray-700 mb-1.5">Harga Beli (Modal)</label><div class="relative"><span class="absolute left-3 top-2.5 text-gray-400 font-semibold text-sm">Rp</span><input type="number" step="any" id="harga_beli" name="harga_beli" class="w-full pl-9 border border-gray-300 p-2.5 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="0" value="<?php echo $data_edit['harga_beli'] ?? '0'; ?>"></div></div>
                     <div class="md:col-span-4"><label class="block text-sm font-medium text-gray-700 mb-1.5">Harga Jual <span class="text-red-500">*</span></label><div class="relative"><span class="absolute left-3 top-2.5 text-gray-400 font-semibold text-sm">Rp</span><input type="number" step="any" id="harga" name="harga" required class="w-full pl-9 border border-gray-300 p-2.5 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="0" value="<?php echo $data_edit['harga'] ?? '0'; ?>"></div></div>
-                    <div class="md:col-span-2"><label class="block text-sm font-medium text-gray-700 mb-1.5">Stok</label><input type="number" step="any" name="stok" min="0" required class="w-full border border-gray-300 p-2.5 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-center font-semibold" value="<?php echo $data_edit['stok'] ?? '0'; ?>"></div>
+                    <div class="md:col-span-2"><label class="block text-sm font-medium text-gray-700 mb-1.5">Stok</label><input type="number" step="any" name="stok" min="0" oninput="if(this.value < 0) this.value = 0;" required class="w-full border border-gray-300 p-2.5 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-center font-semibold" value="<?php echo max(0, (float)($data_edit['stok'] ?? 0)); ?>"></div>
                     <div class="md:col-span-2"><label class="block text-sm font-medium text-gray-700 mb-1.5">Satuan</label><input type="text" name="satuan" required class="w-full border border-gray-300 p-2.5 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-center uppercase text-sm" placeholder="Pcs/Kg" value="<?php echo htmlspecialchars($data_edit['satuan'] ?? ''); ?>"></div>
                 </div>
 

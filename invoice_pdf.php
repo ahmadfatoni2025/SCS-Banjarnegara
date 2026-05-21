@@ -1,5 +1,6 @@
 <?php
 require_once 'vendor/autoload.php';
+
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
@@ -7,10 +8,15 @@ session_start();
 include 'koneksi.php';
 
 // CEK LOGIN
-if (!isset($_SESSION['user'])) { header("Location: login.php"); exit; }
+if (!isset($_SESSION['user'])) {
+    header("Location: login.php");
+    exit;
+}
 
 $id_pesanan = isset($_GET['id']) ? (int)$_GET['id'] : 0;
-if ($id_pesanan <= 0) { die("ID Pesanan tidak valid!"); }
+if ($id_pesanan <= 0) {
+    die("ID Pesanan tidak valid!");
+}
 
 // FETCH DATA PESANAN
 $sql_p = "SELECT p.*, u.nama as nama_dapur 
@@ -23,7 +29,9 @@ $stmt_p->execute();
 $res_p = $stmt_p->get_result();
 $pesanan = $res_p->fetch_assoc();
 
-if (!$pesanan) { die("Pesanan tidak ditemukan!"); }
+if (!$pesanan) {
+    die("Pesanan tidak ditemukan!");
+}
 
 // FETCH DETAIL PESANAN
 $sql_d = "SELECT dp.*, g.nama as nama_barang, g.satuan 
@@ -41,10 +49,11 @@ $m_pesan = (int)date('m', strtotime($pesanan['tgl_pesan']));
 $y_pesan = date('Y', strtotime($pesanan['tgl_pesan']));
 
 $no_invoice = !empty($pesanan['no_invoice']) ? $pesanan['no_invoice'] : str_pad($pesanan['id_pesanan'], 3, '0', STR_PAD_LEFT) . "/INV-D1/" . $bulan_romawi[$m_pesan] . "/" . $y_pesan;
-$no_pesanan = !empty($pesanan['no_pesanan']) ? $pesanan['no_pesanan'] : $pesanan['id_pesanan'] . "/SCS/PO-DP/" . $bulan_romawi[$m_pesan] . "/" . $y_pesan;
+$no_pesanan = !empty($pesanan['no_pesanan']) ? $pesanan['no_pesanan'] : '';
 
 // FETCH DATA AKUNTAN — SELALU tampilkan TTD (helper base64)
-function _to_base64($filepath) {
+function _to_base64($filepath)
+{
     if (!$filepath || !file_exists($filepath)) return '';
     $type = pathinfo($filepath, PATHINFO_EXTENSION);
     $data = file_get_contents($filepath);
@@ -90,6 +99,10 @@ if (empty($ttd_base64) || empty($ttd_nama_display)) {
 }
 
 if (empty($ttd_nama_display)) $ttd_nama_display = 'Bagian Keuangan';
+
+$gd_loaded = extension_loaded('gd');
+$logo_html = $gd_loaded ? '<img src="logo_scs.png" class="logo">' : '<div style="font-size:18pt;font-weight:bold;">SCS</div>';
+$stamp_html = $gd_loaded ? '<img src="logo_scs.png" class="stamp">' : '';
 
 $html = '
 <!DOCTYPE html>
@@ -153,7 +166,7 @@ $html = '
     <div class="header">
         <table>
             <tr>
-                <td class="logo-cell"><img src="logo_scs.png" class="logo"></td>
+                <td class="logo-cell">' . $logo_html . '</td>
                 <td class="center-cell">
                     <div class="company-name">PT. SURYA CERAH SEMESTA</div>
                     <div class="company-addr">Jl. Pemuda No. 83, Kutabanjarnegara, Kec. Banjarnegara, Kab. Banjarnegara, Jawa Tengah, 53471</div>
@@ -177,9 +190,11 @@ $html .= '
         <div class="metadata">
             <table width="100%" style="font-size: 10pt;">
                 <tr><td align="right" width="60%">Tanggal Invoice</td><td align="center" width="10%">:</td><td align="left">' . date('d/m/Y', strtotime($pesanan['tgl_pesan'])) . '</td></tr>
-                <tr><td align="right">Nomor Invoice</td><td align="center">:</td><td align="left">' . $no_invoice . '</td></tr>
-                <tr><td align="right">Nomor Pesanan</td><td align="center">:</td><td align="left">' . $no_pesanan . '</td></tr>
-                <tr><td align="right">Tanggal Pesan</td><td align="center">:</td><td align="left">' . date('d/m/Y', strtotime($pesanan['tgl_pesan'])) . '</td></tr>
+                <tr><td align="right">Nomor Invoice</td><td align="center">:</td><td align="left">' . $no_invoice . '</td></tr>';
+if (!empty($no_pesanan)) {
+    $html .= '<tr><td align="right">Nomor Pesanan</td><td align="center">:</td><td align="left">' . $no_pesanan . '</td></tr>';
+}
+$html .= '      <tr><td align="right">Tanggal Pesan</td><td align="center">:</td><td align="left">' . date('d/m/Y', strtotime($pesanan['tgl_pesan'])) . '</td></tr>
                 <tr><td align="right">Status</td><td align="center">:</td><td align="left"><strong style="color: ' . ($pesanan['status_pembayaran'] === 'Lunas' ? '#15803d' : '#dc2626') . ';">' . ($pesanan['status_pembayaran'] === 'Batal' ? 'DIBATALKAN' : ($pesanan['status_pembayaran'] === 'Lunas' ? 'Lunas' : 'Belum Bayar')) . '</strong></td></tr>
             </table>
         </div>
@@ -262,11 +277,11 @@ if ($pesanan['status_pembayaran'] !== 'Lunas') {
 $html .= '
     <div class="signature-area">
         <p style="font-size: 10pt; margin: 0;">Hormat kami,</p>
-        <img src="logo_scs.png" class="stamp">';
-        
-        if (!empty($ttd_base64)) {
-            $html .= '<img src="' . $ttd_base64 . '" class="signature-img">';
-        }
+        ' . $stamp_html;
+
+if (!empty($ttd_base64) && $gd_loaded) {
+    $html .= '<img src="' . $ttd_base64 . '" class="signature-img">';
+}
 
 $html .= '
         <div class="signature-line">
@@ -290,4 +305,3 @@ $dompdf->render();
 
 $filename = "Invoice-" . str_replace('/', '-', $no_invoice) . ".pdf";
 $dompdf->stream($filename, ["Attachment" => false]);
-?>
