@@ -1070,8 +1070,8 @@ usort($products, function ($a, $b) {
                                         🛒 PO
                                     </span>
                                 <?php else: ?>
-                                    <span class="px-3 py-1.5 bg-green-500 text-white text-xs font-bold rounded-full shadow-sm">
-                                        📦 <?php echo $product['stok']; ?> Tersedia
+                                    <span class="px-3 py-1.5 bg-green-100  text-green-700 text-xs font-bold rounded-full shadow-sm">
+                                        <?php echo $product['stok']; ?> Tersedia
                                     </span>
                                 <?php endif; ?>
 
@@ -1118,7 +1118,7 @@ usort($products, function ($a, $b) {
                                 <!-- Bottom: Action Button -->
                                 <button onclick="addToCart(<?php echo $product['id_barang']; ?>)"
                                     id="cart-btn-<?php echo $product['id_barang']; ?>"
-                                    class="cart-action-btn w-full h-[48px] rounded-[14px] font-bold text-[14px] transition-all flex items-center justify-center gap-2 <?php echo $isOutOfStock ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-gray-900 text-white hover:bg-gray-800 shadow-md'; ?>"
+                                    class="cart-action-btn w-full h-[48px] rounded-[14px] font-bold text-[14px] transition-all flex items-center justify-center gap-2 <?php echo $isOutOfStock ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-green-600 text-white hover:bg-green-700 shadow-md'; ?>"
                                     <?php echo $isOutOfStock ? 'disabled' : ''; ?>>
                                     <?php if ($isOutOfStock): ?>
                                         <i class="fas fa-times"></i> Habis
@@ -1157,7 +1157,7 @@ usort($products, function ($a, $b) {
                             <p id="total-harga-display" class="text-xl md:text-2xl font-extrabold text-green-600 tracking-tight">Rp 0</p>
                         </div>
                         <button onclick="showCartModalMobile()" id="lanjut-bayar-btn" disabled
-                            class="relative bg-gray-900 hover:bg-black disabled:bg-gray-300 text-white px-2 md:p-3 rounded-xl font-bold shadow-xl shadow-gray-900/20 disabled:shadow-none transition-all flex items-center space-x-3 active:scale-[0.98]">
+                            class="relative bg-green-600 hover:bg-black disabled:bg-gray-300 text-white px-2 md:p-3 rounded-xl font-bold shadow-xl shadow-gray-900/20 disabled:shadow-none transition-all flex items-center space-x-3 active:scale-[0.98]">
                             <i class="fas fa-shopping-cart md:text-lg"></i>
                             <span class="text-sm md:text-lg">Checkout</span>
                             <span id="total-items-badge" class="absolute -top-3 -right-3 bg-red-500 text-white text-xs md:text-sm font-bold w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center border-2 border-white shadow-sm">0</span>
@@ -1755,7 +1755,7 @@ usort($products, function ($a, $b) {
                 if (quantity === 0) {
                     // Reset button jika quantity 0
                     button.innerHTML = '<i class="fas fa-cart-plus"></i> Pesan';
-                    button.className = 'cart-action-btn w-full h-[48px] rounded-[14px] font-bold text-[14px] transition-all flex items-center justify-center gap-2 bg-gray-900 text-white hover:bg-gray-800 shadow-md';
+                    button.className = 'cart-action-btn w-full h-[48px] rounded-[14px] font-bold text-[14px] transition-all flex items-center justify-center gap-2 bg-green-600 text-white hover:bg-gray-800 shadow-md';
                 } else if (cart[productId] && cart[productId].jumlah === quantity) {
                     // Jika sudah di cart dan quantity sama
                     button.innerHTML = '<i class="fas fa-check"></i> Selesai';
@@ -1767,7 +1767,7 @@ usort($products, function ($a, $b) {
                 } else {
                     // Jika belum di cart
                     button.innerHTML = '<i class="fas fa-cart-plus"></i> Pesan';
-                    button.className = 'cart-action-btn w-full h-[48px] rounded-[14px] font-bold text-[14px] transition-all flex items-center justify-center gap-2 bg-gray-900 text-white hover:bg-gray-800 shadow-md';
+                    button.className = 'cart-action-btn w-full h-[48px] rounded-[14px] font-bold text-[14px] transition-all flex items-center justify-center gap-2 bg-green-600 text-white hover:bg-gray-800 shadow-md';
                 }
             }
 
@@ -1797,7 +1797,7 @@ usort($products, function ($a, $b) {
                         delete cart[productId];
                         const button = document.getElementById(`cart-btn-${productId}`);
                         button.innerHTML = '<i class="fas fa-cart-plus"></i> Pesan';
-                        button.className = 'cart-action-btn w-full h-[48px] rounded-[14px] font-bold text-[14px] transition-all flex items-center justify-center gap-2 bg-gray-900 text-white hover:bg-gray-800 shadow-md';
+                        button.className = 'cart-action-btn w-full h-[48px] rounded-[14px] font-bold text-[14px] transition-all flex items-center justify-center gap-2 bg-green-600 text-white hover:bg-gray-800 shadow-md';
                         Toast.fire({
                             icon: 'info',
                             title: 'Item dihapus'

@@ -316,6 +316,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body class="min-h-screen flex items-center justify-center p-4 mobile-optimized">
     
     <div class="animated-bg" id="mainBackground"></div>
+    <canvas id="stars-canvas" class="fixed inset-0 pointer-events-none" style="z-index: -1;"></canvas>
     
     <div class="floating-element" id="floating1" style="width: 100px; height: 100px; top: 10%; left: 10%; animation-delay: 0s;"></div>
     <div class="floating-element" id="floating2" style="width: 150px; height: 150px; top: 70%; left: 80%; animation-delay: 5s;"></div>
@@ -407,13 +408,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 <form class="space-y-5" method="POST" action="login.php">
                     <input type="hidden" name="login_type" id="login_type" value="<?php echo htmlspecialchars($active_tab); ?>">
-                    
-                    <!-- Tabs -->
-                    <div class="flex space-x-4">
-                        <button type="button" id="tab-dapur" class="flex-1 py-3 px-4 rounded-xl border <?php echo $active_tab === 'dapur' ? 'border-blue-200 bg-white shadow-sm text-blue-600 font-semibold' : 'border-gray-200 bg-gray-50 shadow-sm text-gray-500 font-medium hover:text-gray-700'; ?> transition-all duration-300 flex items-center justify-center" onclick="switchTab('dapur')">
+                                    <!-- Tabs -->
+                    <div class="relative flex p-1 bg-gray-100 rounded-xl">
+                        <!-- Sliding Background Indicator -->
+                        <div id="tab-indicator" class="absolute top-1 bottom-1 left-1 rounded-lg bg-white shadow-md transition-all duration-300 ease-out" 
+                             style="width: calc(50% - 4px); transform: <?php echo $active_tab === 'umum' ? 'translateX(100%)' : 'translateX(0)'; ?>;"></div>
+                        
+                        <button type="button" id="tab-dapur" class="relative z-10 flex-1 py-2.5 px-4 text-center text-sm font-semibold rounded-lg transition-colors duration-300 flex items-center justify-center <?php echo $active_tab === 'dapur' ? 'text-blue-600' : 'text-gray-500 hover:text-gray-700'; ?>" onclick="switchTab('dapur')">
                             <i class="fas fa-utensils mr-2"></i>Dapur
                         </button>
-                        <button type="button" id="tab-umum" class="flex-1 py-3 px-4 rounded-xl border <?php echo $active_tab === 'umum' ? 'border-blue-200 bg-white shadow-sm text-blue-600 font-semibold' : 'border-gray-200 bg-gray-50 shadow-sm text-gray-500 font-medium hover:text-gray-700'; ?> transition-all duration-300 flex items-center justify-center" onclick="switchTab('umum')">
+                        <button type="button" id="tab-umum" class="relative z-10 flex-1 py-2.5 px-4 text-center text-sm font-semibold rounded-lg transition-colors duration-300 flex items-center justify-center <?php echo $active_tab === 'umum' ? 'text-blue-600' : 'text-gray-500 hover:text-gray-700'; ?>" onclick="switchTab('umum')">
                             <i class="fas fa-user-shield mr-2"></i>Umum
                         </button>
                     </div>
@@ -425,63 +429,73 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <div class="flex-grow border-t border-gray-200"></div>
                     </div>
 
-                    <div id="form-dynamic-fields" class="transition-opacity duration-500 ease-in-out opacity-100">
-                        <!-- Username Input (Hidden for Dapur) -->
-                        <div class="transform transition-all duration-500<?php echo $active_tab === 'dapur' ? ' hidden' : ''; ?>" id="usernameInputContainer">
-                            <label for="username" class="block text-sm font-medium text-gray-700 mb-2">
-                                Username / Email <span class="text-red-500">*</span>
-                            </label>
-                            <div class="relative">
-                                <input type="text" id="username" name="username" placeholder="Masukkan username" 
-                                       class="input-focus block w-full px-4 py-3 border border-gray-300 bg-gray-50 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 transition duration-300">
-                            </div>
-                        </div>
-
-                        <!-- Dapur Select (Shown only for Dapur) -->
-                        <div class="transform transition-all duration-500<?php echo $active_tab !== 'dapur' ? ' hidden' : ''; ?>" id="dapurSelectContainer">
-                            <label for="dapur_select" class="block text-sm font-medium text-gray-700 mb-2">
-                                Pilih Dapur (Outlet) <span class="text-red-500">*</span>
-                            </label>
-                            <div class="relative">
-                                <select id="dapur_select" name="username_dapur"<?php echo $active_tab === 'dapur' ? ' required' : ''; ?> 
-                                        class="input-focus block w-full px-4 py-3 border border-gray-300 bg-gray-50 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 transition duration-300 appearance-none">
-                                    <option value="" disabled selected>-- Pilih Nama Dapur --</option>
-                                    <?php foreach ($dapur_users as $dapur): ?>
-                                        <option value="<?php echo htmlspecialchars($dapur); ?>"><?php echo htmlspecialchars($dapur); ?></option>
-                                    <?php endforeach; ?>
-                                </select>
-                                <div class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none">
-                                    <i class="fas fa-chevron-down"></i>
+                    <!-- Tabs Content Viewport with Height Transition -->
+                    <div class="overflow-hidden relative w-full transition-[height] duration-300 ease-in-out" id="tabs-content-viewport">
+                        <div id="tabs-content-track" class="flex transition-transform duration-300 ease-in-out items-start" style="width: 200%; transform: <?php echo $active_tab === 'dapur' ? 'translateX(0%)' : 'translateX(-50%)'; ?>;">
+                            
+                            <!-- Dapur Pane -->
+                            <div class="w-1/2 flex-shrink-0 px-1 transition-opacity duration-300 <?php echo $active_tab === 'dapur' ? 'opacity-100' : 'opacity-0 pointer-events-none'; ?>" id="pane-dapur">
+                                <div class="mb-1">
+                                    <label for="dapur_select" class="block text-sm font-medium text-gray-700 mb-2">
+                                        Pilih Dapur (Outlet) <span class="text-red-500">*</span>
+                                    </label>
+                                    <div class="relative">
+                                        <select id="dapur_select" name="username_dapur"<?php echo $active_tab === 'dapur' ? ' required' : ''; ?> 
+                                                class="input-focus block w-full px-4 py-3 border border-gray-300 bg-gray-50 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 transition duration-300 appearance-none">
+                                            <option value="" disabled <?php echo empty($_POST['username_dapur']) ? 'selected' : ''; ?>>-- Pilih Nama Dapur --</option>
+                                            <?php foreach ($dapur_users as $dapur): ?>
+                                                <option value="<?php echo htmlspecialchars($dapur); ?>" <?php echo (isset($_POST['username_dapur']) && $_POST['username_dapur'] === $dapur) ? 'selected' : ''; ?>><?php echo htmlspecialchars($dapur); ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                        <div class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none">
+                                            <i class="fas fa-chevron-down"></i>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                            
+                            <!-- Umum Pane -->
+                            <div class="w-1/2 flex-shrink-0 px-1 transition-opacity duration-300 <?php echo $active_tab === 'umum' ? 'opacity-100' : 'opacity-0 pointer-events-none'; ?>" id="pane-umum">
+                                <div class="space-y-4">
+                                    <div>
+                                        <label for="username" class="block text-sm font-medium text-gray-700 mb-2">
+                                            Username / Email <span class="text-red-500">*</span>
+                                        </label>
+                                        <div class="relative">
+                                            <input type="text" id="username" name="username" placeholder="Masukkan username" value="<?php echo htmlspecialchars($_POST['username'] ?? ''); ?>"<?php echo $active_tab === 'umum' ? ' required' : ''; ?>
+                                                   class="input-focus block w-full px-4 py-3 border border-gray-300 bg-gray-50 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 transition duration-300">
+                                        </div>
+                                    </div>
 
-                        <div class="transform transition-all duration-500<?php echo $active_tab === 'dapur' ? ' hidden' : ''; ?>" id="passwordContainer">
-                            <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
-                                Password <span class="text-red-500">*</span>
-                            </label>
-                            <div class="relative">
-                                <input type="password" id="password" name="password" placeholder="Masukkan password"<?php echo $active_tab === 'umum' ? ' required' : ''; ?> 
-                                       class="input-focus block w-full px-4 py-3 border border-gray-300 bg-gray-50 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 transition duration-300">
-                                
-                                <div class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                                    <span class="cursor-pointer" onclick="togglePassword('password', this)">
-                                        <i class="fas fa-eye-slash"></i>
-                                    </span>
+                                    <div>
+                                        <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
+                                            Password <span class="text-red-500">*</span>
+                                        </label>
+                                        <div class="relative">
+                                            <input type="password" id="password" name="password" placeholder="Masukkan password"<?php echo $active_tab === 'umum' ? ' required' : ''; ?> 
+                                                   class="input-focus block w-full px-4 py-3 border border-gray-300 bg-gray-50 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 transition duration-300">
+                                            
+                                            <div class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                                                <span class="cursor-pointer" onclick="togglePassword('password', this)">
+                                                    <i class="fas fa-eye-slash"></i>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center">
+                                            <input id="remember_me" name="remember_me" type="checkbox" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer">
+                                            <label for="remember_me" class="ml-2 block text-sm text-gray-600 cursor-pointer">
+                                                Ingat saya
+                                            </label>
+                                        </div>
+                                        <a href="./lupaPassword.php" class="text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors">
+                                            Lupa Password?
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        
-                        <div class="flex items-center justify-between mt-2<?php echo $active_tab === 'dapur' ? ' hidden' : ''; ?>" id="forgotPasswordLink">
-                            <div class="flex items-center">
-                                <input id="remember_me" name="remember_me" type="checkbox" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer">
-                                <label for="remember_me" class="ml-2 block text-sm text-gray-600 cursor-pointer">
-                                    Ingat saya
-                                </label>
-                            </div>
-                            <a href="./lupaPassword.php" class="text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors">
-                                Lupa Password?
-                            </a>
                         </div>
                     </div>
 
@@ -496,7 +510,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <p class="text-gray-500 text-sm">
                         Belum punya akun? <a href="./daftar.php" class="text-blue-600 font-medium cursor-pointer hover:text-blue-800">Daftar sekarang</a>
                     </p>
-                </div></div>
+                </div>
             </div>
         </div>
     </div>
@@ -508,80 +522,141 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             const icon = iconElement.querySelector('i');
             if (input.type === "password") {
                 input.type = "text";
-                icon.classList.remove("fa-eye");
-                icon.classList.add("fa-eye-slash");
-            } else {
-                input.type = "password";
                 icon.classList.remove("fa-eye-slash");
                 icon.classList.add("fa-eye");
+            } else {
+                input.type = "password";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            }
+        }
+
+        function updateViewportHeight(tab) {
+            const viewport = document.getElementById('tabs-content-viewport');
+            const activePane = document.getElementById('pane-' + tab);
+            if (viewport && activePane) {
+                viewport.style.height = activePane.offsetHeight + 'px';
             }
         }
 
         function switchTab(tab) {
             const currentTab = document.getElementById('login_type').value;
-            if (currentTab === tab) return; // Mencegah klik berulang pada tab yang sama
+            if (currentTab === tab) return;
             
             document.getElementById('login_type').value = tab;
             
             const tabUmum = document.getElementById('tab-umum');
             const tabDapur = document.getElementById('tab-dapur');
+            const tabIndicator = document.getElementById('tab-indicator');
+            const contentTrack = document.getElementById('tabs-content-track');
             
-            const usernameContainer = document.getElementById('usernameInputContainer');
-            const passwordContainer = document.getElementById('passwordContainer');
-            const forgotPasswordLink = document.getElementById('forgotPasswordLink');
-            const dapurSelectContainer = document.getElementById('dapurSelectContainer');
+            const paneDapur = document.getElementById('pane-dapur');
+            const paneUmum = document.getElementById('pane-umum');
             
             const usernameInput = document.getElementById('username');
             const passwordInput = document.getElementById('password');
             const dapurSelect = document.getElementById('dapur_select');
 
-            const activeClass = "flex-1 py-3 px-4 rounded-xl border border-blue-200 bg-white shadow-sm text-blue-600 font-semibold transition-all duration-300 flex items-center justify-center";
-            const inactiveClass = "flex-1 py-3 px-4 rounded-xl border border-gray-200 bg-gray-50 shadow-sm text-gray-500 font-medium hover:text-gray-700 transition-all duration-300 flex items-center justify-center";
-
-            const formContainer = document.getElementById('form-dynamic-fields');
-
-            // 1. Fade out animasi
-            formContainer.classList.remove('opacity-100');
-            formContainer.classList.add('opacity-0');
-
-            // 2. Tunggu sebentar, lalu ubah konten (saat transparan)
-            setTimeout(() => {
-                if (tab === 'dapur') {
-                    tabDapur.className = activeClass;
-                    tabUmum.className = inactiveClass;
-                    
-                    dapurSelectContainer.classList.remove('hidden');
-                    usernameContainer.classList.add('hidden');
-                    passwordContainer.classList.add('hidden');
-                    forgotPasswordLink.classList.add('hidden');
-                    
-                    dapurSelect.required = true;
-                    usernameInput.required = false;
-                    passwordInput.required = false;
-                } else {
-                    tabUmum.className = activeClass;
-                    tabDapur.className = inactiveClass;
-                    
-                    dapurSelectContainer.classList.add('hidden');
-                    usernameContainer.classList.remove('hidden');
-                    passwordContainer.classList.remove('hidden');
-                    forgotPasswordLink.classList.remove('hidden');
-                    
-                    dapurSelect.required = false;
-                    usernameInput.required = true;
-                    passwordInput.required = true;
-                }
+            if (tab === 'dapur') {
+                // Animate indicator
+                tabIndicator.style.transform = 'translateX(0)';
+                tabDapur.className = "relative z-10 flex-1 py-2.5 px-4 text-center text-sm font-semibold rounded-lg transition-colors duration-300 flex items-center justify-center text-blue-600";
+                tabUmum.className = "relative z-10 flex-1 py-2.5 px-4 text-center text-sm font-semibold rounded-lg transition-colors duration-300 flex items-center justify-center text-gray-500 hover:text-gray-700";
                 
-                // 3. Fade in animasi kembali
-                setTimeout(() => {
-                    formContainer.classList.remove('opacity-0');
-                    formContainer.classList.add('opacity-100');
-                }, 50);
-            }, 200); // Harus sesuai dengan durasi transition-opacity di HTML
+                // Slide track & opacity
+                contentTrack.style.transform = 'translateX(0%)';
+                paneDapur.classList.remove('opacity-0', 'pointer-events-none');
+                paneDapur.classList.add('opacity-100');
+                paneUmum.classList.remove('opacity-100');
+                paneUmum.classList.add('opacity-0', 'pointer-events-none');
+                
+                dapurSelect.required = true;
+                usernameInput.required = false;
+                passwordInput.required = false;
+            } else {
+                // Animate indicator
+                tabIndicator.style.transform = 'translateX(100%)';
+                tabUmum.className = "relative z-10 flex-1 py-2.5 px-4 text-center text-sm font-semibold rounded-lg transition-colors duration-300 flex items-center justify-center text-blue-600";
+                tabDapur.className = "relative z-10 flex-1 py-2.5 px-4 text-center text-sm font-semibold rounded-lg transition-colors duration-300 flex items-center justify-center text-gray-500 hover:text-gray-700";
+                
+                // Slide track & opacity
+                contentTrack.style.transform = 'translateX(-50%)';
+                paneUmum.classList.remove('opacity-0', 'pointer-events-none');
+                paneUmum.classList.add('opacity-100');
+                paneDapur.classList.remove('opacity-100');
+                paneDapur.classList.add('opacity-0', 'pointer-events-none');
+                
+                dapurSelect.required = false;
+                usernameInput.required = true;
+                passwordInput.required = true;
+            }
+
+            // Smoothly update container height
+            updateViewportHeight(tab);
         }
 
-        // Mobile optimization
+        function initStarsBackground() {
+            const canvas = document.getElementById('stars-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            
+            let stars = [];
+            const numStars = 120;
+            
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+            
+            // Create stars
+            for (let i = 0; i < numStars; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    radius: Math.random() * 1.5 + 0.3,
+                    opacity: Math.random(),
+                    speed: Math.random() * 0.015 + 0.005,
+                    direction: Math.random() > 0.5 ? 1 : -1
+                });
+            }
+            
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                stars.forEach(star => {
+                    // Twinkle effect (opacity oscillation)
+                    star.opacity += star.speed * star.direction;
+                    if (star.opacity > 0.95 || star.opacity < 0.05) {
+                        star.direction *= -1;
+                    }
+                    
+                    ctx.beginPath();
+                    ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255, 255, 255, ${star.opacity})`;
+                    ctx.fill();
+                });
+                
+                requestAnimationFrame(animate);
+            }
+            
+            animate();
+        }
+
+        // Mobile optimization & Initialization
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Stars Background
+            initStarsBackground();
+
+            // Set initial viewport height
+            const currentTab = document.getElementById('login_type').value;
+            // Delay slightly to ensure elements are fully rendered to get correct offsets
+            setTimeout(() => {
+                updateViewportHeight(currentTab);
+            }, 150);
+
             // Prevent zoom on focus
             const inputs = document.querySelectorAll('input, select');
             inputs.forEach(input => {
@@ -594,7 +669,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             window.addEventListener('orientationchange', function() {
                 setTimeout(function() { 
                     window.scrollTo(0, 0); 
+                    updateViewportHeight(document.getElementById('login_type').value);
                 }, 100);
+            });
+
+            // Handle window resizing
+            window.addEventListener('resize', function() {
+                updateViewportHeight(document.getElementById('login_type').value);
             });
         });
     </script>
